@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jamify Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">🎵 Jamify</div>
+    <ul class="nav-links">
+        <li>Home</li>
+        <li>Discover</li>
+        <li>Suggest</li>
+        <li>Profile</li>
+        <li class="logout" onclick="goToLogout()">Logout</li>
+    </ul>
+</nav>
+
+<!-- Profile Card -->
+<div class="profile-card">
+    <img src="portrait-young-beautiful-woman-standing-smiling.jpg" class="profile-img">
+
+    <div class="profile-info">
+        <h2>Emma Rodriguez</h2>
+        <p class="username">@swiftie4ever</p>
+        <p class="bio">Pop music enthusiast 🎵 Taylor Swift is my religion ✨</p>
+
+        <div class="stats">
+            <span>2 Following</span>
+            <span>1 Followers</span>
+            <span>3 Reviews</span>
+            <span>58 Likes</span>
+            <span>⭐ 5.0 Avg Rating</span>
+        </div>
+
+        <button id="editBtn">Edit Profile</button>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+    <button class="tab active" onclick="showTab('reviews')">Reviews</button>
+    <button class="tab" onclick="showTab('following')">Following</button>
+    <button class="tab" onclick="showTab('followers')">Followers</button>
+</div>
+
+<!-- Content -->
+<div id="reviews" class="tab-content active">
+    
+    <!-- Review Card -->
+    <div class="review-card">
+        <img src="Midnights_-_Taylor_Swift.png">
+        <div>
+            <h3>Midnights - Taylor Swift</h3>
+            <p class="rating">⭐⭐⭐⭐⭐ 5/5</p>
+            <p>
+                Taylor has done it again! Midnights is absolutely magical...
+            </p>
+            <small>❤️ 24 likes · 2024-03-10</small>
+        </div>
+    </div>
+
+    <div class="review-card">
+        <img src="Adele_-_30.png">
+        <div>
+            <h3>30 - Adele</h3>
+            <p class="rating">⭐⭐⭐⭐⭐ 5/5</p>
+            <p>
+                Adele’s voice is unmatched. Emotional and powerful album...
+            </p>
+            <small>❤️ 18 likes · 2024-02-20</small>
+        </div>
+    </div>
+
+</div>
+
+<div id="following" class="tab-content active">
+ <div class="user-card">
+    <img src="young-beautiful-woman-looking-camera-trendy-girl-casual-summer-white-t-shirt-jeans-shorts-positive-female-shows-facial-emotions-funny-model-isolated-yellow.jpg" class="user-img">
+
+        <div class="user-info">
+            <h3>Mia Chen</h3>
+            <p class="username">@popqueen</p>
+            <p class="bio">Living for pop perfection. Dua Lipa stan 💃</p>
+        </div>
+    </div>
+</div>
+
+<div id="followers" class="tab-content active">
+
+    <div class="user-card">
+        <img src="young-beautiful-woman-looking-camera-trendy-girl-casual-summer-white-t-shirt-jeans-shorts-positive-female-shows-facial-emotions-funny-model-isolated-yellow.jpg" class="user-img">
+
+        <div class="user-info">
+            <h3>Mia Chen</h3>
+            <p class="username">@popqueen</p>
+            <p class="bio">Living for pop perfection. Dua Lipa stan 💃</p>
+        </div>
+    </div>
+
+
+</div>
+<!-- Edit Profile Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>Edit Profile</h3>
+
+        <input type="text" id="editName" placeholder="Name">
+        <input type="text" id="editUsername" placeholder="Username">
+        <textarea id="editBio" placeholder="Bio"></textarea>
+
+        <div class="modal-buttons">
+            <button id="saveProfile">Save</button>
+            <button id="closeModal">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="profile.js"></script>
+</body>
+</html>
