@@ -1,15 +1,50 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
+    background: #f7f3f3;
+    margin: 0;
 }
-#review-rating{
 
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c2c2c;
+}
+
+.nav-links a:hover {
+    color: #e74c3c;
+}
+
+#review-rating{
     font-size: 10px;
     gap: 2px;
 }
+
 #review{
     font-size: 14px;
     color:rgb(81, 81, 81);
 }
+
 .reviewBox{
     display: flex;
     flex-direction: column;
@@ -17,28 +52,48 @@ body{
     height: auto;
     margin-top: 20px;
     margin-bottom:20px;
-    border-left: 4px solid rgb(226, 144, 128);
-    background-color: aliceblue;
+    border-left: 4px solid #e74c3c;
+    background-color: white;
     border-radius:5px;
     padding: 2%;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 #profile-icon {
     padding-right:2%;
     max-width: 8.5%;   
     height: auto;
     opacity: 0.7;
 }
-.reviewerInfo{
+
+/* i added these so the username and date are on opposite sides */
+.reviewerInfo {
     display: flex;
     flex-direction: row;
-    align-items:flex-start;
+    align-items: center; 
+    justify-content: space-between; /* this pushes content to left and right */
+    width: 100%;
 }
+
+/* this insures that the icon + name + and stars stay together on the left */
+.user-meta-group {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* takes up available space to push the date */
+}
+
+.review-date {
+    color: rgb(81, 81, 81);
+    font-size: 13px;
+    white-space: nowrap; /* this prevents the date from wrapping to a new line :) */
+}
+
 hr{
     width:100%;
     border:1px solid rgb(81, 81, 81);
     opacity:0.6;
 }
+
 .reviewForm{
     display: flex;
     flex-direction: column;
@@ -47,45 +102,62 @@ hr{
     gap: 10px;
     margin-top: 20px;
     margin-bottom:20px;
-    border-left: 4px solid rgb(226, 144, 128);
-    background-color: aliceblue;
+    border-left: 4px solid #e74c3c;
+    background-color: white;
     border-radius:5px;
     padding:20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+
 .stars i{
     color:rgb(213, 204, 201);
     font-size:30px;
     cursor: pointer;
     transition: color 0.3s ease;
 }
+
 .stars i.active{
     color:rgb(226, 186, 29);
 }
+
+.like i{
+    color:rgb(213, 204, 201);
+    font-size:30px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.like i.active {
+    color:rgb(234, 39, 39);
+}
+
 .page-wrapper{
     width: 650px;
     margin: 0 auto;
 }
+
 #main{
     font-size: 15px;
-    color:rgb(238, 138, 118)
+    color:#e74c3c
 }
+
 #head{
     font-size: 30px;
     justify-content: space-between;
     font-weight: bold;
-    color:rgb(238, 138, 118);
+    color:#e74c3c;
 }
+
 .mainInfoContainer {
     box-sizing: border-box; 
-    border-left: 4px solid rgb(226, 144, 128);
+    border-left: 4px solid #e74c3c;
     margin-top: 70px;
     padding: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 15px;
-    background-color: aliceblue;
+    background-color: white;
     height: 250px;
     width: 100%; 
     border-radius: 10px;
@@ -96,8 +168,19 @@ hr{
 .headerINFO {
     font-size: 20px;
     font-weight: bold;
-    padding-right: 45%;  
+    padding-right: 10px; /* reduced this from 45% to accomodate the album like */
 }
+
+
+.header-with-heart {
+    width: 100%;
+}
+
+.album-like-wrapper {
+    cursor: pointer;
+    text-align: center;
+}
+
 .albumInfo {
     padding-top: 2%;
     padding-bottom:2%;
@@ -106,12 +189,14 @@ hr{
     align-items: flex-start;
     min-width: 0;        
 }
+
 #album-cover {
     max-width: 36%;   
     height: auto;      
     border-radius: 5px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
+
 #small-icon {
     padding-right:9%;
     max-width: 25%;   
@@ -124,9 +209,9 @@ button {
     font-weight:bold;
     opacity:0.8;
     border:none;
-    border-right: 4px solid rgb(226, 144, 128);
+    border-right: 4px solid #e74c3c;
     flex: 1;   
-    background-color: #f8d7da;
+    background-color: #fbe9e7;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -136,23 +221,27 @@ button {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s ease;
 }
+
 #spotify:hover {
     
     border-right: 4px solid rgb(69, 124, 74);
     background-color: rgb(118, 238, 168);
     color:white;
 }
+
 #anghami:hover {
     
     border-right: 4px solid rgb(125, 65, 106);
     background-color:rgb(187, 96, 158);
     color:white;
 }
+
 #submit{
    width:30%;
    
    align-self: flex-start;
 }
+
 .buttons {
     display: flex;
     flex-direction: row;
@@ -160,15 +249,16 @@ button {
     width: 100%;
     margin-top: 10px;
 }
+
 .miniContainer {
     box-sizing: border-box;
-    border-left: 4px solid rgb(226, 144, 128);
+    border-left: 4px solid #e74c3c;
     display: flex; 
     padding:2%;  
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: aliceblue;
+    background-color: white;
     width: 31%;   
     height: 100px;
     border-radius: 10px;
@@ -182,3 +272,19 @@ button {
     justify-content: space-between; 
     padding: 0;   
 }
+
+.like-heart {
+    color: rgb(197, 181, 181); 
+    cursor: pointer;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.like-heart.active {
+    color: crimson;
+}
+
+.like-heart:hover {
+    color: rgb(174, 108, 121);
+}
+
