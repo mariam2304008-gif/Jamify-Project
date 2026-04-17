@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../../">
+    <link rel="stylesheet" href="CSS/albumCSS.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <title>Sweetener</title>
+    <script src="JavaScript/albumJS.js" defer></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">🎵 Jamify</div>
+        <ul class="nav-links">
+            <li><a href="HTML/index.html">Home</a></li>
+            <li><a href="HTML/suggest.html">Suggest</a></li>
+            <li><a href="HTML/profile.html">Profile</a></li>
+            <li><a href="HTML/logout.html">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="page-wrapper">
+        <div class="mainInfoContainer">
+            <img src="Images/album-profile-images/Sweetener.jpg" alt="Sweetener Album Cover" id="album-cover">
+            <div class="albumInfo">
+                <div class="header-with-heart" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div class="headerINFO">
+                        <label id="head">Sweetener</label><br>
+                        <label style="color:rgb(81, 81, 81)">Ariana Grande</label>
+                    </div>
+                    
+                    <div class="album-like-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-heart like-heart" style="font-size: 40px;"></i>
+                        <span class="like-count" style="font-size: 12px; color: grey;">167 Likes</span>
+                    </div>
+                </div>
+                <p id="main">Release Date: <span style="color:rgb(81, 81, 81)">August 17, 2018</span></p>
+                <p id="main" id="genre">Genre: <span style="color:rgb(81, 81, 81)">Pop</span> </p>
+
+                <div class="buttons">
+                    <button id="spotify"
+                        onclick="window.open('https://open.spotify.com/album/3tx8gQqWbGwqIGZHqDNrGe', '_blank')"><img
+                            src="Images/album-profile-images/spotify.png" style="width:1em; height: 1em; padding-right:2%;">Open in Spotify</button>
+                    <button id="anghami"
+                        onclick="window.open('https://play.anghami.com/album/4907062', '_blank')"><img
+                            src="Images/album-profile-images/anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="containsContainers">
+            <div class="miniContainer">
+                <img src="Images/album-profile-images/chartSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Reviews</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">15</p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="Images/album-profile-images/starSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Average rating</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">5.0</p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="Images/album-profile-images/heartSVG.svg" style="max-width: 20%;" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Likes</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">15</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviewForm">
+            <label id="head" style="color:rgb(81, 81, 81);">Write a Review</label>
+            <hr>
+            <label for="rating" id="main">Your Rating</label>
+            <div class="stars">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+            
+            <label for="review" id="main">Log your thoughts!</label>
+            <textarea id="review" name="review" rows="4" cols="50"
+                placeholder="Share your thoughts with the community!"></textarea>
+            <button id="submit">Submit Review</button>
+        </div>
+
+        <label id="head" style="justify-content:center; color:rgb(81, 81, 81);">Recent Reviews</label>
+        <div class="reviewBox">
+            <div class="reviewerInfo">
+                <img src="Images/album-profile-images/epic.png" alt="Profile" id="profile-icon">
+                
+                <div class="user-meta-group">
+                    <p id="main" style="font-size: 16px; margin: 0;">
+                        Reviewer <br>
+                        <span id="review-rating" style="color:rgb(226, 186, 29);">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </span>
+                    </p>
+                </div>
+            
+                <p class="review-date">3-21-2026 • 2:45 PM</p>
+            </div>
+            <hr>
+            <p id="review">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nec est nec sem egestas rutrum et at mi. 
+                Nam dignissim auctor nulla, vel porta purus rutrum aliquet. Sed dapibus eros non quam elementum commodo. 
+                Suspendisse turpis neque, pretium ut nisi id, efficitur placerat ligula. 
+            </p>
+            <div class="like-container">
+                <i class="fa-solid fa-heart like-heart"></i>
+                <span class="like-count" style="font-size: 12px; color: grey;">15 Likes</span>
+            </div>
+            
+        </div>
+        <div class="reviewBox">
+            <div class="reviewerInfo">
+                <img src="Images/album-profile-images/epic.png" alt="Profile" id="profile-icon">
+                
+                <div class="user-meta-group">
+                    <p id="main" style="font-size: 16px; margin: 0;">
+                        Reviewer <br>
+                        <span id="review-rating" style="color:rgb(226, 186, 29);">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </span>
+                    </p>
+                </div>
+            
+                <p class="review-date">3-21-2026 • 2:45 PM</p>
+            </div>
+            <hr>
+            <p id="review">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nec est nec sem egestas rutrum et at mi. 
+                Nam dignissim auctor nulla, vel porta purus rutrum aliquet. Sed dapibus eros non quam elementum commodo. 
+                Suspendisse turpis neque, pretium ut nisi id, efficitur placerat ligula. 
+            </p>
+            <div class="like-container">
+                <i class="fa-solid fa-heart like-heart"></i>
+                <span class="like-count" style="font-size: 12px; color: grey;">7 Likes</span>
+            </div>
+            
+        </div>
+
+</body>
+
+</html>
