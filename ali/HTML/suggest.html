@@ -1,0 +1,69 @@
+
+<html>
+<head>
+ 
+  <title>Suggest Music</title>
+  <link rel="stylesheet" href="../CSS/suggest.css" />
+</head>
+<body>
+
+  <div class="popup" id="popup">✅ Thank you for your suggestion!</div>
+
+  <div class="container">
+
+    <h1>Suggest Music</h1>
+    <p class="subtitle">Know a song or album we're missing? Drop it here and we'll look into it.</p>
+
+    <button class="btn-red" onclick="openForm()">♫ &nbsp; Submit a Suggestion</button>
+
+    <div class="form-card" id="form-card">
+      <h2>New Suggestion</h2>
+
+      <div class="form-group">
+        <label>Type *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="type" value="album" checked onclick="changeType('album')" /> Album</label>
+          <label><input type="radio" name="type" value="song" onclick="changeType('song')" /> Song</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" id="title" placeholder="Album title" />
+      </div>
+
+      <div class="form-group">
+        <label>Artist *</label>
+        <input type="text" placeholder="Artist name" />
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>Release Year</label>
+          <input type="number" placeholder="e.g. 2023" min="1900" max="2099" />
+        </div>
+        <div class="form-group">
+          <label>Genre</label>
+          <input type="text" placeholder="Pop, Jazz, Rock..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label id="link-label">Album Link</label>
+        <input type="text" id="link-input" placeholder="e.g. Spotify, Anghami, SoundCloud" />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-red" onclick="submitSuggestion()">Submit</button>
+        <button class="btn-cancel" onclick="closeForm()">Cancel</button>
+      </div>
+    </div>
+
+    <h2 class="suggestions-title">Your Suggestions</h2>
+    <p class="empty-msg">You haven't submitted any suggestions yet.</p>
+
+  </div>
+
+  <script src="../JavaScript/suggest.js"></script>
+</body>
+</html>
