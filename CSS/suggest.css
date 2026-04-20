@@ -86,6 +86,16 @@ h1 {
   margin-bottom: 22px;
 }
 
+.error-message {
+  background-color: #ffe6e6;
+  color: #c0392b;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border: 1px solid #c0392b;
+}
+
 .form-group {
   margin-bottom: 20px;
 }

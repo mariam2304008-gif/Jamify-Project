@@ -4,7 +4,7 @@ document.getElementById("confirmLogout").addEventListener("click", () => {
     localStorage.removeItem("user");
 
     // Redirect to login page
-    window.location.href = "../../index.html";
+    window.location.href = "login.html";
 });
 
 // Cancel logout → go back to profile
