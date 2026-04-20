@@ -174,16 +174,18 @@ textarea {
 }
 
 .btn-cancel {
-  background: none;
+  background-color: #c0392b;
+  color: white;
   border: none;
+  padding: 13px 22px;
   font-size: 14px;
-  color: #555;
+  border-radius: 6px;
   cursor: pointer;
-  font-family: Georgia, serif;
+  margin-bottom: 36px;
 }
 
 .btn-cancel:hover {
-  color: #c0392b;
+  background-color: #a93226;
 }
 
 .suggestions-title {

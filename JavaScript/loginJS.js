@@ -112,7 +112,6 @@ function validateSignup() {
     saveUsers(users);
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
 
-    alert('Account created successfully!');
     window.location.href = 'index.html';
 }
 
@@ -146,6 +145,5 @@ function loginAction() {
     }
 
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    alert('Login successful!');
     window.location.href = 'index.html';
 }
