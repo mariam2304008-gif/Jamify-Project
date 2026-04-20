@@ -23,8 +23,14 @@
     <h1>Review Moderation</h1>
     <p class="subtitle">Review and approve or deny user submissions</p>
 
-    <div id="reviewsContainer" class="reviews-container">
-        </div>
+    <div class="filters">
+      <button class="active" onclick="filter('all', this)">All</button>
+      <button onclick="filter('pending', this)">Pending</button>
+      <button onclick="filter('accepted', this)">Accepted</button>
+      <button onclick="filter('rejected', this)">Rejected</button>
+    </div>
+
+    <div id="list"></div>
 
     <div id="noReviewsMessage" class="no-reviews-message" style="display: none;">
         <p>No pending reviews at the moment.</p>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jamify Profile</title>
     <link rel="stylesheet" href="../CSS/profile.css">
     <script src="../JavaScript/navbar.js"></script>
@@ -19,14 +20,17 @@
     </ul>
 </nav>
 
+<!-- Main content wrapper -->
+<div class="main-content">
+
 <!-- Profile Card -->
 <div class="profile-card">
     <img src="../Images/album-profile-images/epic.png" class="profile-img">
 
     <div class="profile-info">
-        <h2>Emma Rodriguez</h2>
-        <p class="username">@swiftie4ever</p>
-        <p class="bio">Pop music enthusiast 🎵 Taylor Swift is my religion ✨</p>
+        <h2 id="displayName" class="editable-text" contenteditable="false"></h2>
+        <p class="username" id="displayUsername"></p>
+        <p class="bio" id="displayBio" class="editable-text" contenteditable="false"></p>
 
         <div class="stats">
             <span>2 Following</span>
@@ -36,6 +40,10 @@
             <span>⭐ 5.0 Avg Rating</span>
         </div>
 
+        <div class="edit-buttons" id="editButtons" style="display: none;">
+            <button id="saveBtn">Save</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
         <button id="editBtn">Edit Profile</button>
     </div>
 </div>
@@ -50,76 +58,35 @@
 <!-- Content -->
 <div id="reviews" class="tab-content active">
     
-    <!-- Review Card -->
-    <div class="review-card">
-        <img src="../Images/profile-images/Midnights_-_Taylor_Swift.png">
-        <div>
-            <h3>Midnights - Taylor Swift</h3>
-            <p class="rating">⭐⭐⭐⭐⭐ 5/5</p>
-            <p>
-                Taylor has done it again! Midnights is absolutely magical...
-            </p>
-            <small>❤️ 24 likes · 2024-03-10</small>
-        </div>
-    </div>
-
-    <div class="review-card">
-        <img src="../Images/profile-images/Adele_-_30.png">
-        <div>
-            <h3>30 - Adele</h3>
-            <p class="rating">⭐⭐⭐⭐⭐ 5/5</p>
-            <p>
-                Adele’s voice is unmatched. Emotional and powerful album...
-            </p>
-            <small>❤️ 18 likes · 2024-02-20</small>
-        </div>
+    <!-- User Reviews Container -->
+    <div id="user-reviews-container">
+    <!-- Reviews will be loaded from localStorage -->
     </div>
 
 </div>
 
-<div id="following" class="tab-content active">
- <div class="user-card">
-    <img src="../Images/album-profile-images/epic.png" class="user-img">
-
-        <div class="user-info">
-            <h3>Mia Chen</h3>
-            <p class="username">@popqueen</p>
-            <p class="bio">Living for pop perfection. Dua Lipa stan 💃</p>
-        </div>
-    </div>
-</div>
-
-<div id="followers" class="tab-content active">
-
+<div id="following" class="tab-content">
     <div class="user-card">
         <img src="../Images/album-profile-images/epic.png" class="user-img">
-
         <div class="user-info">
-            <h3>Mia Chen</h3>
-            <p class="username">@popqueen</p>
-            <p class="bio">Living for pop perfection. Dua Lipa stan 💃</p>
-        </div>
-    </div>
-
-
-</div>
-<!-- Edit Profile Modal -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <h3>Edit Profile</h3>
-
-        <input type="text" id="editName" placeholder="Name">
-        <input type="text" id="editUsername" placeholder="Username">
-        <textarea id="editBio" placeholder="Bio"></textarea>
-
-        <div class="modal-buttons">
-            <button id="saveProfile">Save</button>
-            <button id="closeModal">Cancel</button>
+            <h3>Reviewer</h3>
+            <p class="username">@placeholder</p>
+            <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
     </div>
 </div>
 
-
+<div id="followers" class="tab-content">
+    <div class="user-card">
+        <img src="../Images/album-profile-images/epic.png" class="user-img">
+        <div class="user-info">
+            <h3>Reviewer</h3>
+            <p class="username">@placeholder</p>
+            <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+    </div>
+</div>
 <script src="../JavaScript/profile.js"></script>
+</div><!-- End main-content -->
 </body>
 </html>

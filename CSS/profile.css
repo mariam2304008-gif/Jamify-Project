@@ -9,6 +9,14 @@ body {
     color: #2c2c2c;
 }
 
+/* Main content wrapper for consistent width */
+.main-content {
+    width: 70%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
 /* Navbar */
 .navbar {
     display: flex;
@@ -51,20 +59,34 @@ body {
     display: flex;
     gap: 20px;
     background: white;
-    margin: 30px auto;
+    margin: 30px 0;
     padding: 20px;
-    width: 70%;
+    width: 100%;
     border-radius: 10px;
     align-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .profile-img {
     width: 100px;
+    height: 100px;
     border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.profile-info {
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 .profile-info h2 {
     margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .username {
@@ -82,6 +104,25 @@ body {
     margin-bottom: 10px;
 }
 
+.edit-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.edit-buttons button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-buttons button:hover {
+    background: #c0392b;
+}
+
 button {
     background: #e74c3c;
     color: white;
@@ -91,31 +132,37 @@ button {
     cursor: pointer;
 }
 
-/* Tabs */
+/* Tabs - consolidated */
 .tabs {
     display: flex;
     justify-content: center;
-    margin: 20px;
-    gap: 10px;
+    margin: 20px 0;
+    width: 100%;
+    background: #e9caca;
+    border-radius: 25px;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .tab {
-    padding: 10px 30px;
-    border-radius: 20px;
+    flex: 1;
+    padding: 10px;
     border: none;
+    background: transparent;
     cursor: pointer;
-    background: #f1dada;
+    border-radius: 20px;
+    font-weight: 500;
 }
 
 .tab.active {
-    background: #eaa;
+    background: white;
 }
 
 /* Content */
 .tab-content {
     display: none;
-    width: 70%;
-    margin: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tab-content.active {
@@ -130,11 +177,46 @@ button {
     padding: 15px;
     margin: 15px 0;
     border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .review-card img {
     width: 80px;
+    height: 80px;
     border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.review-card .review-text {
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.review-card .review-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.review-card .review-text h3 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.review-card .review-text h3 a:hover {
+    color: #e74c3c;
+}
+
+.review-card .review-text p {
+    margin: 5px 0;
+    font-size: 14px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .rating {
@@ -190,15 +272,26 @@ button {
     gap: 15px;
     background: white;
     padding: 15px 20px;
-    margin: 20px auto;
-    width: 70%;
+    margin: 20px 0;
+    width: 100%;
     border-radius: 12px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .user-img {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-info {
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 /* Username style */
@@ -212,26 +305,39 @@ button {
     font-size: 14px;
     color: #555;
 }
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-    width: 70%;
-    background: #e9caca;
-    border-radius: 25px;
-    padding: 5px;
+
+/* Additional constraints for containers */
+.profile-card,
+.user-card {
+    max-width: 100%;
 }
 
-.tab {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 20px;
-    font-weight: 500;
-}
-
-.tab.active {
-    background: white;
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .profile-card {
+        width: 90%;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .tabs {
+        width: 90%;
+    }
+    
+    .tab-content {
+        width: 90%;
+    }
+    
+    .main-content {
+        width: 90%;
+    }
+    
+    .profile-info {
+        text-align: center;
+    }
+    
+    .stats {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
