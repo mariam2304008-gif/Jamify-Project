@@ -20,8 +20,12 @@ function setupNavbar() {
     if (isAdmin) {
         // Admin navigation
         const adminReviewLink = document.createElement('li');
-        adminReviewLink.innerHTML = '<a href="../HTML/adminreview.html">Admin Review</a>';
+        adminReviewLink.innerHTML = '<a href="../HTML/reviewadmin.html">Admin Review</a>';
         navLinksList.appendChild(adminReviewLink);
+
+        const adminSuggestionLink = document.createElement('li');
+        adminSuggestionLink.innerHTML = '<a href="../HTML/adminsuggestion.html">Admin Suggestion</a>';
+        navLinksList.appendChild(adminSuggestionLink);
 
         const profileLink = document.createElement('li');
         profileLink.innerHTML = '<a href="../HTML/profile.html">Profile</a>';

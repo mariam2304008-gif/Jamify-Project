@@ -10,20 +10,21 @@
 <body>
 
 <nav class="navbar">
-    <div class="nav-container">
-        <a href="../HTML/index.html" class="logo">
-            <span class="logo-icon">🎵</span>
-            <span class="logo-text">Jamify</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="../HTML/index.html">Home</a></li>
-            <li><a href="../HTML/reviewadmin.html">Admin Review</a></li>
-            <li><a href="../HTML/profile.html">Profile</a></li>
-            <li><a href="../HTML/logout.html">Logout</a></li>
-        </ul>
-    </div>
-</nav>
+    <div class="logo">🎵 Jamify</div>
+    <ul class="nav-links">
+        <li><a href="../HTML/index.html">Home</a></li>
+        <li><a href="../HTML/suggest.html">Suggest</a></li>
+        <li><a href="../HTML/profile.html">Profile</a></li>
+        <!-- Admin link shown only if logged in as admin -->
+        <li id="admin-link" style="display:none">
+          <a href="../HTML/reviewadmin.html">Admin review</a>
+        </li>
+         <li id="admin-link" style="display:none">
+          <a href="../HTML/adminsuggestion.html">Admin Suggestion</a>
+        </li>
+        <li><a href="../HTML/logout.html">Logout</a></li>
+    </ul>
+  </nav>
 
 <div class="container">
     <h1>Review Moderation</h1>
