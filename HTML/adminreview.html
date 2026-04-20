@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Review - Jamify</title>
     <link rel="stylesheet" href="../CSS/adminreview.css">
+    <script src="../JavaScript/navbar.js"></script>
 </head>
 <body>
-    
+
+<nav class="navbar">
+    <div class="logo">🎵 Jamify</div>
+    <ul class="nav-links">
+        <li><a href="../HTML/index.html">Home</a></li>
+        <li><a href="../HTML/suggest.html">Suggest</a></li>
+        <li><a href="../HTML/profile.html">Profile</a></li>
+        <li><a href="../HTML/logout.html">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1>Review Moderation</h1>
+    <p class="subtitle">Review and approve or deny user submissions</p>
+
+    <div id="reviewsContainer" class="reviews-container">
+        </div>
+
+    <div id="noReviewsMessage" class="no-reviews-message" style="display: none;">
+        <p>No pending reviews at the moment.</p>
+    </div>
+</div>
+
+<div id="successNotification" class="notification success" style="display: none;">
+    <span id="notificationMessage">Action completed successfully!</span>
+    <span class="close-notification" onclick="closeNotification()">&times;</span>
+</div>
+
+<script src="../JavaScript/adminreview.js"></script>
+</body>
+</html>
