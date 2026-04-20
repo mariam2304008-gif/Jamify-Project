@@ -111,6 +111,74 @@ function goToLogout() {
     window.location.href = "logout.html";
 }
 
+// Load user reviews in profile
+function loadUserReviews() {
+    const allReviews = JSON.parse(localStorage.getItem('jamifyReviews')) || [];
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    
+    if (!currentUser) return;
+    
+    // Filter reviews by current user
+    const userReviews = allReviews.filter(r => r.userUsername === currentUser.username);
+    
+    // Get the reviews container
+    const reviewsContainer = document.getElementById('user-reviews-container');
+    if (!reviewsContainer) return;
+    
+    // Clear existing reviews
+    reviewsContainer.innerHTML = '';
+    
+    // Add reviews
+    userReviews.forEach(review => {
+        const reviewCard = document.createElement('div');
+        reviewCard.className = 'review-card';
+        reviewCard.innerHTML = `
+            <a href="albums/${review.albumFile}"><img src="../Images/album-profile-images/${getAlbumImage(review.albumTitle)}"></a>       
+            <div class="review-text">
+                <h3><a href="albums/${review.albumFile}">${review.albumTitle}</a></h3>
+                <p class="rating">${getStarRatingHTML(review.rating)} ${review.rating}/5</p>
+                <p>${review.reviewText}</p>
+                <small>❤️ ${review.likes} likes · ${review.date}</small>
+            </div>
+        `;
+        reviewsContainer.appendChild(reviewCard);
+    });
+}
+
+function getAlbumImage(albumTitle) {
+    const imageMap = {
+        'Sweetener': 'sweetener.jpg',
+        'Thriller': 'thriller.png',
+        'Lemonade': 'lemonade.png',
+        'Beyoncé': 'beyonce.png',
+        'Daydream': 'daydream.png',
+        'emails i can\'t send': 'emails.jpeg',
+        'A Head Full Of Dreams': 'headfullofdreams.png',
+        'My Everything': 'myeverything.jpeg',
+        'Midnight Sun': 'midnight_sun.jpg',
+        'Wicked': 'wicked.jpg',
+        'Writing\'s on the Wall': 'writingonthewall.jpeg'
+    };
+    return imageMap[albumTitle] || 'epic.png';
+}
+
+function getStarRatingHTML(rating) {
+    let html = '';
+    for (let i = 0; i < 5; i++) {
+        if (i < rating) {
+            html += '⭐';
+        } else {
+            html += '☆';
+        }
+    }
+    return html;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserReviews();
+});
+
 const followers = [
     {
         name: "reviewer",
