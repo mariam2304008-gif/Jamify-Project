@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Review - Jamify</title>
-    <link rel="stylesheet" href="../CSS/adminreview.css">
+  <meta charset="UTF-8" />
+  <title>Admin – Jamify</title>
+  <link rel="stylesheet" href="../CSS/adminreview.css" />
 </head>
 <body>
-    
+
+  <nav class="navbar">
+    <div class="logo">🎵 Jamify</div>
+    <ul class="nav-links">
+      <li><a href="../HTML/index.html">Home</a></li>
+      <li><a href="../HTML/suggest.html">Suggest</a></li>
+      <li><a href="../HTML/profile.html">Profile</a></li>
+      <li><a href="../HTML/logout.html">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h1>🛡️ Suggestions</h1>
+
+    <div class="filters">
+      <button class="active" onclick="filter('all', this)">All</button>
+      <button onclick="filter('pending', this)">Pending</button>
+      <button onclick="filter('accepted', this)">Accepted</button>
+      <button onclick="filter('rejected', this)">Rejected</button>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <script src="../JavaScript/adminreview.js"></script>
+</body>
+</html>

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jamify - Rate the Music You Love</title>
   <link rel="stylesheet" href="../CSS/index.css">
-
 </head>
 <body>
   <nav class="navbar">
@@ -14,9 +13,14 @@
         <li><a href="../HTML/index.html">Home</a></li>
         <li><a href="../HTML/suggest.html">Suggest</a></li>
         <li><a href="../HTML/profile.html">Profile</a></li>
+        <!-- Admin link shown only if logged in as admin -->
+        <li id="admin-link" style="display:none">
+          <a href="../HTML/adminreview.html">Admin</a>
+        </li>
         <li><a href="../HTML/logout.html">Logout</a></li>
     </ul>
-</nav>
+  </nav>
+
   <div class="container">
     <h1>Rate. Review. Share.</h1>
     <p class="subtitle">Jamify is a simple music rating app where you can review albums, like reviews, and suggest new music to add.</p>
@@ -79,8 +83,7 @@
                 <h3>Beyoncé</h3>
                 <p>Beyoncé</p>
             </div>
-        </a>
-
+          </a>
   
           <a href="../HTML/Albums/Sweetener.html" class="album-card">
               <div class="album-image-wrapper">
@@ -148,7 +151,16 @@
               </div>
           </a>
       </div>
+    </div>
   </div>
-  </div>
+
+  <script>
+    // Show Admin link only if logged in as admin
+    var user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.role === 'admin') {
+      document.getElementById('admin-link').style.display = 'block';
+    }
+  </script>
+
 </body>
 </html>
