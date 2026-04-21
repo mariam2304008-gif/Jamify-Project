@@ -133,9 +133,9 @@ function loadUserReviews() {
         const reviewCard = document.createElement('div');
         reviewCard.className = 'review-card';
         reviewCard.innerHTML = `
-            <a href="albums/${review.albumFile}"><img src="../Images/album-profile-images/${getAlbumImage(review.albumTitle)}"></a>       
+            <a href="${review.albumFile}"><img src="Images/album-profile-images/${getAlbumImage(review.albumTitle)}"></a>       
             <div class="review-text">
-                <h3><a href="albums/${review.albumFile}">${review.albumTitle}</a></h3>
+                <h3><a href="${review.albumFile}">${review.albumTitle}</a></h3>
                 <p class="rating">${getStarRatingHTML(review.rating)} ${review.rating}/5</p>
                 <p>${review.reviewText}</p>
                 <small>❤️ ${review.likes} likes · ${review.date}</small>

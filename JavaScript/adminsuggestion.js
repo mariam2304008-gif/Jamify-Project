@@ -1,7 +1,7 @@
 // If not admin, go back to home
 var currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 if (currentUser.role !== 'admin') {
-  window.location.href = '../HTML/index.html';
+  window.location.href = 'index.html';
 }
 
 var currentFilter = 'all';
