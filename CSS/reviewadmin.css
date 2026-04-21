@@ -10,16 +10,21 @@ body {
   margin: 0;
   color: #2c2c2c;
 }
+
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-  background: white;
-  border-bottom: 2px solid #e74c3c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: white;
+    border-bottom: 2px solid #e74c3c;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.logo { font-weight: bold; color: #e74c3c; }
+.logo {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
 .nav-links { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
 .nav-links a { text-decoration: none; color: #2c2c2c; }
 .nav-links a:hover { color: #e74c3c; }

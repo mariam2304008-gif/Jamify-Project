@@ -14,38 +14,38 @@ function setupNavbar() {
 
     // Always show Home
     const homeLink = document.createElement('li');
-    homeLink.innerHTML = '<a href="../HTML/index.html">Home</a>';
+    homeLink.innerHTML = '<a href="index.html">Home</a>';
     navLinksList.appendChild(homeLink);
 
     if (isAdmin) {
         // Admin navigation
         const adminReviewLink = document.createElement('li');
-        adminReviewLink.innerHTML = '<a href="../HTML/reviewadmin.html">Admin Review</a>';
+        adminReviewLink.innerHTML = '<a href="reviewadmin.html">Admin Review</a>';
         navLinksList.appendChild(adminReviewLink);
 
-        const adminSuggestionLink = document.createElement('li');
-        adminSuggestionLink.innerHTML = '<a href="../HTML/adminsuggestion.html">Admin Suggestion</a>';
-        navLinksList.appendChild(adminSuggestionLink);
+        const adminsuggestionLink = document.createElement('li');
+        adminsuggestionLink.innerHTML = '<a href="adminsuggestion.html">Admin Suggestion</a>';
+        navLinksList.appendChild(adminsuggestionLink);
 
         const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="../HTML/profile.html">Profile</a>';
+        profileLink.innerHTML = '<a href="profile.html">Profile</a>';
         navLinksList.appendChild(profileLink);
 
         const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="../HTML/logout.html">Logout</a>';
+        logoutLink.innerHTML = '<a href="logout.html">Logout</a>';
         navLinksList.appendChild(logoutLink);
     } else {
         // Regular user navigation
         const suggestLink = document.createElement('li');
-        suggestLink.innerHTML = '<a href="../HTML/suggest.html">Suggest</a>';
+        suggestLink.innerHTML = '<a href="suggest.html">Suggest</a>';
         navLinksList.appendChild(suggestLink);
 
         const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="../HTML/profile.html">Profile</a>';
+        profileLink.innerHTML = '<a href="profile.html">Profile</a>';
         navLinksList.appendChild(profileLink);
 
         const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="../HTML/logout.html">Logout</a>';
+        logoutLink.innerHTML = '<a href="logout.html">Logout</a>';
         navLinksList.appendChild(logoutLink);
     }
 
