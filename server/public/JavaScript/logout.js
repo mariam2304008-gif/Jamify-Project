@@ -1,13 +1,11 @@
-// Simulate clearing user session
-document.getElementById("confirmLogout").addEventListener("click", () => {
-    // Remove stored user data
-    localStorage.removeItem("user");
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    });
 
-    // Redirect to login page
-    window.location.href = "login.html";
-});
-
-// Cancel logout → go back to profile
-document.getElementById("cancelLogout").addEventListener("click", () => {
-    window.location.href = "profile.html";
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        window.history.back();
+    });
 });
