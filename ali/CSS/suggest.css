@@ -1,0 +1,170 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #d6d3d0;
+  font-family: Georgia, serif;
+  color: #2c2c2c;
+}
+
+.container {
+  max-width: 820px;
+  margin: 50px auto;
+  padding: 0 24px;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 28px;
+}
+
+.btn-red {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 13px 22px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 36px;
+}
+
+.btn-red:hover {
+  background-color: #a93226;
+}
+
+.form-card {
+  border: 1.5px solid #c0392b;
+  border-radius: 10px;
+  padding: 28px;
+  margin-bottom: 44px;
+  display: none;
+}
+
+.form-card h2 {
+  font-size: 20px;
+  margin-bottom: 22px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: #ccc9c6;
+  border: none;
+  border-bottom: 1.5px solid #aaa;
+  font-size: 14px;
+  color: #444;
+  font-family: Georgia, serif;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-bottom-color: #c0392b;
+}
+
+::placeholder {
+  color: #555;
+  opacity: 1;
+}
+
+textarea {
+  height: 95px;
+  resize: vertical;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: normal;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  accent-color: #c0392b;
+  width: 16px;
+  height: 16px;
+}
+
+.two-col {
+  display: flex;
+  gap: 24px;
+}
+
+.two-col .form-group {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.btn-cancel {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  font-family: Georgia, serif;
+}
+
+.btn-cancel:hover {
+  color: #c0392b;
+}
+
+.suggestions-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2c2c2c;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+}

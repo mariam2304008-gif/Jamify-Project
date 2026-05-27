@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="..\CSS\albumCSS.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <title>Midnight Sun</title>
+    <script src="..\JavaScript\albumJS.js" defer></script>
+</head>
+
+<body style="background-color: rgb(247, 238, 227);">
+    <div class="page-wrapper">
+        <div class="mainInfoContainer">
+            <img src="..\Images\album-profile-images\midnight_sun.jpg" alt="Midnight Sun Album Cover" id="album-cover">
+            <div class="albumInfo">
+                <div class="headerINFO">
+                    <label id="head">Midnight Sun</label><br>
+                    <label style="color:rgb(81, 81, 81)">Zara Larsson</label>
+                </div>
+                <p id="main">Release Date: <span style="color:rgb(81, 81, 81)">September 25, 2025</span></p>
+                <p id="main">Genre: <span style="color:rgb(81, 81, 81)">Pop</span> </p>
+
+                <div class="buttons">
+                    <button id="spotify"
+                        onclick="window.open('https://open.spotify.com/album/0nte5x6fXd37Nt7jALSmx0?si=ByFlwa0gSUSbQRsldE-s5w', '_blank')"><img
+                            src="..\Images\album-profile-images\spotify.png" style="width:1em; height: 1em; padding-right:2%;">Open in Spotify</button>
+                    <button id="anghami"
+                        onclick="window.open('https://play.anghami.com/album/1075056307', '_blank')"><img
+                            src="..\Images\album-profile-images\anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="containsContainers">
+            <div class="miniContainer">
+                <img src="..\Images\album-profile-images\chartSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Reviews</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">15</p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="..\Images\album-profile-images\starSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Average rating</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">15</p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="..\Images\album-profile-images\heartSVG.svg" style="max-width: 20%;" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Likes</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);">15</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="reviewForm">
+            <label id="head" style="color:rgb(81, 81, 81);">Write a Review</label>
+            <hr>
+            <label for="rating" id="main">Your Rating</label>
+            <div class="stars">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <label for="review" id="main">Log your thoughts!</label>
+            <textarea id="review" name="review" rows="4" cols="50"
+                placeholder="Share your thoughts with the community!"></textarea>
+            <button id="submit">Submit Review</button>
+        </div>
+
+        <label id="head" style="justify-content:center; color:rgb(81, 81, 81);">Recent Reviews</label>
+        <div class="reviewBox">
+            <div class="reviewerInfo">
+                <img src="..\Images\album-profile-images\epic.png" alt="ZaraLarssonFan01" id="profile-icon">
+                <div class="headerINFO">
+                    <p id="main" style="font-size: 16px;">ZaraLarssonFan01 <br>
+                        <span id="review-rating"style="color:rgb(226, 186, 29);">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </span>
+                </p>
+                </div>
+                <p style="color:rgb(81, 81, 81); font-size: 13px;">3-21-2026 • 2:45 PM </p>
+            
+
+            </div>
+            <hr>
+            <p id="review">I absolutely love this album! Zara's vocals are stunning, 
+                and the production is top-notch. Each track has its own unique vibe, 
+                but they all come together to create a cohesive and enjoyable listening experience. 
+                My favorite songs are "Midnight Sun" and "Saturn's Return". I highly recommend this album 
+                to anyone who loves pop music!
+            </p>
+
+
+
+
+            
+        </div>
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <title>Admin – Suggestions – Jamify</title>
+  <link rel="stylesheet" href="/css/adminsuggestion.css" />
+</head>
+<body>
+
+<%- include('../partials/navbar') %>
+
+<div class="container">
+  <h1>🛡️ Suggestions</h1>
+
+  <div class="filters">
+    <a href="/admin/suggestions?status=all" class="filter-btn <%= activeFilter === 'all' ? 'active' : '' %>">All</a>
+    <a href="/admin/suggestions?status=pending" class="filter-btn <%= activeFilter === 'pending' ? 'active' : '' %>">Pending</a>
+    <a href="/admin/suggestions?status=accepted" class="filter-btn <%= activeFilter === 'accepted' ? 'active' : '' %>">Accepted</a>
+    <a href="/admin/suggestions?status=rejected" class="filter-btn <%= activeFilter === 'rejected' ? 'active' : '' %>">Rejected</a>
+  </div>
+
+  <div id="list">
+    <% if (suggestions.length === 0) { %>
+      <p style="text-align:center;color:gray;">No suggestions found.</p>
+    <% } %>
+    <% suggestions.forEach(s => { %>
+    <div class="suggestion-card">
+      <div class="suggestion-header">
+        <div>
+          <strong><%= s.title %></strong> — <%= s.artist %>
+          <% if (s.addedByAdmin) { %><span class="badge badge-admin">Admin Added</span><% } %>
+        </div>
+        <span class="badge badge-<%= s.status %>"><%= s.status %></span>
+      </div>
+      <div class="suggestion-meta">
+        <span><%= s.type %></span>
+        <% if (s.year) { %><span> · <%= s.year %></span><% } %>
+        <% if (s.genre) { %><span> · <%= s.genre %></span><% } %>
+        <% if (s.submittedBy) { %><span> · by <%= s.submittedBy.displayName %></span><% } %>
+      </div>
+      <% if (s.status === 'pending') { %>
+      <div class="suggestion-actions">
+        <form method="POST" action="/admin/suggestions/<%= s._id %>/approve" style="display:inline;">
+          <button type="submit" class="btn-accept">✓ Accept</button>
+        </form>
+        <form method="POST" action="/admin/suggestions/<%= s._id %>/reject" style="display:inline;">
+          <button type="submit" class="btn-reject">✕ Reject</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+</body>
+</html>
