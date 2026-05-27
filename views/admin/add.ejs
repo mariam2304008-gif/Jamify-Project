@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Add – Jamify</title>
+  <link rel="stylesheet" href="/css/adminadd.css" />
+</head>
+<body>
+
+<%- include('../partials/navbar') %>
+
+<div class="container">
+  <h1>➕ Add Song / Album</h1>
+
+  <% if (error) { %>
+    <p style="color:#e74c3c; margin-bottom:12px;"><%= error %></p>
+  <% } %>
+  <% if (success) { %>
+    <p style="color:green; margin-bottom:12px;">✅ Added successfully!</p>
+  <% } %>
+
+  <div class="admin-form">
+    <form method="POST" action="/admin/add" enctype="multipart/form-data">
+
+      <div class="form-row">
+        <label>Type *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="type" value="album" checked onclick="toggleImageField(true)" /> Album</label>
+          <label><input type="radio" name="type" value="song"  onclick="toggleImageField(false)" /> Song</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Title *</label>
+        <input type="text" name="title" placeholder="Title" required />
+      </div>
+
+      <div class="form-row">
+        <label>Artist *</label>
+        <input type="text" name="artist" placeholder="Artist name" required />
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Release Date</label>
+          <input type="text" name="releaseDate" placeholder="e.g. April 23, 2016" />
+        </div>
+        <div>
+          <label>Genre</label>
+          <input type="text" name="genre" placeholder="Pop, Jazz, R&B..." />
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Spotify Link</label>
+          <input type="text" name="spotifyLink" placeholder="https://open.spotify.com/..." />
+        </div>
+        <div>
+          <label>Anghami Link</label>
+          <input type="text" name="anghamiLink" placeholder="https://play.anghami.com/..." />
+        </div>
+      </div>
+
+      <div class="form-row" id="imageField">
+        <label>Album Cover Image *</label>
+        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+        <small style="color:#888; display:block; margin-top:4px;">JPG, PNG, GIF or WebP — max 5 MB</small>
+      </div>
+
+      <button type="submit" class="btn-add">➕ Add</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleImageField(show) {
+  document.getElementById('imageField').style.display = show ? 'block' : 'none';
+}
+</script>
+
+</body>
+</html>
