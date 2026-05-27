@@ -9,23 +9,14 @@
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar">
-    <div class="logo">🎵 Jamify</div>
-    <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="suggest.html">Suggest</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><a href="logout.html">Logout</a></li>
-    </ul>
-</nav>
+ <%- include('partials/navbar') %>
 
 <!-- Main content wrapper -->
 <div class="main-content">
 
 <!-- Profile Card -->
 <div class="profile-card">
-    <img src="Images/album-profile-images/epic.png" class="profile-img">
+    <img id="profileImg" src="Images/album-profile-images/epic.png" class="profile-img">
 
     <div class="profile-info">
         <h2 id="displayName" class="editable-text" contenteditable="false"></h2>
@@ -33,11 +24,8 @@
         <p class="bio" id="displayBio" class="editable-text" contenteditable="false"></p>
 
         <div class="stats">
-            <span>2 Following</span>
-            <span>1 Followers</span>
-            <span>3 Reviews</span>
-            <span>58 Likes</span>
-            <span>⭐ 5.0 Avg Rating</span>
+            <span id="statReviews">0 Reviews</span>
+            <span id="statPlaylists">0 Playlists</span>
         </div>
 
         <div class="edit-buttons" id="editButtons" style="display: none;">
@@ -50,42 +38,43 @@
 
 <!-- Tabs -->
 <div class="tabs">
-    <button class="tab active" onclick="showTab('reviews')">Reviews</button>
-    <button class="tab" onclick="showTab('following')">Following</button>
-    <button class="tab" onclick="showTab('followers')">Followers</button>
+    <button class="tab active" onclick="showTab('reviews', this)">Reviews</button>
+    <button class="tab" onclick="showTab('playlists', this)">Playlists</button>
 </div>
 
-<!-- Content -->
+<!-- Reviews Tab -->
 <div id="reviews" class="tab-content active">
-    
-    <!-- User Reviews Container -->
-    <div id="user-reviews-container">
-    <!-- Reviews will be loaded from localStorage -->
-    </div>
-
+    <div id="user-reviews-container"></div>
 </div>
 
-<div id="following" class="tab-content">
-    <div class="user-card">
-        <img src="Images/album-profile-images/epic.png" class="user-img">
-        <div class="user-info">
-            <h3>Reviewer</h3>
-            <p class="username">@placeholder</p>
-            <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+<!-- Playlists Tab -->
+<div id="playlists" class="tab-content">
+
+    <div class="playlist-header">
+        <h3>My Playlists</h3>
+        <button id="createPlaylistBtn">+ New Playlist</button>
+    </div>
+
+    <div id="user-playlists-container"></div>
+
+    <!-- Create/Edit Playlist Modal -->
+    <div class="modal" id="playlistModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Create Playlist</h3>
+            <input type="text" id="playlistName" placeholder="Playlist name" maxlength="100">
+            <textarea id="playlistDesc" placeholder="Description (optional)" maxlength="300" rows="3"></textarea>
+            <label class="checkbox-label">
+                <input type="checkbox" id="playlistPublic" checked> Public
+            </label>
+            <div class="modal-buttons">
+                <button id="savePlaylistBtn">Save</button>
+                <button id="cancelPlaylistBtn" class="btn-secondary">Cancel</button>
+            </div>
         </div>
     </div>
+
 </div>
 
-<div id="followers" class="tab-content">
-    <div class="user-card">
-        <img src="Images/album-profile-images/epic.png" class="user-img">
-        <div class="user-info">
-            <h3>Reviewer</h3>
-            <p class="username">@placeholder</p>
-            <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-    </div>
-</div>
 <script src="JavaScript/profile.js"></script>
 </div><!-- End main-content -->
 </body>
