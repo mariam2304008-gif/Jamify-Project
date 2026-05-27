@@ -100,7 +100,7 @@ hr{
     opacity:0.6;
 }
 
-.reviewForm{
+form{
     display: flex;
     flex-direction: column;
     width: auto;
