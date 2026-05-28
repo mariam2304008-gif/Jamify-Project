@@ -6,16 +6,25 @@ exports.signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).send("User already exists"); // Simple error for now
+        // Check if user already exists by email or username
+        let user = await User.findOne({ $or: [{ email }, { username }] });
+        if (user) return res.status(400).send("User already exists with that email or username");
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        user = new User({ username, email, password: hashedPassword });
+        // Dynamically initialize clean fields in Atlas upon signup
+        user = new User({ 
+            username, 
+            email, 
+            password: hashedPassword,
+            displayName: username, 
+            bio: "No bio yet.",
+            profileImageUrl: "/Images/album-profile-images/epic.png", 
+            isAdmin: false
+        });
+        
         await user.save();
-
-        // AFTER SIGNUP: Redirect them to the login page
         res.redirect('/login'); 
     } catch (err) {
         res.status(500).send(err.message);
@@ -25,41 +34,60 @@ exports.signup = async (req, res) => {
 // Handle User Login
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body; // Grab username from the form
+        // FIXED: Explicitly grab both the input identifier AND the password from the form body!
+        const loginInput = req.body.username || req.body.email; 
+        const password = req.body.password;
 
-        // Search the database for the username
-        const user = await User.findOne({ username: username }); 
+        if (!loginInput || !password) {
+            return res.status(400).send("Please provide both a username/email and password to log in.");
+        }
+
+        // Search for the account matching either field in Atlas
+        const user = await User.findOne({
+            $or: [
+                { username: loginInput },
+                { email: loginInput }
+            ]
+        });
         
         if (!user) {
             return res.status(400).send("Invalid Credentials (User not found)");
         }
 
-        // Check password
+        // Check password dynamically
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).send("Invalid Credentials (Wrong password)");
         }
 
-        // Success! Set up the session
+        // Success! Set up the session object with standard keys
         req.session.user = {
-            id: user._id,
+            id: user._id.toString(), 
             username: user.username,
             isAdmin: user.isAdmin || false
         };
 
-        res.redirect('/'); 
+        // Explicitly save the session before redirecting to guarantee the cookie updates immediately
+        req.session.save((err) => {
+            if (err) {
+                console.error("Session save error:", err);
+                return res.status(500).send("Error saving login session.");
+            }
+            res.redirect('/'); 
+        });
+
     } catch (err) {
         res.status(500).send(err.message);
     }
 };
 
-// Make sure "exports.logout" matches exactly what you call in auth.js
+// Handle User Logout
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.redirect('/');
         }
-        res.clearCookie('connect.sid'); // Clears the session cookie
+        res.clearCookie('connect.sid'); 
         res.redirect('/login');
     });
 };

@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirmLogout').addEventListener('click', () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = 'index.html';
+        window.location.href = '/api/logout';
     });
 
     document.getElementById('cancelLogout').addEventListener('click', () => {

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jamify Profile</title>
-    <link rel="stylesheet" href="CSS/profile.css">
-    <script src="JavaScript/navbar.js"></script>
+    <link rel="stylesheet" href="/CSS/profile.css">
+    <script src="/JavaScript/navbar.js"></script>
 </head>
 <body>
 
@@ -16,16 +16,16 @@
 
 <!-- Profile Card -->
 <div class="profile-card">
-    <img id="profileImg" src="Images/album-profile-images/epic.png" class="profile-img">
+    <img id="profileImg" src="<%= user.profileImageUrl %>" class="profile-img">
 
     <div class="profile-info">
-        <h2 id="displayName" class="editable-text" contenteditable="false"></h2>
-        <p class="username" id="displayUsername"></p>
-        <p class="bio" id="displayBio" class="editable-text" contenteditable="false"></p>
+        <h2 id="displayName" class="editable-text" contenteditable="false"><%= user.displayName %></h2>
+        <p class="username" id="displayUsername"><%= user.username %></p>
+        <p class="bio" id="displayBio" class="editable-text" contenteditable="false"><%= user.bio %></p>
 
         <div class="stats">
-            <span id="statReviews">0 Reviews</span>
-            <span id="statPlaylists">0 Playlists</span>
+            <span id="statReviews"><%= reviewCount %> Reviews</span>
+            <span id="statPlaylists"><%= playlistCount %> Playlists</span>
         </div>
 
         <div class="edit-buttons" id="editButtons" style="display: none;">
@@ -44,7 +44,40 @@
 
 <!-- Reviews Tab -->
 <div id="reviews" class="tab-content active">
-    <div id="user-reviews-container"></div>
+
+
+
+
+    <div id="user-reviews-container">
+  <% if (!reviews || reviews.length === 0) { %>
+    <p class="empty-msg">No reviews yet.</p>
+  <% } else { %>
+    <% reviews.forEach(review => { %>
+      <div class="review-card">
+        <a href="/albums/<%= review.album ? review.album._id : '#' %>">
+          <img src="<%= review.album && review.album.image ? review.album.image : '/Images/default-album.png' %>" alt="album art">
+        </a>
+        <div class="review-text">
+          <h3><a href="/albums/<%= review.album ? review.album._id : '#' %>"><%= review.album ? review.album.title : 'Unknown Album' %></a></h3>
+          <p class="rating">
+           <% for(let i = 0; i < review.rating; i++) { %>
+                <i class="fa-solid fa-star"></i>
+            <% } %>
+            <% for(let i = review.rating; i < 5; i++) { %>
+                <i class="fa-regular fa-star" style="color: #ccc"></i>
+            <% } %>
+          </p>
+          <p><%= review.comment %></p>
+          <small><%= new Date(review.date).toLocaleDateString() %> • <%= review.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+
+
+
 </div>
 
 <!-- Playlists Tab -->
@@ -75,7 +108,7 @@
 
 </div>
 
-<script src="JavaScript/profile.js"></script>
+<script src="/JavaScript/profile.js"></script>
 </div><!-- End main-content -->
 </body>
 </html>

@@ -14,49 +14,41 @@ function setupNavbar() {
 
     // Always show Home
     const homeLink = document.createElement('li');
-    homeLink.innerHTML = '<a href="index.html">Home</a>';
+    homeLink.innerHTML = '<a href="/">Home</a>';
     navLinksList.appendChild(homeLink);
 
     if (isAdmin) {
         // Admin navigation
         const adminReviewLink = document.createElement('li');
-        adminReviewLink.innerHTML = '<a href="reviewadmin.html">Admin Review</a>';
+        adminReviewLink.innerHTML = '<a href="/reviewadmin">Admin Review</a>';
         navLinksList.appendChild(adminReviewLink);
 
         const adminsuggestionLink = document.createElement('li');
-        adminsuggestionLink.innerHTML = '<a href="adminsuggestion.html">Admin Suggestion</a>';
+        adminsuggestionLink.innerHTML = '<a href="/admin/suggestions">Admin Suggestion</a>';
         navLinksList.appendChild(adminsuggestionLink);
 
         const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="profile.html">Profile</a>';
+        profileLink.innerHTML = '<a href="/profile">Profile</a>';
         navLinksList.appendChild(profileLink);
 
         const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="logout.html">Logout</a>';
+        logoutLink.innerHTML = '<a href="/logout">Logout</a>';
         navLinksList.appendChild(logoutLink);
     } else {
         // Regular user navigation
         const suggestLink = document.createElement('li');
-        suggestLink.innerHTML = '<a href="suggest.html">Suggest</a>';
+        suggestLink.innerHTML = '<a href="/suggest">Suggest</a>';
         navLinksList.appendChild(suggestLink);
 
         const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="profile.html">Profile</a>';
+        profileLink.innerHTML = '<a href="/profile">Profile</a>';
         navLinksList.appendChild(profileLink);
 
         const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="logout.html">Logout</a>';
+        logoutLink.innerHTML = '<a href="/logout">Logout</a>';
         navLinksList.appendChild(logoutLink);
     }
 
-    // Highlight current page
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        const href = link.getAttribute('href').split('/').pop();
-        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-            link.classList.add('active');
-        }
-    });
 }
 
 // Run on page load
