@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Review = require('../models/Review');
+const Review = require('../models/review');
 const Playlist = require('../models/Playlist');
 const ErrorResponse = require('../utils/errorResponse');
 
