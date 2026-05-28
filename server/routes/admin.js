@@ -1,0 +1,25 @@
+const express = require('express');
+const router = express.Router();
+const adminCtrl = require('../controllers/adminController');
+const suggCtrl  = require('../controllers/suggestionController');
+const isLoggedIn = require('../middleware/isLoggedIn');
+const isAdmin    = require('../middleware/isAdmin');
+const upload     = require('../middleware/upload');
+
+router.use(isLoggedIn, isAdmin);
+
+// Suggestion management
+router.get('/suggestions',              suggCtrl.adminIndex);
+router.post('/suggestions/:id/approve', suggCtrl.approve);
+router.post('/suggestions/:id/reject',  suggCtrl.reject);
+
+// Admin add music — multer handles the image upload (single field named "image")
+router.get('/add',  adminCtrl.showAdd);
+router.post('/add', upload.single('image'), adminCtrl.addMusic);
+
+// Review moderation
+router.get('/reviews',              adminCtrl.reviewIndex);
+router.post('/reviews/:id/approve', adminCtrl.approveReview);
+router.post('/reviews/:id/deny',    adminCtrl.denyReview);
+
+module.exports = router;
