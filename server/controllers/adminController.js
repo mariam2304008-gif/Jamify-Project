@@ -1,6 +1,6 @@
-const Album = require('../models/Album');
+const Album = require('../models/album');
 const Suggestion = require('../models/Suggestion');
-const Review = require('../models/Review');
+const Review = require('../models/review');
 
 exports.showAdd = (req, res) => {
   res.render('admin/add', { error: null, success: !!req.query.success });

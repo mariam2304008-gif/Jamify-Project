@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/albumCSS.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <title>Thriller</title>
+    <script src="/JavaScript/albumJS.js" defer></script>
+    <script src="/JavaScript/navbar.js?v=2"></script>
+</head>
+
+  <%- include('partials/navbar') %>
+<body>
+    
+    <div class="page-wrapper">
+        <div class="mainInfoContainer">
+            <img src="<%= album.coverImageUrl %>" alt="album cover" id="album-cover">
+            <div class="albumInfo">
+                <div class="header-with-heart" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div class="headerINFO">
+                        <label id="head"><%= album.title %></label><br>
+                        <label style="color:rgb(81, 81, 81)"> <%= album.artist %></label>
+                    </div>
+                    
+                    <div class="album-like-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-heart like-heart" style="font-size: 40px;"></i>
+                        <span class="like-count" style="font-size: 12px; color: grey;"><%= album.likes %></span>
+                    </div>
+                </div>
+                <p id="main">Release Date: <span style="color:rgb(81, 81, 81)"><%= new Date(album.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></p>
+                <p id="main" id="genre">Genre: <span style="color:rgb(81, 81, 81)"><%= album.genre %></span> </p>
+
+                <div class="buttons">
+                    <button id="spotify"
+                        onclick="window.open('<%= album.albumLinks.spotify %>', '_blank')"><img
+                            src="/Images/album-profile-images/spotify.png" style="width:1em; height: 1em; padding-right:2%;">Open in Spotify</button>
+                    <button id="anghami"
+                        onclick="window.open('<%= album.albumLinks.anghami %>', '_blank')"><img
+                            src="/Images/album-profile-images/anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="containsContainers">
+            <div class="miniContainer">
+                <img src="/Images/album-profile-images/chartSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Reviews</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= reviews.length %></p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="/Images/album-profile-images/starSVG.svg" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Average rating</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= album.rating %></p>
+                </div>
+            </div>
+            <div class="miniContainer">
+                <img src="/Images/album-profile-images/heartSVG.svg" style="max-width: 20%;" id="small-icon">
+                <div class="headerINFO">
+                    <p id="main">Total Likes</p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= album.likes %></p>
+                </div>
+            </div>
+        </div>
+
+        <form action="/albums/<%= album._id %>/reviews" method="POST">
+            <label id="head" style="color:rgb(81, 81, 81);">Write a Review</label>
+            <hr>
+            <label for="rating" id="main">Your Rating</label>
+            <div class="stars">
+                <i class="fa-solid fa-star" data-value="1"></i>
+                <i class="fa-solid fa-star" data-value="2"></i>
+                <i class="fa-solid fa-star" data-value="3"></i>
+                <i class="fa-solid fa-star" data-value="4"></i>
+                <i class="fa-solid fa-star" data-value="5"></i>
+            </div>
+            <input type="hidden" name="rating" id="rating" value="0">
+            <label for="review" id="main">Log your thoughts!</label>
+            <textarea id="review" name="review" rows="4" cols="50"
+                placeholder="Share your thoughts with the community!"></textarea>
+            <button id="submit">Submit Review</button>
+        </form>
+
+        <label id="head" style="justify-content:center; color:rgb(81, 81, 81);">Recent Reviews</label>
+        <div id="reviews-stream">
+            <% if (reviews.length === 0) { %>
+                <p style="color:rgb(81, 81, 81);">No reviews yet. Be the first to review this album!</p>
+            <% } else { %>
+                <% reviews.forEach(review => { %>
+                    <div class="reviewBox">
+                        <div class="reviewerInfo">
+                            <img src="/Images/album-profile-images/epic.png" alt="Profile" id="profile-icon">
+                            
+                            <div class="user-meta-group">
+                                <p id="main" style="font-size: 16px; margin: 0;">
+                                    <%= review.user ? review.user.username : 'Anon' %> <br>
+                                    <span id="review-rating" style="color:rgb(226, 186, 29);">
+                                        <% for(let i = 0; i < review.rating; i++) { %>
+                                            <i class="fa-solid fa-star"></i>
+                                        <% } %>
+                                        <% for(let i = review.rating; i < 5; i++) { %>
+                                            <i class="fa-regular fa-star" style="color: #ccc"></i>
+                                        <% } %>
+                                    </span>
+                                </p>
+                            </div>
+                            <p class="review-date"><%= new Date(review.date).toLocaleDateString() %> • <%= review.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></p>
+                        </div>
+                        <hr>
+                        <p id="review"><%= review.review %></p>
+
+                        <div class="like-container">
+                            <i class="fa-solid fa-heart like-heart" data-id="<%= review._id %>"></i>
+                            <span class="like-count" style="font-size: 12px; color: grey;"><%= review.likes %> Likes</span>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+                
+            
+                
+            
+    </div>
