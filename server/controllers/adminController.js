@@ -19,36 +19,26 @@ exports.addMusic = async (req, res, next) => {
         return res.render('admin/add', { error: 'Album cover image is required for albums.', success: false });
       }
 
-      // Build a URL-safe slug from title + artist
-      let slug = (title + '-' + artist)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-
-      // Ensure slug is unique
-      const existing = await Album.findOne({ slug });
-      if (existing) slug = slug + '-' + Date.now();
-
       await Album.create({
         title,
         artist,
-        slug,
-        image: req.file.filename,
-        genre:       genre       || '',
-        releaseDate: releaseDate || (year ? String(year) : ''),
-        spotifyLink: spotifyLink || '',
-        anghamiLink: anghamiLink || ''
+        genre:        genre        || '',
+        releaseDate:  releaseDate  || (year ? String(year) : ''),
+        coverImageUrl: `/uploads/${req.file.filename}`,
+        albumLinks: {
+          spotify: spotifyLink || '',
+          anghami: anghamiLink || ''
+        }
       });
 
     } else {
-      // Songs are stored as accepted suggestions (no Album doc needed)
       await Suggestion.create({
         title,
         artist,
         type: 'song',
         year: year ? parseInt(year) : undefined,
         genre,
-        submittedBy:  req.session.user._id,
+        submittedBy:  req.session.user.id,
         addedByAdmin: true,
         status:       'accepted'
       });
@@ -62,12 +52,12 @@ exports.addMusic = async (req, res, next) => {
 
 exports.reviewIndex = async (req, res, next) => {
   try {
-    const reviews = await Review.find({ status: 'pending' })
-      .populate('submittedBy', 'displayName username')
-      .populate('album', 'title')
-      .sort({ createdAt: -1 })
+    const reviews = await Review.find()
+      .populate('user', 'displayName username')
+      .populate('albumID', 'title')
+      .sort({ date: -1 })
       .lean();
-    res.render('admin/reviewadmin', { reviews });
+    res.render('reviewadmin', { reviews });
   } catch (err) {
     next(err);
   }
@@ -75,7 +65,7 @@ exports.reviewIndex = async (req, res, next) => {
 
 exports.approveReview = async (req, res, next) => {
   try {
-    await Review.findByIdAndUpdate(req.params.id, { status: 'approved' });
+    // Review is kept as-is (approved by doing nothing — denial deletes it)
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -84,7 +74,7 @@ exports.approveReview = async (req, res, next) => {
 
 exports.denyReview = async (req, res, next) => {
   try {
-    await Review.findByIdAndUpdate(req.params.id, { status: 'denied' });
+    await Review.findByIdAndDelete(req.params.id);
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
