@@ -64,6 +64,7 @@ const userRoutes = require('./routes/users');
 app.use('/albums', albumRoutes);
 app.use('/songs', songRoutes);
 app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
+app.use('/api/artists', require('./routes/artists'));
 app.use('/suggestions', suggestionRoutes);
 app.use('/users', userRoutes);
 
