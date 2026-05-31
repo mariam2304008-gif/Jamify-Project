@@ -4,6 +4,8 @@ const express = require('express');
 const {
   getProfile,
   updateProfile,
+  getPublicProfile,
+  searchUsers,
   getUsers,
   deleteUser,
   getPlaylists,
@@ -19,35 +21,33 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
+
+// search users
+router.route('/search').get(searchUsers);
 // Profile routes
 router
   .route('/profile')
-  .get(isLoggedIn, getProfile) // Now it uses your real session data!
-  .put(isLoggedIn, upload.single('profileImage'), updateProfile);
-
-// Admin user management
-router
-  .route('/')
-  .get(protect, authorize('admin'), getUsers);
-
-router
-  .route('/:id')
-  .delete(protect, authorize('admin'), deleteUser);
+  .get(protect, getProfile)
+  .put(protect, upload.single('profileImage'), updateProfile);
 
 // Playlist routes
-router
-  .route('/playlists')
+router.route('/playlists')
   .get(protect, getPlaylists)
   .post(protect, createPlaylist);
 
-router
-  .route('/playlists/:id')
+router.route('/playlists/:id')
   .put(protect, updatePlaylist)
   .delete(protect, deletePlaylist);
 
-router
-  .route('/playlists/:id/albums/:albumId')
+router.route('/playlists/:id/albums/:albumId')
   .post(protect, addAlbumToPlaylist)
   .delete(protect, removeAlbumFromPlaylist);
+
+// Admin routes
+router.route('/').get(protect, authorize('admin'), getUsers);
+router.route('/:id').delete(protect, authorize('admin'), deleteUser);
+
+// Public profile (must be last to avoid catching other routes)
+router.route('/:id/public').get(getPublicProfile);
 
 module.exports = router;
