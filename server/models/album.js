@@ -35,10 +35,14 @@ const albumSchema = new mongoose.Schema({
             type: String
         }
     },
-    likes:{ 
-        type: Number, 
-        default: 0 
-    }
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    songs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Song'
+}]
 });
 
 

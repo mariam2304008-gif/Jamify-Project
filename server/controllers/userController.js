@@ -21,8 +21,14 @@ exports.getProfile = async (req, res, next) => {
       return next(new ErrorResponse('User session profile data could not be found in the database.', 404));
     }
 
-    // 3. Gather linked assets dynamically
-    const reviews = await Review.find({ user: userId }).populate('album');
+    // 3. Gather linked assets dynamically — UPDATED POPULATION ENGINE HERE:
+    const reviews = await Review.find({ user: userId })
+        .populate('albumID')
+        .populate({
+            path: 'songID',
+            populate: { path: 'album' } // Deep-populates album context for track cards
+        });
+
     const playlists = await Playlist.find({ user: userId }).populate('albums').sort('-createdAt');
 
     // 4. Send the living database results right to EJS

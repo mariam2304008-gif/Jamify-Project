@@ -13,6 +13,7 @@ const { getProfile } = require('./controllers/userController');
 const authRoutes = require('./routes/auth');
 const isLoggedIn = require('./middleware/isLoggedIn');
 const isAdmin = require('./middleware/isAdmin');
+const songRoutes = require('./routes/songs');
 
 const app = express();
 const port = 3000;
@@ -34,20 +35,38 @@ app.use(session({
     }
 }));
 
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
 // MongoDB Connection
 mongoose.connect(dbURL)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
+
+
+
+
+
+
+
+
+
 const albumRoutes = require('./routes/albums');
 const suggestionRoutes = require('./routes/suggestions');
 const userRoutes = require('./routes/users');
 
+
+
 // 2. Route Routing Middlewares
 app.use('/albums', albumRoutes);
+app.use('/songs', songRoutes);
 app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
 app.use('/suggestions', suggestionRoutes);
 app.use('/users', userRoutes);
+
 
 // 3. Browser View Routes
 app.get('/login', (req, res) => {
@@ -78,3 +97,4 @@ app.get('/', albumController.getAllAlbums);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+

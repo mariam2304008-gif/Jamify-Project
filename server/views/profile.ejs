@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jamify Profile</title>
     <link rel="stylesheet" href="/CSS/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <script src="/JavaScript/navbar.js"></script>
 </head>
 <body>
 
  <%- include('partials/navbar') %>
 
-<!-- Main content wrapper -->
 <div class="main-content">
 
-<!-- Profile Card -->
 <div class="profile-card">
     <img id="profileImg" src="<%= user.profileImageUrl %>" class="profile-img">
 
@@ -36,51 +35,65 @@
     </div>
 </div>
 
-<!-- Tabs -->
 <div class="tabs">
     <button class="tab active" onclick="showTab('reviews', this)">Reviews</button>
     <button class="tab" onclick="showTab('playlists', this)">Playlists</button>
 </div>
 
-<!-- Reviews Tab -->
 <div id="reviews" class="tab-content active">
 
-
-
-
     <div id="user-reviews-container">
-  <% if (!reviews || reviews.length === 0) { %>
-    <p class="empty-msg">No reviews yet.</p>
-  <% } else { %>
-    <% reviews.forEach(review => { %>
-      <div class="review-card">
-        <a href="/albums/<%= review.album ? review.album._id : '#' %>">
-          <img src="<%= review.album && review.album.image ? review.album.image : '/Images/default-album.png' %>" alt="album art">
-        </a>
-        <div class="review-text">
-          <h3><a href="/albums/<%= review.album ? review.album._id : '#' %>"><%= review.album ? review.album.title : 'Unknown Album' %></a></h3>
-          <p class="rating">
-           <% for(let i = 0; i < review.rating; i++) { %>
-                <i class="fa-solid fa-star"></i>
-            <% } %>
-            <% for(let i = review.rating; i < 5; i++) { %>
-                <i class="fa-regular fa-star" style="color: #ccc"></i>
-            <% } %>
-          </p>
-          <p><%= review.comment %></p>
-          <small><%= new Date(review.date).toLocaleDateString() %> • <%= review.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
-        </div>
-      </div>
-    <% }) %>
-  <% } %>
+    <% if (!reviews || reviews.length === 0) { %>
+        <p class="empty-msg">No reviews yet.</p>
+    <% } else { %>
+        <% reviews.forEach(review => { %>
+            <div class="review-card">
+                
+                <% if (review.albumID) { %>
+                    <a href="/albums/<%= review.albumID._id %>">
+                        <img src="<%= review.albumID.coverImageUrl ? review.albumID.coverImageUrl : '/Images/default-album.png' %>" alt="album art">
+                    </a>
+                <% } else if (review.songID) { %>
+                    <a href="/songs/<%= review.songID._id %>">
+                        <img src="<%= review.songID.album && review.songID.album.coverImageUrl ? review.songID.album.coverImageUrl : '/Images/album-profile-images/default-single.png' %>" alt="song art">
+                    </a>
+                <% } else { %>
+                    <img src="/Images/default-album.png" alt="fallback art">
+                <% } %>
+
+                <div class="review-text">
+                    
+                    <h3>
+                        <% if (review.albumID) { %>
+                            <span style="font-size: 12px; color: #1db954; text-transform: uppercase; display: block; font-weight: bold;">Album Review</span>
+                            <a href="/albums/<%= review.albumID._id %>"><%= review.albumID.title %></a>
+                        <% } else if (review.songID) { %>
+                            <span style="font-size: 12px; color: #1db954; text-transform: uppercase; display: block; font-weight: bold;">Song Review</span>
+                            <a href="/songs/<%= review.songID._id %>"><%= review.songID.title %></a>
+                        <% } else { %>
+                            Unknown Logged Asset
+                        <% } %>
+                    </h3>
+
+                    <p class="rating">
+                    <% for(let i = 0; i < review.rating; i++) { %>
+                            <i class="fa-solid fa-star"></i>
+                        <% } %>
+                        <% for(let i = review.rating; i < 5; i++) { %>
+                            <i class="fa-regular fa-star" style="color: #ccc"></i>
+                        <% } %>
+                    </p>
+                    
+                    <p><%= review.review %></p>
+                    <small><%= new Date(review.date).toLocaleDateString() %> • <%= review.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+                </div>
+            </div>
+        <% }) %>
+    <% } %>
+    </div>
+
 </div>
 
-
-
-
-</div>
-
-<!-- Playlists Tab -->
 <div id="playlists" class="tab-content">
 
     <div class="playlist-header">
@@ -90,7 +103,6 @@
 
     <div id="user-playlists-container"></div>
 
-    <!-- Create/Edit Playlist Modal -->
     <div class="modal" id="playlistModal">
         <div class="modal-content">
             <h3 id="modalTitle">Create Playlist</h3>
@@ -109,6 +121,5 @@
 </div>
 
 <script src="/JavaScript/profile.js"></script>
-</div><!-- End main-content -->
-</body>
+</div></body>
 </html>

@@ -6,6 +6,11 @@ const reviewSchema = new mongoose.Schema({
         ref: 'Album',
         required: true
     },
+    songID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Song',
+    default: null
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -26,10 +31,11 @@ const reviewSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    likes:{ 
-        type: Number, 
-        default: 0 
-    }
+    likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: []
+}]
 });
 
 module.exports = mongoose.model('Review', reviewSchema);

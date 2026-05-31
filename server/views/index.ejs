@@ -34,7 +34,39 @@
               </div>
           </a>
   
-        <% }) %> </div>
+        <% }) %> 
+      </div>
+    
+
+<h2 class="section-title" style="margin-top: 40px; margin-bottom: 20px;">Standalone Singles</h2>
+
+<div class="album-discovery-grid"> 
+    <% if (typeof standaloneSongs !== 'undefined' && standaloneSongs.length > 0) { %>
+        <% standaloneSongs.forEach(song => { %>
+                  
+            <% const cardUrl = (song.trackType === 'Standalone Single' || song.trackType === 'Single') ? `/albums/${song._id}` : `/songs/${song._id}`; %>
+
+            <a href="<%= cardUrl %>" class="album-card">
+                <div class="album-image-wrapper">
+                    <img src="<%= song.coverImageUrl || '/Images/album-profile-images/default-single.png' %>" alt="<%= song.title %>">
+                    <span class="avg-rating"><i class="fa-solid fa-star"></i> 5.0</span>
+                </div>
+                <div class="album-card-info">
+                    <h3><%= song.title %></h3>
+                    <p>
+                        <%= Array.isArray(song.artists) ? song.artists.join(', ') : (song.artist || 'Unknown Artist') %>
+                    </p>
+                </div>
+            </a>
+    
+        <% }) %>
+    <% } else { %>
+        <p style="color: grey; padding-left: 15px; grid-column: 1 / -1;">No standalone singles available right now.</p>
+    <% } %>
+</div>
+        
+
+
     </div>
   </div>
 
