@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/CSS/albumCSS.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    <title><%= album.title %></title>
+    <title><%= song.title %></title>
     <script src="/JavaScript/albumJS.js" defer></script>
     <script src="/JavaScript/navbar.js?v=2"></script>
 </head>
@@ -16,59 +16,52 @@
     
     <div class="page-wrapper">
         <div class="mainInfoContainer">
-            <img src="<%= album.coverImageUrl %>" alt="album cover" id="album-cover">
+           <img src="<%= song.coverImageUrl %>" alt="song cover" id="album-cover">
+            
             <div class="albumInfo">
                 <div class="header-with-heart" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <div class="headerINFO">
-                        <label id="head"><%= album.title %></label><br>
-                        <label style="color:rgb(81, 81, 81)"> <%= album.artist %></label>
+                        <label id="head"><%= song.title %></label><br>
+                        <label style="color:rgb(81, 81, 81)"> <%= song.artists.join(', ') %></label>
                     </div>
                     
                     <div class="album-like-wrapper" style="display: flex; flex-direction: column; align-items: center;">
-                        <i class="fa-solid fa-heart like-heart <%= (typeof user !== 'undefined' && user && Array.isArray(album.likes) && album.likes.includes(user.id || (user._id && user._id.toString()))) ? 'active' : '' %>" style="font-size: 40px;"></i>
-                        <span class="like-count" style="font-size: 12px; color: grey;">
-                            <%= Array.isArray(album.likes) ? album.likes.length : (album.likes || 0) %>
-                        </span>
+                        <i class="fa-solid fa-heart like-heart" style="font-size: 40px;"></i>
+                        <span class="like-count" style="font-size: 12px; color: grey;"><%= song.likes.length %></span>
                     </div>
                 </div>
-                <p id="main">Release Date: <span style="color:rgb(81, 81, 81)"><%= new Date(album.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></p>
-                <p id="main" id="genre">Genre: <span style="color:rgb(81, 81, 81)"><%= album.genre %></span> </p>
 
-                <div class="buttons">
+                <p id="main">Track Type: 
+                    <span style="color:rgb(81, 81, 81); font-weight: bold;">
+                        <% if (song.trackType === 'Standalone Single' || !song.album) { %>
+                            Standalone Single
+                        <% } else { %>
+                            <%= song.trackType %> (Track #<%= song.trackNumber %>)
+                        <% } %>
+                    </span>
+                </p>
+
+                <p id="main">Context: 
+                    <span style="color:rgb(81, 81, 81)">
+                        <% if (song.album) { %>
+                            From the album <a href="/albums/<%= song.album._id %>" style="color: #1db954; text-decoration: none; font-weight: bold;"><%= song.album.title %></a>
+                        <% } else { %>
+                            Independent Release
+                        <% } %>
+                    </span>
+                </p>
+
+                <p id="main">Released: <span style="color:rgb(81, 81, 81)"><%= new Date(song.released).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span></p>
+
+                 <div class="buttons">
                     <button id="spotify"
-                        onclick="window.open('<%= album.albumLinks.spotify %>', '_blank')"><img
+                        onclick="window.open('<%= song.songLinks.spotify %>', '_blank')"><img
                             src="/Images/album-profile-images/spotify.png" style="width:1em; height: 1em; padding-right:2%;">Open in Spotify</button>
                     <button id="anghami"
-                        onclick="window.open('<%= album.albumLinks.anghami %>', '_blank')"><img
+                        onclick="window.open('<%= song.songLinks.anghami %>', '_blank')"><img
                             src="/Images/album-profile-images/anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
                 </div>
             </div>  
-        </div>
-        
-        <button id="toggleTracklistBtn" class="tracklist-btn">View Tracklist</button>
-
-        <div id="tracklistSection" class="tracklist-container" style="display: none;">
-            <h3>Tracklist</h3>
-            
-            <% if (typeof tracklist !== 'undefined' && tracklist.length > 0) { %>
-                <ul style="list-style: none; padding-left: 0;">
-                    <% tracklist.forEach(function(song, index) { %>
-                        <li>
-                            <div class="track-row">
-                                <span class="track-number">
-                                    <%= song.trackNumber || (index + 1) %>.
-                                </span>
-                                
-                                <a href="/songs/<%= song._id %>" class="track-title">
-                                    <%= song.title %>
-                                </a>
-                            </div>
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p class="empty-msg">No tracks added to this album yet.</p>
-            <% } %>
         </div>
 
         <div class="containsContainers">
@@ -83,21 +76,19 @@
                 <img src="/Images/album-profile-images/starSVG.svg" id="small-icon">
                 <div class="headerINFO">
                     <p id="main">Average rating</p>
-                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= album.rating %></p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= song.rating || 'N/A' %></p>
                 </div>
             </div>
             <div class="miniContainer">
                 <img src="/Images/album-profile-images/heartSVG.svg" style="max-width: 20%;" id="small-icon">
                 <div class="headerINFO">
                     <p id="main">Total Likes</p>
-                    <p class="total-likes-counter" style="font-size: 1em;color:rgb(81, 81, 81);">
-                        <%= Array.isArray(album.likes) ? album.likes.length : (album.likes || 0) %>
-                    </p>
+                    <p style="font-size: 1em;color:rgb(81, 81, 81);"><%= song.likes.length %></p>
                 </div>
             </div>
         </div>
 
-        <form action="/albums/<%= album._id %>/reviews" method="POST">
+        <form action="/songs/<%= song._id %>/reviews" method="POST">
             <label id="head" style="color:rgb(81, 81, 81);">Write a Review</label>
             <hr>
             <label for="rating" id="main">Your Rating</label>
@@ -118,7 +109,7 @@
         <label id="head" style="justify-content:center; color:rgb(81, 81, 81);">Recent Reviews</label>
         <div id="reviews-stream">
             <% if (reviews.length === 0) { %>
-                <p style="color:rgb(81, 81, 81);">No reviews yet. Be the first to review this album!</p>
+                <p style="color:rgb(81, 81, 81);">No reviews yet. Be the first to review this song!</p>
             <% } else { %>
                 <% reviews.forEach(review => { %>
                     <div class="reviewBox">
@@ -144,16 +135,13 @@
                         <p id="review"><%= review.review %></p>
 
                         <div class="like-container">
-                            <i class="fa-solid fa-heart like-heart<%= (typeof user !== 'undefined' && user && Array.isArray(review.likes) && review.likes.includes(user.id || (user._id && user._id.toString()))) ? 'active' : '' %>" style="font-size:15px;" data-id="<%= review._id %>"></i>
-                            <span class="like-count" style="font-size: 12px; color: grey;">
-                                <%= Array.isArray(review.likes) ? review.likes.length : (review.likes || 0) %> Likes
-                            </span>
+                            <i class="fa-solid fa-heart like-heart" data-id="<%= review._id %>"></i>
+                            <span class="like-count" style="font-size: 12px; color: grey;"><%= review.likes %> Likes</span>
                         </div>
                     </div>
                 <% }) %>
             <% } %>
         </div>
     </div>
-
 </body>
 </html>

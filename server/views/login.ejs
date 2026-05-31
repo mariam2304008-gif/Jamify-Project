@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamify Music Rating Website</title>
+    
+    <script src="/JavaScript/loginJS.js" defer></script>
+    <link rel="stylesheet" href="/CSS/loginCSS.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">Jamify</div>
+        <div class="subtitle">Rate and review your favorite pop albums</div>
+    </div>
+
+    <div class="button-container">
+        <button id="loginTab" class="active">Login</button>
+        <button id="signupTab">Sign Up</button>
+    </div>
+
+    <div id="loginForm" class="form-box">
+        <h3>Login</h3>
+        <p class="form-desc">Enter your credentials to access your account</p>
+        
+        <% if (locals.errorMessage) { %>
+            <div class="error-message"><%= errorMessage %></div>
+        <% } %>
+
+    <form action="/api/login" method="POST">
+        <label for="login-user">Username</label>
+        <input type="text" id="login-user" name="username" required>
+    
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" name="password" required>
+    
+        <button type="submit" class="submit-btn">Login</button>
+    </form>
+    </div>
+
+    <div id="signupForm" class="form-box hidden">
+        <h3>Sign Up</h3>
+        <p class="form-desc">Create a new account to start reviewing music</p>
+        
+        <form action="/api/signup" method="POST">
+            <label for="reg-name">Display Name</label>
+            <input type="text" id="reg-name" name="displayName">
+            
+            <label for="reg-user">Username</label>
+            <input type="text" id="reg-user" name="username" required>
+            
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" name="email" required>
+
+            <label for="reg-pass">Password</label>
+            <input type="password" id="reg-pass" name="password" placeholder="At least 8 chars" required>
+            
+            <label for="reg-confirm">Confirm Password</label>
+            <input type="password" id="reg-confirm" name="confirmPassword" required>
+            
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

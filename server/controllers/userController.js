@@ -1,28 +1,48 @@
 const User = require('../models/User');
-const Review = require('../models/Review');
+const Review = require('../models/review');
 const Playlist = require('../models/Playlist');
 const ErrorResponse = require('../utils/errorResponse');
 
-// @desc    Get user profile (includes user data and reviews)
-// @route   GET /api/users/profile
-// @access  Private
+
 exports.getProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
-    const reviews = await Review.find({ user: req.user.id }).populate('album', 'title image');
+    // 1. Guard check: If there is no active session, send them straight to login
+    if (!req.session || !req.session.user) {
+      return res.redirect('/login');
+    }
 
-    res.status(200).json({
-      success: true,
-      data: {
-        user,
-        reviews
-      }
+    const userId = req.session.user.id;
+
+    // 2. Fetch the logged-in user directly from Atlas
+    const user = await User.findById(userId);
+
+    // If the account was deleted or session is corrupted, throw a clear message
+    if (!user) {
+      return next(new ErrorResponse('User session profile data could not be found in the database.', 404));
+    }
+
+    // 3. Gather linked assets dynamically — UPDATED POPULATION ENGINE HERE:
+    const reviews = await Review.find({ user: userId })
+        .populate('albumID')
+        .populate({
+            path: 'songID',
+            populate: { path: 'album' } // Deep-populates album context for track cards
+        });
+
+    const playlists = await Playlist.find({ user: userId }).populate('albums').sort('-createdAt');
+
+    // 4. Send the living database results right to EJS
+    res.render('profile', {
+      user: user,
+      reviews: reviews,
+      playlists: playlists,
+      reviewCount: reviews.length,     
+      playlistCount: playlists.length
     });
   } catch (err) {
     next(err);
   }
 };
-
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
@@ -31,11 +51,11 @@ exports.updateProfile = async (req, res, next) => {
     const fieldsToUpdate = {
       displayName: req.body.displayName,
       email: req.body.email,
-      phone: req.body.phone
+      bio: req.body.bio,
     };
 
     if (req.file) {
-      fieldsToUpdate.profileImage = `uploads/${req.file.filename}`;
+      fieldsToUpdate.profileImageUrl = `uploads/${req.file.filename}`;
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {

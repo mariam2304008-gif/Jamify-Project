@@ -1,3 +1,5 @@
+const isLoggedIn = require('../middleware/isLoggedIn');
+
 const express = require('express');
 const {
   getProfile,
@@ -20,8 +22,8 @@ const router = express.Router();
 // Profile routes
 router
   .route('/profile')
-  .get(protect, getProfile)
-  .put(protect, upload.single('profileImage'), updateProfile);
+  .get(isLoggedIn, getProfile) // Now it uses your real session data!
+  .put(isLoggedIn, upload.single('profileImage'), updateProfile);
 
 // Admin user management
 router

@@ -1,27 +1,66 @@
 const album = require('../models/album');
 const review = require('../models/review');
+const Song = require('../models/Song'); 
 
 module.exports = {
     getAllAlbums: async (req, res) => {
-        try {
-            const allAlbums = await album.find({});
-            res.render('index', { albums: allAlbums });
-        } catch (err) {
-            res.status(500).json({ message: err.message });
-        }
-    },
+    try {
+        // 1. Fetch ALL documents from your album collection
+        const allItems = await album.find({});
+        
+        // 2. Filter out ONLY true full-length multi-track albums
+        // (Ensuring we don't accidentally display standalone singles up top)
+        const trueAlbums = allItems.filter(item => item.trackType !== 'Standalone Single' && item.trackType !== 'Single track' && item.trackType !== 'Single');
+        
+        // 3. Query your SONG collection for BOTH 'Standalone Single' AND 'Single track'
+        // Using $or allows us to catch both schema variants in one trip to the database!
+        const combinedSingles = await Song.find({
+            $or: [
+                { album: null },
+                { trackType: 'Standalone Single' },
+                { trackType: 'Single track' } // Matched exactly to your lowercase schema enum!
+            ]
+        });
+
+        // 4. Render your page with the clean, separated data packages
+        res.render('index', { 
+            albums: trueAlbums, 
+            standaloneSongs: combinedSingles 
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+},
+
+    // FIXED: Now populates the nested song objects to prevent .join() crashes in EJS!
     getAlbumById: async (req, res) => {
         try {
-            const currentAlbum = await album.findById(req.params.id);
+            // .populate('songs') matches your updated models/album.js schema definition
+            const currentAlbum = await album.findById(req.params.id).populate('songs');
+            
             if (!currentAlbum) {
                 return res.status(404).json({ message: 'Album not found' });
             }
+
+            // Fetch all reviews linked to this album
             const reviews = await review.find({ albumID: req.params.id }).populate('user');
-            res.render('albumProfile', { album: currentAlbum, reviews: reviews });
+
+            // Fallback tracklist sorting check
+            const tracklist = currentAlbum.songs && currentAlbum.songs.length > 0 
+                ? currentAlbum.songs.sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0))
+                : await Song.find({ album: req.params.id }).sort({ trackNumber: 1 });
+
+            // Pass the variables into your albumProfile.ejs template cleanly
+            res.render('albumProfile', { 
+                album: currentAlbum, 
+                reviews: reviews,
+                tracklist: tracklist 
+            });
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
     },
+
     createAlbum: async (req, res) => {
         const newAlbum = new album({
             title: req.body.title,
@@ -40,6 +79,7 @@ module.exports = {
             res.status(400).json({ message: err.message });
         }
     },
+
     updateAlbum: async (req, res) => {
         try {
             const updatedAlbum = await album.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -51,6 +91,7 @@ module.exports = {
             res.status(400).json({ message: err.message });
         }
     },
+
     deleteAlbum: async (req, res) => {
         try {
             const deletedAlbum = await album.findByIdAndDelete(req.params.id);
@@ -62,24 +103,98 @@ module.exports = {
             res.status(500).json({ message: err.message });
         }
     },
+
+    // FIXED: Cleaned up to properly map to your updated Review database schema configuration
     addReview: async (req, res) => {
         try {
             const currentAlbum = await album.findById(req.params.id);
             if (!currentAlbum) {
                 return res.status(404).json({ message: 'Album not found' });
             }
+            
             const newReview = new review({
-                albumID: req.params.id,
-                rating: parseInt(req.body.rating),
-                review: req.body.review,
+                albumID: req.params.id, 
+                rating: parseInt(req.body.rating) || 0,
+                review: req.body.review, // Verified matching your schema property
                 date: new Date(),
-                likes: 0,
-                user: req.body.user || "65af3b23c12a4b567890abcd"
+                likes: [],
+                // Automatically capture active user session, or fallback to the seed placeholder
+                user: req.session && req.session.user ? req.session.user.id : "65af3b23c12a4b567890abcd"
             });
+            
             await newReview.save();
             res.redirect(`/albums/${req.params.id}`);
         } catch (err) {
             res.status(400).send("Error Saving Review: " + err.message);
         }
+    },
+
+    toggleAlbumLike: async (req, res) => {
+        try {
+            const albumId = req.params.id;
+            const userId = req.session.user.id || req.session.user._id;
+
+            const currentAlbum = await album.findById(albumId);
+            if (!currentAlbum) return res.status(404).json({ success: false, message: "Album not found" });
+
+            // Fail-safe initialization for arrays
+            if (!Array.isArray(currentAlbum.likes)) {
+                currentAlbum.likes = [];
+            }
+
+            const hasLiked = currentAlbum.likes.includes(userId);
+            if (hasLiked) {
+                await album.findByIdAndUpdate(albumId, { $pull: { likes: userId } });
+            } else {
+                await album.findByIdAndUpdate(albumId, { $addToSet: { likes: userId } });
+            }
+
+            const updatedAlbum = await album.findById(albumId);
+            return res.json({ 
+                success: true, 
+                likeCount: updatedAlbum.likes.length, 
+                hasLiked: !hasLiked 
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: "Error changing album favorite trace" });
+        }
+    },
+
+    // 8. POST /albums/reviews/:reviewId/like -> Toggle user like inside album review comment loops
+    toggleAlbumReviewLike: async (req, res) => {
+        try {
+            const reviewId = req.params.reviewId;
+            const userId = req.session.user.id || req.session.user._id;
+
+            const targetReview = await review.findById(reviewId);
+            if (!targetReview) return res.status(404).json({ success: false, message: "Review not found" });
+
+            let hasLiked = false;
+            if (Array.isArray(targetReview.likes)) {
+                hasLiked = targetReview.likes.includes(userId);
+                if (hasLiked) {
+                    await review.findByIdAndUpdate(reviewId, { $pull: { likes: userId } });
+                } else {
+                    await review.findByIdAndUpdate(reviewId, { $addToSet: { likes: userId } });
+                }
+            } else {
+                // Fallback for legacy database counters
+                await review.findByIdAndUpdate(reviewId, { $inc: { likes: 1 } });
+            }
+
+            const updatedReview = await review.findById(reviewId);
+            const count = Array.isArray(updatedReview.likes) ? updatedReview.likes.length : updatedReview.likes;
+
+            return res.json({ 
+                success: true, 
+                likeCount: count, 
+                hasLiked: !hasLiked 
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: "Error mutating review metric" });
+        }
     }
+
 };
