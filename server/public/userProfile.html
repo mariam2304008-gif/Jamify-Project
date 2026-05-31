@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamify - User Profile</title>
+    <link rel="stylesheet" href="CSS/profile.css">
+    <link rel="stylesheet" href="CSS/userProfile.css">
+    <script src="JavaScript/navbar.js"></script>
+</head>
+<body>
+<div class="main-content">
+
+<div class="profile-card">
+    <img id="profileImg" src="Images/album-profile-images/epic.png" class="profile-img">
+    <div class="profile-info">
+        <h2 id="displayName"></h2>
+        <p class="username" id="displayUsername"></p>
+        <p id="displayBio" class="bio"></p>
+        <div class="stats">
+            <span id="statReviews">0 Reviews</span>
+            <span id="statPlaylists">0 Playlists</span>
+        </div>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="showTab('reviews', this)">Reviews</button>
+    <button class="tab" onclick="showTab('playlists', this)">Playlists</button>
+</div>
+
+<div id="reviews" class="tab-content active">
+    <div id="user-reviews-container"></div>
+</div>
+
+<div id="playlists" class="tab-content">
+    <div id="user-playlists-container"></div>
+</div>
+
+</div>
+<script src="JavaScript/userProfile.js"></script>
+</body>
+</html>
