@@ -1,50 +1,56 @@
+// ─── IMPORT YOUR MODELS AT THE TOP OF USERCONTROLLER.JS ───
+const User = require('../models/User'); // 🌟 This fixes "User is not defined"
+const Review = require('../models/Review');
+const Playlist = require('../models/Playlist');
+
+// Make sure you import your custom error handler class if you use it:
+const ErrorResponse = require('../utils/errorResponse'); // Or wherever your custom error utility sits
+
+// @desc    Get own profile
+// @route   GET /api/users/profile
+// @access  Private
 exports.getProfile = async (req, res, next) => {
-try {
-if (!req.session || !req.session.user) {
-return res.redirect('/login');
-}
+  try {
+    if (!req.session || !req.session.user) {
+      return res.redirect('/login');
+    }
 
-```
-const userId = req.session.user._id;
+    const userId = req.session.user._id;
 
-<<<<<<< Updated upstream
-    // 2. Fetch the logged-in user directly from Atlas and populate relationships
-const user = await User.findById(userId).populate([
-  {
-    path: 'followers',
-    select: 'username profileImage' // Only fetch what you need to display
-  },
-  {
-    path: 'followingUsers', // Or 'followingUsers', match your schema's field name
-    select: 'username profileImage'
-  }
-]);
-=======
-const user = await User.findById(userId);
->>>>>>> Stashed changes
+    // Fetch the logged-in user directly from Atlas and populate relationships
+    const user = await User.findById(userId).populate([
+      {
+        path: 'followers',
+        select: 'username displayName profileImageUrl' // Unified matching field targets
+      },
+      {
+        path: 'followingUsers', 
+        select: 'username displayName profileImageUrl'
+      }
+    ]);
 
-if (!user) {
-  return next(
-    new ErrorResponse(
-      'User session profile data could not be found in the database.',
-      404
-    )
-  );
-}
+    if (!user) {
+      return next(
+        new ErrorResponse(
+          'User session profile data could not be found in the database.',
+          404
+        )
+      );
+    }
 
-const reviews = await Review.find({ user: userId })
+    const reviews = await Review.find({ user: userId }) // or req.params.id for public
   .populate('albumID')
   .populate({
     path: 'songID',
-    populate: { path: 'album' }
+    populate: { path: 'album' },
+    options: { strictPopulate: false } // 🌟 Prevents strict schema validation crashes
   });
 
-const playlists = await Playlist.find({ user: userId })
-  .populate('albums')
-  .sort('-createdAt');
+    const playlists = await Playlist.find({ user: userId })
+      .populate('albums')
+      .sort('-createdAt');
 
-<<<<<<< Updated upstream
-    // 4. Send the living database results right to EJS
+    // Send the living database results right to EJS
     res.render('profile', {
       user: user,
       reviews: reviews,
@@ -56,20 +62,19 @@ const playlists = await Playlist.find({ user: userId })
     next(err);
   }
 };
+
 // @desc    Update own profile
 // @route   PUT /api/users/profile
 // @access  Private
 exports.updateProfile = async (req, res, next) => {
   try {
-    // 1. Guard check: Use the session user ID to match getProfile's login tracking
     if (!req.session || !req.session.user) {
       return res.status(401).json({ success: false, error: 'Not authorized, session expired.' });
     }
     
-    const userId = req.session.user.id;
+    const userId = req.session.user._id; 
     const fieldsToUpdate = {};
     
-    // Explicitly pull ONLY displayName and bio. Email is completely locked out.
     if (req.body.displayName !== undefined) fieldsToUpdate.displayName = req.body.displayName;
     if (req.body.bio !== undefined) fieldsToUpdate.bio = req.body.bio;
 
@@ -77,7 +82,6 @@ exports.updateProfile = async (req, res, next) => {
       fieldsToUpdate.profileImageUrl = `uploads/${req.file.filename}`;
     }
 
-    // 2. Fix: Find by the verified session userId
     const user = await User.findByIdAndUpdate(userId, fieldsToUpdate, {
       new: true,
       runValidators: true 
@@ -86,6 +90,11 @@ exports.updateProfile = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ success: false, error: 'User profile not found.' });
     }
+
+    // 🌟 CRUCIAL: Update the session data so getProfile reads the new values on reload!
+    req.session.user.displayName = user.displayName;
+    req.session.user.bio = user.bio;
+    if (user.profileImageUrl) req.session.user.profileImageUrl = user.profileImageUrl;
     
     res.status(200).json({ success: true, data: user });
   } catch (err) {
@@ -104,26 +113,24 @@ exports.getPublicProfile = async (req, res, next) => {
       return res.status(404).render('error', { message: 'User not found' });
     }
 
-    // Find the target user's reviews using your schema's actual matching population paths
-    const reviews = await Review.find({ user: req.params.id })
-      .populate('albumID')
-      .populate({
-        path: 'songID',
-        populate: { path: 'album' } 
-      });
+    const reviews = await Review.find({ user: req.params.id }) // or req.params.id for public
+  .populate('albumID')
+  .populate({
+    path: 'songID',
+    populate: { path: 'album' },
+    options: { strictPopulate: false } // 🌟 Prevents strict schema validation crashes
+  });
 
-    // Find the target user's public playlists
     const playlists = await Playlist.find({ user: req.params.id, isPublic: true })
       .populate('albums')
       .sort('-createdAt');
 
-    // Render the main 'publicProfile.ejs' template with ALL necessary structural values
     res.render('publicProfile', { 
       user: user, 
       reviews: reviews, 
       playlists: playlists,
-      reviewCount: reviews.length,     // Fixes "reviewCount is not defined"
-      playlistCount: playlists.length   // Fixes "playlistCount is not defined"
+      reviewCount: reviews.length,     
+      playlistCount: playlists.length   
     });
 
   } catch (err) {
@@ -142,7 +149,7 @@ exports.searchUsers = async (req, res, next) => {
         { username: { $regex: query, $options: 'i' } },
         { displayName: { $regex: query, $options: 'i' } }
       ]
-    }).select('username displayName profileImage').limit(10);
+    }).select('username displayName profileImageUrl').limit(10); // Standardized image key tracking
 
     res.status(200).json({ success: true, count: users.length, data: users });
   } catch (err) {
@@ -174,26 +181,15 @@ exports.deleteUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-=======
-res.render('profile', {
-  user,
-  reviews,
-  playlists,
-  reviewCount: reviews.length,
-  playlistCount: playlists.length
-});
-```
-
-} catch (err) {
-next(err);
-}
->>>>>>> Stashed changes
 };
 
 // ─── PLAYLIST CONTROLLERS ─────────────────────────────────────────────────────
 
 exports.getPlaylists = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     const playlists = await Playlist.find({
       user: req.session.user._id
     })
@@ -212,13 +208,13 @@ exports.getPlaylists = async (req, res, next) => {
 
 exports.createPlaylist = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     const playlist = await Playlist.create({
       name: req.body.name,
       description: req.body.description || '',
-      isPublic:
-        req.body.isPublic !== undefined
-          ? req.body.isPublic
-          : true,
+      isPublic: req.body.isPublic !== undefined ? req.body.isPublic : true,
       user: req.session.user._id
     });
 
@@ -233,16 +229,16 @@ exports.createPlaylist = async (req, res, next) => {
 
 exports.updatePlaylist = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     let playlist = await Playlist.findById(req.params.id);
 
     if (!playlist) {
       return next(new ErrorResponse('Playlist not found', 404));
     }
 
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
@@ -265,16 +261,16 @@ exports.updatePlaylist = async (req, res, next) => {
 
 exports.deletePlaylist = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     const playlist = await Playlist.findById(req.params.id);
 
     if (!playlist) {
       return next(new ErrorResponse('Playlist not found', 404));
     }
 
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
@@ -291,27 +287,24 @@ exports.deletePlaylist = async (req, res, next) => {
 
 exports.addAlbumToPlaylist = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     const playlist = await Playlist.findById(req.params.id);
 
     if (!playlist) {
       return next(new ErrorResponse('Playlist not found', 404));
     }
 
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
     if (playlist.albums.includes(req.params.albumId)) {
-      return next(
-        new ErrorResponse('Album already in playlist', 400)
-      );
+      return next(new ErrorResponse('Album already in playlist', 400));
     }
 
     playlist.albums.push(req.params.albumId);
-
     await playlist.save();
 
     const updated = await Playlist.findById(playlist._id)
@@ -328,16 +321,16 @@ exports.addAlbumToPlaylist = async (req, res, next) => {
 
 exports.removeAlbumFromPlaylist = async (req, res, next) => {
   try {
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Authentication missing.' });
+    }
     const playlist = await Playlist.findById(req.params.id);
 
     if (!playlist) {
       return next(new ErrorResponse('Playlist not found', 404));
     }
 
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
@@ -359,20 +352,24 @@ exports.removeAlbumFromPlaylist = async (req, res, next) => {
   }
 };
 
-<<<<<<< Updated upstream
 // @desc    Follow another User
 // @route   POST /api/users/:id/follow
 // @access  Private
 exports.followUser = async (req, res, next) => {
   try {
-    const targetUserId = req.params.id;
-    const currentUserId = req.user.id; // From your protect middleware
+    // 🔥 FIX: Switched from mixed tracking dependencies straight to your unified tracking engine
+    if (!req.session || !req.session.user) {
+      return next(new ErrorResponse('Not authorized, session expired.', 401));
+    }
 
-    if (targetUserId === currentUserId) {
+    const targetUserId = req.params.id;
+    const currentUserId = req.session.user._id; 
+
+    if (targetUserId === currentUserId.toString()) {
       return next(new ErrorResponse('You cannot follow your own account.', 400));
     }
 
-    // 1. Add target user to current user's following list ($addToSet avoids duplicates)
+    // 1. Add target user to current user's following list
     await User.findByIdAndUpdate(currentUserId, {
       $addToSet: { followingUsers: targetUserId }
     });
@@ -391,10 +388,15 @@ exports.followUser = async (req, res, next) => {
 // @access  Private
 exports.unfollowUser = async (req, res, next) => {
   try {
-    await User.findByIdAndUpdate(req.user.id, { $pull: { followingUsers: req.params.id } });
-    await User.findByIdAndUpdate(req.params.id, { $pull: { followers: req.user.id } });
+    if (!req.session || !req.session.user) {
+      return next(new ErrorResponse('Not authorized, session expired.', 401));
+    }
+
+    const currentUserId = req.session.user._id;
+
+    await User.findByIdAndUpdate(currentUserId, { $pull: { followingUsers: req.params.id } });
+    await User.findByIdAndUpdate(req.params.id, { $pull: { followers: currentUserId } });
+    
     res.status(200).json({ success: true, message: 'Successfully unfollowed user.' });
   } catch (err) { next(err); }
 };
-=======
->>>>>>> Stashed changes

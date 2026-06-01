@@ -38,4 +38,4 @@ const reviewSchema = new mongoose.Schema({
 }]
 });
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = mongoose.models.Review || mongoose.model('Review', reviewSchema);
