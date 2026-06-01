@@ -14,6 +14,7 @@ const authRoutes = require('./routes/auth');
 const isLoggedIn = require('./middleware/isLoggedIn');
 const isAdmin = require('./middleware/isAdmin');
 const songRoutes = require('./routes/songs');
+const searchRoutes = require('./routes/search');
 
 const app = express();
 const port = 3000;
@@ -62,7 +63,7 @@ app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
 app.use('/api/artists', require('./routes/artists'));
 app.use('/suggestions', suggestionRoutes);
 app.use('/api/users', userRoutes);
-
+app.use('/api/search', searchRoutes);
 
 // 3. Browser View Routes
 app.get('/login', (req, res) => {
