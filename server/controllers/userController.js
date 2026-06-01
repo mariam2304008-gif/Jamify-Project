@@ -1,10 +1,13 @@
+const User = require('../models/User');
+const Review = require('../models/review');
+const Playlist = require('../models/Playlist');
+const ErrorResponse = require('../utils/errorResponse');
 exports.getProfile = async (req, res, next) => {
 try {
 if (!req.session || !req.session.user) {
 return res.redirect('/login');
 }
 
-```
 const userId = req.session.user._id;
 
     // 2. Fetch the logged-in user directly from Atlas and populate relationships
