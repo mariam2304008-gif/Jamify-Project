@@ -1,4 +1,5 @@
 const express = require('express');
+const Artist = require('../models/Artist');
 const {
   getArtists,
   getArtist,

@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const albumController = require('../controllers/albumController');
 
@@ -11,6 +12,7 @@ const protectSession = (req, res, next) => {
 };
 
 router.get('/', albumController.getAllAlbums);
+router.get('/search', albumController.searchAlbums);
 router.get('/:id', albumController.getAlbumById);
 router.post('/', albumController.createAlbum);
 router.put('/:id', albumController.updateAlbum);
