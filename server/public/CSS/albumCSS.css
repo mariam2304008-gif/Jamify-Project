@@ -114,7 +114,23 @@ form{
     padding:20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
-
+.tracklist-btn{
+    display: flex;
+    font-weight:bold;
+    margin-top: 20px;
+    opacity:0.8;
+    border:none;
+    border-right: 4px solid #e74c3c;
+    background-color: #b8827c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;  
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+}
 .stars i{
     color:rgb(213, 204, 201);
     font-size:30px;
