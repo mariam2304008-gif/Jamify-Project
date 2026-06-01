@@ -49,21 +49,15 @@ mongoose.connect(dbURL)
 
 
 
-
-
-
-
-
-
 const albumRoutes = require('./routes/albums');
 const suggestionRoutes = require('./routes/suggestions');
 const userRoutes = require('./routes/users');
-
-
+const adminRoutes = require('./routes/admin');
 
 // 2. Route Routing Middlewares
 app.use('/albums', albumRoutes);
 app.use('/songs', songRoutes);
+app.use('/admin', adminRoutes);
 app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
 app.use('/api/artists', require('./routes/artists'));
 app.use('/suggestions', suggestionRoutes);
@@ -75,7 +69,7 @@ app.get('/login', (req, res) => {
     res.render('login', { errorMessage: null });
 });
 
-// FIXED: Cleaned up the duplicates! Only ONE protected profile route exists now.
+//  Only ONE protected profile route exists .
 
 app.get('/suggest', isLoggedIn, suggestionController.index);
 app.get('/profile', isLoggedIn, getProfile);
