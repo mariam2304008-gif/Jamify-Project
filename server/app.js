@@ -88,6 +88,12 @@ app.get('/admin/add', isAdmin, (req, res) => {
 });
 
 // Home Route
+// Search Route
+app.get('/search', (req, res) => {
+    res.render('search');
+});
+
+// Home Route
 app.get('/', albumController.getAllAlbums);
 
 app.listen(port, () => {
