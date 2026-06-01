@@ -1,18 +1,13 @@
-const User = require('../models/User');
-const Review = require('../models/review');
-const Playlist = require('../models/Playlist');
-const ErrorResponse = require('../utils/errorResponse');
-
-
 exports.getProfile = async (req, res, next) => {
-  try {
-    // 1. Guard check: If there is no active session, send them straight to login
-    if (!req.session || !req.session.user) {
-      return res.redirect('/login');
-    }
+try {
+if (!req.session || !req.session.user) {
+return res.redirect('/login');
+}
 
-    const userId = req.session.user.id;
+```
+const userId = req.session.user._id;
 
+<<<<<<< Updated upstream
     // 2. Fetch the logged-in user directly from Atlas and populate relationships
 const user = await User.findById(userId).populate([
   {
@@ -24,22 +19,31 @@ const user = await User.findById(userId).populate([
     select: 'username profileImage'
   }
 ]);
+=======
+const user = await User.findById(userId);
+>>>>>>> Stashed changes
 
-    // If the account was deleted or session is corrupted, throw a clear message
-    if (!user) {
-      return next(new ErrorResponse('User session profile data could not be found in the database.', 404));
-    }
+if (!user) {
+  return next(
+    new ErrorResponse(
+      'User session profile data could not be found in the database.',
+      404
+    )
+  );
+}
 
-    // 3. Gather linked assets dynamically — UPDATED POPULATION ENGINE HERE:
-    const reviews = await Review.find({ user: userId })
-        .populate('albumID')
-        .populate({
-            path: 'songID',
-            populate: { path: 'album' } // Deep-populates album context for track cards
-        });
+const reviews = await Review.find({ user: userId })
+  .populate('albumID')
+  .populate({
+    path: 'songID',
+    populate: { path: 'album' }
+  });
 
-    const playlists = await Playlist.find({ user: userId }).populate('albums').sort('-createdAt');
+const playlists = await Playlist.find({ user: userId })
+  .populate('albums')
+  .sort('-createdAt');
 
+<<<<<<< Updated upstream
     // 4. Send the living database results right to EJS
     res.render('profile', {
       user: user,
@@ -170,79 +174,192 @@ exports.deleteUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+=======
+res.render('profile', {
+  user,
+  reviews,
+  playlists,
+  reviewCount: reviews.length,
+  playlistCount: playlists.length
+});
+```
+
+} catch (err) {
+next(err);
+}
+>>>>>>> Stashed changes
 };
 
 // ─── PLAYLIST CONTROLLERS ─────────────────────────────────────────────────────
 
 exports.getPlaylists = async (req, res, next) => {
   try {
-    const playlists = await Playlist.find({ user: req.user.id })
-      .populate('albums', 'title artist image').sort('-createdAt');
-    res.status(200).json({ success: true, count: playlists.length, data: playlists });
-  } catch (err) { next(err); }
+    const playlists = await Playlist.find({
+      user: req.session.user._id
+    })
+      .populate('albums', 'title artist image')
+      .sort('-createdAt');
+
+    res.status(200).json({
+      success: true,
+      count: playlists.length,
+      data: playlists
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.createPlaylist = async (req, res, next) => {
   try {
-    req.body.user = req.user.id;
-    const playlist = await Playlist.create(req.body);
-    res.status(201).json({ success: true, data: playlist });
-  } catch (err) { next(err); }
+    const playlist = await Playlist.create({
+      name: req.body.name,
+      description: req.body.description || '',
+      isPublic:
+        req.body.isPublic !== undefined
+          ? req.body.isPublic
+          : true,
+      user: req.session.user._id
+    });
+
+    res.status(201).json({
+      success: true,
+      data: playlist
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.updatePlaylist = async (req, res, next) => {
   try {
     let playlist = await Playlist.findById(req.params.id);
-    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
-    if (playlist.user.toString() !== req.user.id) return next(new ErrorResponse('Not authorized', 403));
+
+    if (!playlist) {
+      return next(new ErrorResponse('Playlist not found', 404));
+    }
+
+    if (
+      playlist.user.toString() !==
+      req.session.user._id.toString()
+    ) {
+      return next(new ErrorResponse('Not authorized', 403));
+    }
 
     const { name, description, isPublic } = req.body;
+
     if (name !== undefined) playlist.name = name;
     if (description !== undefined) playlist.description = description;
     if (isPublic !== undefined) playlist.isPublic = isPublic;
+
     await playlist.save();
 
-    res.status(200).json({ success: true, data: playlist });
-  } catch (err) { next(err); }
+    res.status(200).json({
+      success: true,
+      data: playlist
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.deletePlaylist = async (req, res, next) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
-    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
-    if (playlist.user.toString() !== req.user.id) return next(new ErrorResponse('Not authorized', 403));
+
+    if (!playlist) {
+      return next(new ErrorResponse('Playlist not found', 404));
+    }
+
+    if (
+      playlist.user.toString() !==
+      req.session.user._id.toString()
+    ) {
+      return next(new ErrorResponse('Not authorized', 403));
+    }
+
     await Playlist.findByIdAndDelete(req.params.id);
-    res.status(200).json({ success: true, data: {} });
-  } catch (err) { next(err); }
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.addAlbumToPlaylist = async (req, res, next) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
-    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
-    if (playlist.user.toString() !== req.user.id) return next(new ErrorResponse('Not authorized', 403));
-    if (playlist.albums.includes(req.params.albumId)) return next(new ErrorResponse('Album already in playlist', 400));
+
+    if (!playlist) {
+      return next(new ErrorResponse('Playlist not found', 404));
+    }
+
+    if (
+      playlist.user.toString() !==
+      req.session.user._id.toString()
+    ) {
+      return next(new ErrorResponse('Not authorized', 403));
+    }
+
+    if (playlist.albums.includes(req.params.albumId)) {
+      return next(
+        new ErrorResponse('Album already in playlist', 400)
+      );
+    }
 
     playlist.albums.push(req.params.albumId);
+
     await playlist.save();
-    const updated = await Playlist.findById(playlist._id).populate('albums', 'title artist image');
-    res.status(200).json({ success: true, data: updated });
-  } catch (err) { next(err); }
+
+    const updated = await Playlist.findById(playlist._id)
+      .populate('albums', 'title artist image');
+
+    res.status(200).json({
+      success: true,
+      data: updated
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.removeAlbumFromPlaylist = async (req, res, next) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
-    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
-    if (playlist.user.toString() !== req.user.id) return next(new ErrorResponse('Not authorized', 403));
 
-    playlist.albums = playlist.albums.filter(id => id.toString() !== req.params.albumId);
+    if (!playlist) {
+      return next(new ErrorResponse('Playlist not found', 404));
+    }
+
+    if (
+      playlist.user.toString() !==
+      req.session.user._id.toString()
+    ) {
+      return next(new ErrorResponse('Not authorized', 403));
+    }
+
+    playlist.albums = playlist.albums.filter(
+      id => id.toString() !== req.params.albumId
+    );
+
     await playlist.save();
-    const updated = await Playlist.findById(playlist._id).populate('albums', 'title artist image');
-    res.status(200).json({ success: true, data: updated });
-  } catch (err) { next(err); }
+
+    const updated = await Playlist.findById(playlist._id)
+      .populate('albums', 'title artist image');
+
+    res.status(200).json({
+      success: true,
+      data: updated
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
+<<<<<<< Updated upstream
 // @desc    Follow another User
 // @route   POST /api/users/:id/follow
 // @access  Private
@@ -279,3 +396,5 @@ exports.unfollowUser = async (req, res, next) => {
     res.status(200).json({ success: true, message: 'Successfully unfollowed user.' });
   } catch (err) { next(err); }
 };
+=======
+>>>>>>> Stashed changes
