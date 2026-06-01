@@ -61,10 +61,12 @@ exports.login = async (req, res) => {
         }
 
         // Success! Set up the session object with standard keys
+       // Success! Set up the session object with standard keys
         req.session.user = {
-            id: user._id.toString(), 
-            username: user.username,
-            isAdmin: user.isAdmin || false
+        id: user._id.toString(),   // Keeps your code working
+        _id: user._id.toString(),  // FIX: This gives your friend's userController the exact key it wants!
+        username: user.username,
+        isAdmin: user.isAdmin || false
         };
 
         // Explicitly save the session before redirecting to guarantee the cookie updates immediately
