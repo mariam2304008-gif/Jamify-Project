@@ -28,6 +28,26 @@
                 <span id="statPlaylists"><%= playlistCount %> Playlists</span>
             </div>
             
+
+
+<% if (currentUser) { %>
+
+<button
+    id="followBtn"
+    data-user-id="<%= user._id %>"
+    data-following="<%= user.followers && user.followers.some(f => f._id.toString() === currentUser._id.toString()) %>"
+    class="follow-btn"
+>
+    <%= user.followers && user.followers.some(f => f._id.toString() === currentUser._id.toString())
+        ? 'Unfollow'
+        : 'Follow'
+    %>
+</button>
+
+<% } %>
+
+
+            
             </div>
     </div>
 
@@ -204,6 +224,52 @@ function toggleSocialExpansion(listId, buttonElement) {
     } else {
         buttonElement.textContent = "Show More";
     }
+}
+const followBtn = document.getElementById('followBtn');
+
+if (followBtn) {
+
+    followBtn.addEventListener('click', async () => {
+
+        const userId = followBtn.dataset.userId;
+        const isFollowing = followBtn.dataset.following === 'true';
+
+        try {
+
+            const endpoint = isFollowing
+                ? `/api/users/${userId}/unfollow`
+                : `/api/users/${userId}/follow`;
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+
+                followBtn.dataset.following = (!isFollowing).toString();
+
+                followBtn.textContent = isFollowing
+                    ? 'Follow'
+                    : 'Unfollow';
+
+                location.reload();
+
+            } else {
+                alert(data.message || 'Something went wrong');
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert('Server error');
+        }
+
+    });
+
 }
 </script>
 </body>

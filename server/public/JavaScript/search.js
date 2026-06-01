@@ -150,7 +150,7 @@ section.className = 'results-section users';
             card.className = 'result-card';
 
             card.innerHTML = `
-                <a href="/users/${user._id}">
+                <a href="/api/users/${user._id}">
                     <img 
                         src="${user.profileImageUrl || 'Images/album-profile-images/epic.png'}" 
                         alt="${escapeHtml(user.username)}"

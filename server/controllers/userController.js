@@ -117,12 +117,13 @@ exports.getPublicProfile = async (req, res, next) => {
 
     // Render the main 'publicProfile.ejs' template with ALL necessary structural values
     res.render('publicProfile', { 
-      user: user, 
-      reviews: reviews, 
-      playlists: playlists,
-      reviewCount: reviews.length,     // Fixes "reviewCount is not defined"
-      playlistCount: playlists.length   // Fixes "playlistCount is not defined"
-    });
+  user: user,
+  currentUser: req.session.user,
+  reviews: reviews,
+  playlists: playlists,
+  reviewCount: reviews.length,
+  playlistCount: playlists.length
+});
 
   } catch (err) {
     next(err);
@@ -342,14 +343,14 @@ exports.removeAlbumFromPlaylist = async (req, res, next) => {
 exports.followUser = async (req, res, next) => {
   try {
     const targetUserId = req.params.id;
-    const currentUserId = req.user.id; // From your protect middleware
+    const currentUserId = req.session.user._id;
 
     if (targetUserId === currentUserId) {
       return next(new ErrorResponse('You cannot follow your own account.', 400));
     }
 
     // 1. Add target user to current user's following list ($addToSet avoids duplicates)
-    await User.findByIdAndUpdate(currentUserId, {
+    await User.findByIdAndUpdate(req.session.user._id, {
       $addToSet: { followingUsers: targetUserId }
     });
 
@@ -367,8 +368,8 @@ exports.followUser = async (req, res, next) => {
 // @access  Private
 exports.unfollowUser = async (req, res, next) => {
   try {
-    await User.findByIdAndUpdate(req.user.id, { $pull: { followingUsers: req.params.id } });
-    await User.findByIdAndUpdate(req.params.id, { $pull: { followers: req.user.id } });
+    await User.findByIdAndUpdate(req.session.user._id, { $pull: { followingUsers: req.params.id } });
+    await User.findByIdAndUpdate(req.params.id, { $pull: { followers: req.session.user._id } });
     res.status(200).json({ success: true, message: 'Successfully unfollowed user.' });
   } catch (err) { next(err); }
 };

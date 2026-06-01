@@ -489,3 +489,15 @@ body {
         text-align: center;
     }
 }
+.follow-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    background-color: #ef533f;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
