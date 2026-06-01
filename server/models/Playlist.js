@@ -20,7 +20,7 @@ const PlaylistSchema = new mongoose.Schema({
   albums: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: 'album'
+      ref: 'Album'
     }
   ],
   isPublic: {
