@@ -23,6 +23,10 @@ function setupNavbar() {
         adminReviewLink.innerHTML = '<a href="/reviewadmin">Admin Review</a>';
         navLinksList.appendChild(adminReviewLink);
 
+        const searchLink = document.createElement('li');
+        searchLink.innerHTML = '<a href="/search">Search</a>';
+        navLinksList.appendChild(searchLink);
+
         const adminsuggestionLink = document.createElement('li');
         adminsuggestionLink.innerHTML = '<a href="/admin/suggestions">Admin Suggestion</a>';
         navLinksList.appendChild(adminsuggestionLink);
@@ -39,6 +43,10 @@ function setupNavbar() {
         const suggestLink = document.createElement('li');
         suggestLink.innerHTML = '<a href="/suggest">Suggest</a>';
         navLinksList.appendChild(suggestLink);
+
+        const searchLink = document.createElement('li');
+        searchLink.innerHTML = '<a href="/search">Search</a>';
+        navLinksList.appendChild(searchLink);
 
         const profileLink = document.createElement('li');
         profileLink.innerHTML = '<a href="/profile">Profile</a>';
