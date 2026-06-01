@@ -13,8 +13,17 @@ exports.getProfile = async (req, res, next) => {
 
     const userId = req.session.user.id;
 
-    // 2. Fetch the logged-in user directly from Atlas
-    const user = await User.findById(userId);
+    // 2. Fetch the logged-in user directly from Atlas and populate relationships
+const user = await User.findById(userId).populate([
+  {
+    path: 'followers',
+    select: 'username profileImage' // Only fetch what you need to display
+  },
+  {
+    path: 'followingUsers', // Or 'followingUsers', match your schema's field name
+    select: 'username profileImage'
+  }
+]);
 
     // If the account was deleted or session is corrupted, throw a clear message
     if (!user) {
@@ -48,23 +57,36 @@ exports.getProfile = async (req, res, next) => {
 // @access  Private
 exports.updateProfile = async (req, res, next) => {
   try {
-    const fieldsToUpdate = {
-      displayName: req.body.displayName,
-      email: req.body.email,
-      bio: req.body.bio,
-    };
+    // 1. Guard check: Use the session user ID to match getProfile's login tracking
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, error: 'Not authorized, session expired.' });
+    }
+    
+    const userId = req.session.user.id;
+    const fieldsToUpdate = {};
+    
+    // Explicitly pull ONLY displayName and bio. Email is completely locked out.
+    if (req.body.displayName !== undefined) fieldsToUpdate.displayName = req.body.displayName;
+    if (req.body.bio !== undefined) fieldsToUpdate.bio = req.body.bio;
 
     if (req.file) {
       fieldsToUpdate.profileImageUrl = `uploads/${req.file.filename}`;
     }
 
-    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+    // 2. Fix: Find by the verified session userId
+    const user = await User.findByIdAndUpdate(userId, fieldsToUpdate, {
       new: true,
-      runValidators: true
+      runValidators: true 
     });
+    
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User profile not found.' });
+    }
+    
     res.status(200).json({ success: true, data: user });
   } catch (err) {
-    next(err);
+    console.error("Error updating profile:", err);
+    res.status(500).json({ success: false, error: err.message || "Server error while saving profile" });
   }
 };
 
@@ -74,13 +96,32 @@ exports.updateProfile = async (req, res, next) => {
 exports.getPublicProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
-    if (!user) return next(new ErrorResponse('User not found', 404));
+    if (!user) {
+      return res.status(404).render('error', { message: 'User not found' });
+    }
 
-    const reviews = await Review.find({ user: req.params.id }).populate('album', 'title image');
+    // Find the target user's reviews using your schema's actual matching population paths
+    const reviews = await Review.find({ user: req.params.id })
+      .populate('albumID')
+      .populate({
+        path: 'songID',
+        populate: { path: 'album' } 
+      });
+
+    // Find the target user's public playlists
     const playlists = await Playlist.find({ user: req.params.id, isPublic: true })
-      .populate('albums', 'title artist image');
+      .populate('albums')
+      .sort('-createdAt');
 
-    res.status(200).json({ success: true, data: { user, reviews, playlists } });
+    // Render the main 'publicProfile.ejs' template with ALL necessary structural values
+    res.render('publicProfile', { 
+      user: user, 
+      reviews: reviews, 
+      playlists: playlists,
+      reviewCount: reviews.length,     // Fixes "reviewCount is not defined"
+      playlistCount: playlists.length   // Fixes "playlistCount is not defined"
+    });
+
   } catch (err) {
     next(err);
   }
@@ -199,5 +240,42 @@ exports.removeAlbumFromPlaylist = async (req, res, next) => {
     await playlist.save();
     const updated = await Playlist.findById(playlist._id).populate('albums', 'title artist image');
     res.status(200).json({ success: true, data: updated });
+  } catch (err) { next(err); }
+};
+
+// @desc    Follow another User
+// @route   POST /api/users/:id/follow
+// @access  Private
+exports.followUser = async (req, res, next) => {
+  try {
+    const targetUserId = req.params.id;
+    const currentUserId = req.user.id; // From your protect middleware
+
+    if (targetUserId === currentUserId) {
+      return next(new ErrorResponse('You cannot follow your own account.', 400));
+    }
+
+    // 1. Add target user to current user's following list ($addToSet avoids duplicates)
+    await User.findByIdAndUpdate(currentUserId, {
+      $addToSet: { followingUsers: targetUserId }
+    });
+
+    // 2. Add current user to target user's followers list
+    await User.findByIdAndUpdate(targetUserId, {
+      $addToSet: { followers: currentUserId }
+    });
+
+    res.status(200).json({ success: true, message: 'Successfully followed user.' });
+  } catch (err) { next(err); }
+};
+
+// @desc    Unfollow another User
+// @route   POST /api/users/:id/unfollow
+// @access  Private
+exports.unfollowUser = async (req, res, next) => {
+  try {
+    await User.findByIdAndUpdate(req.user.id, { $pull: { followingUsers: req.params.id } });
+    await User.findByIdAndUpdate(req.params.id, { $pull: { followers: req.user.id } });
+    res.status(200).json({ success: true, message: 'Successfully unfollowed user.' });
   } catch (err) { next(err); }
 };

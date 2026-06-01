@@ -13,7 +13,9 @@ const {
   updatePlaylist,
   deletePlaylist,
   addAlbumToPlaylist,
-  removeAlbumFromPlaylist
+  removeAlbumFromPlaylist,
+  followUser,
+  unfollowUser
 } = require('../controllers/userController');
 
 const { protect, authorize } = require('../middleware/auth');
@@ -34,6 +36,9 @@ router
 router.route('/playlists')
   .get(protect, getPlaylists)
   .post(protect, createPlaylist);
+  // Place these near your other user profile routes
+router.route('/:id/follow').post(protect, followUser);
+router.route('/:id/unfollow').post(protect, unfollowUser);
 
 router.route('/playlists/:id')
   .put(protect, updatePlaylist)

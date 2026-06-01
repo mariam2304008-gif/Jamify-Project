@@ -23,7 +23,6 @@ function bindEditProfile() {
         originalName = document.getElementById('displayName').textContent;
         originalBio = document.getElementById('displayBio').textContent;
 
-        // Clean Fix: We iterate over displayName and displayBio (your custom bio field)
         ['displayName', 'displayBio'].forEach(id => {
             const el = document.getElementById(id);
             el.contentEditable = 'true';
@@ -48,19 +47,26 @@ function bindEditProfile() {
 
         if (!newName) { alert('Please enter a display name'); return; }
 
-        // Clean Fix: Pack only displayName and bio into the multipart form data
-        const formData = new FormData();
-        formData.append('displayName', newName);
-        formData.append('bio', newBio); 
+        // Fix: Pack fields into a standard JSON payload
+        const payload = {
+            displayName: newName,
+            bio: newBio
+        };
 
         try {
-            const res = await fetch('/api/users/profile', { method: 'PUT', body: formData });
+            const res = await fetch('/users/profile', { 
+                method: 'PUT', 
+                headers: {
+                    'Content-Type': 'application/json' // Crucial for Express to read req.body correctly
+                },
+                body: JSON.stringify(payload) 
+            });
             const data = await res.json();
 
             if (data.success) {
                 exitEditMode();
                 alert('Profile updated successfully!');
-                window.location.reload(); // Reload to display perfectly compiled server values
+                window.location.reload(); 
             } else {
                 alert(data.error || 'Failed to update profile');
             }
@@ -143,5 +149,20 @@ async function deletePlaylist(id) {
         if (data.success) window.location.reload();
     } catch (err) {
         console.error(err);
+    }
+}
+
+// ─── Social Collapsible Widget Engine ──────────────────────────────────────────
+function toggleSocialExpansion(listId, buttonElement) {
+    const listContainer = document.getElementById(listId);
+    
+    // Toggle structural state class
+    listContainer.classList.toggle('expanded-state');
+    
+    // Evaluate current state to re-label text contents
+    if (listContainer.classList.contains('expanded-state')) {
+        buttonElement.textContent = "Show Less";
+    } else {
+        buttonElement.textContent = "Show More";
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jamify Profile</title>
+    <title><%= user.displayName %> - Jamify Profile</title>
     <link rel="stylesheet" href="/CSS/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <script src="/JavaScript/navbar.js"></script>
@@ -15,24 +15,19 @@
 <div class="main-content">
 
     <div class="profile-card">
-        <img id="profileImg" src="<%= user.profileImageUrl %>" class="profile-img">
+        <img id="profileImg" src="<%= user.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="profile-img">
 
         <div class="profile-info">
-            <h2 id="displayName" class="editable-text" contenteditable="false"><%= user.displayName %></h2>
-            <p class="username" id="displayUsername"><%= user.username %></p>
-            <p class="bio" id="displayBio" class="editable-text" contenteditable="false"><%= user.bio %></p>
+            <h2 id="displayName"><%= user.displayName %></h2>
+            <p class="username" id="displayUsername">@<%= user.username %></p>
+            <p class="bio" id="displayBio"><%= user.bio || "No bio yet." %></p>
 
             <div class="stats">
                 <span id="statReviews"><%= reviewCount %> Reviews</span>
                 <span id="statPlaylists"><%= playlistCount %> Playlists</span>
             </div>
-
-            <div class="edit-buttons" id="editButtons" style="display: none;">
-                <button id="saveBtn">Save</button>
-                <button id="cancelBtn">Cancel</button>
+            
             </div>
-            <button id="editBtn">Edit Profile</button>
-        </div>
     </div>
 
     <div class="profile-layout">
@@ -85,7 +80,7 @@
                                 </p>
                                 
                                 <p><%= review.review %></p>
-                                <small><%= new Date(review.date).toLocaleDateString() %> • <%= review.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+                                <small><%= new Date(review.date).toLocaleDateString() %> • <%= new Date(review.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
                             </div>
                         </div>
                     <% }) %>
@@ -95,10 +90,23 @@
 
             <div id="playlists" class="tab-content">
                 <div class="playlist-header">
-                    <h3>My Playlists</h3>
-                    <button id="createPlaylistBtn">+ New Playlist</button>
+                    <h3>Public Playlists</h3>
                 </div>
-                <div id="user-playlists-container"></div>
+                <div id="user-playlists-container">
+                <% if (!playlists || playlists.length === 0) { %>
+                    <p class="empty-msg">No public playlists available.</p>
+                <% } else { %>
+                    <% playlists.forEach(playlist => { %>
+                        <div class="playlist-card">
+                            <div class="playlist-info">
+                                <h4><%= playlist.name %></h4>
+                                <p><%= playlist.description || 'No description provided.' %></p>
+                                <small><%= playlist.albums ? playlist.albums.length : 0 %> Albums Included</small>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+                </div>
             </div>
         </div>
 
@@ -116,7 +124,7 @@
                         <p class="empty-msg" style="font-size: 12px; text-align: left;">No followers yet.</p>
                     <% } else { %>
                         <% user.followers.forEach((f, index) => { %>
-                            <a href="/userProfile.html?id=<%= f._id %>" class="connection-row <%= index >= 3 ? 'collapsible-target' : '' %>">
+                            <a href="/api/users/<%= f._id %>/public" class="connection-row <%= index >= 3 ? 'collapsible-target' : '' %>">
                                 <img src="<%= f.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                 <div class="connection-meta">
                                     <p class="connection-name"><%= f.displayName || f.username %></p>
@@ -144,7 +152,7 @@
                         
                         <% if (user.followingUsers) { %>
                             <% user.followingUsers.forEach((u) => { %>
-                                <a href="/userProfile.html?id=<%= u._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
+                                <a href="/api/users/<%= u._id %>/public" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= u.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
                                         <p class="connection-name"><%= u.displayName || u.username %></p>
@@ -157,11 +165,11 @@
 
                         <% if (user.followingArtists) { %>
                             <% user.followingArtists.forEach((a) => { %>
-                                <a href="/artistProfile.html?id=<%= a._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
+                                <a href="/artists/<%= a._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= a.image || '/Images/default-avatar.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
                                         <p class="connection-name"><%= a.name %></p>
-                                        <p class="connection-handle" style="color: #e74c3c;">🎵 Artist</p>
+                                        <p class="connection-handle" style="color: #1db954;">🎵 Artist</p>
                                     </div>
                                 </a>
                                 <% dynamicIndex++; %>
@@ -175,23 +183,27 @@
 
     </div>
 
-    <div class="modal" id="playlistModal">
-        <div class="modal-content">
-            <h3 id="modalTitle">Create Playlist</h3>
-            <input type="text" id="playlistName" placeholder="Playlist name" maxlength="100">
-            <textarea id="playlistDesc" placeholder="Description (optional)" maxlength="300" rows="3"></textarea>
-            <label class="checkbox-label">
-                <input type="checkbox" id="playlistPublic" checked> Public
-            </label>
-            <div class="modal-buttons">
-                <button id="savePlaylistBtn">Save</button>
-                <button id="cancelPlaylistBtn" class="btn-secondary">Cancel</button>
-            </div>
-        </div>
-    </div>
-
 </div>
 
-<script src="/JavaScript/profile.js"></script>
+<script>
+// Tab Switching Handler for Public Profile
+function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btn) btn.classList.add('active');
+}
+
+// Collapsible Widget Engine for Following/Followers lists
+function toggleSocialExpansion(listId, buttonElement) {
+    const listContainer = document.getElementById(listId);
+    listContainer.classList.toggle('expanded-state');
+    if (listContainer.classList.contains('expanded-state')) {
+        buttonElement.textContent = "Show Less";
+    } else {
+        buttonElement.textContent = "Show More";
+    }
+}
+</script>
 </body>
 </html>

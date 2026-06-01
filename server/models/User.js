@@ -38,7 +38,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'No bio yet.',
         maxlength: 300
-    }
+    },
+    followingUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    followingArtists: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist'
+    }],
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 
 });
 

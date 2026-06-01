@@ -25,7 +25,7 @@ async function loadPublicProfile(userId) {
         document.title = `${user.displayName || user.username} - Jamify`;
         document.getElementById('displayName').textContent = user.displayName || user.username;
         document.getElementById('displayUsername').textContent = '@' + user.username;
-        document.getElementById('displayBio').textContent = user.phone ? `Phone: ${user.phone}` : '';
+        document.getElementById('displayBio').textContent = user.bio || 'No bio yet.';
 
         if (user.profileImage) {
             document.getElementById('profileImg').src = user.profileImage;

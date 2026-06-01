@@ -63,3 +63,36 @@ exports.createArtist = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Follow an Artist
+// @route   POST /api/artists/:id/follow
+// @access  Private
+exports.followArtist = async (req, res, next) => {
+  try {
+    const artistId = req.params.id;
+    const currentUserId = req.user.id;
+
+    // 1. Link artist to user's followingArtists array
+    await require('../models/User').findByIdAndUpdate(currentUserId, {
+      $addToSet: { followingArtists: artistId }
+    });
+
+    // 2. Link user to artist's followers array
+    await Artist.findByIdAndUpdate(artistId, {
+      $addToSet: { followers: currentUserId }
+    });
+
+    res.status(200).json({ success: true, message: 'Successfully following artist.' });
+  } catch (err) { next(err); }
+};
+
+// @desc    Unfollow an Artist
+// @route   POST /api/artists/:id/unfollow
+// @access  Private
+exports.unfollowArtist = async (req, res, next) => {
+  try {
+    await require('../models/User').findByIdAndUpdate(req.user.id, { $pull: { followingArtists: req.params.id } });
+    await Artist.findByIdAndUpdate(req.params.id, { $pull: { followers: req.user.id } });
+    res.status(200).json({ success: true, message: 'Successfully unfollowed artist.' });
+  } catch (err) { next(err); }
+};

@@ -31,7 +31,11 @@ const ArtistSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+}]
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true }

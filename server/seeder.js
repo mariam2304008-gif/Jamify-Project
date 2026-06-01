@@ -1,77 +1,68 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-
 const mongoose = require('mongoose');
-const Album = require('./models/album'); // Adjust paths if your folder structure is different
-const Song = require('./models/Song');
+const User = require('./models/User'); 
+config = require('dotenv').config();
 
-const dbURL = process.env.DATABASE_URL;
+// Adjust path to your User model if needed
 
-async function runDatabaseMigration() {
-    try {
-        console.log('Connecting to MongoDB...');
-        await mongoose.connect(dbURL);
-        console.log('Connected successfully.\n');
+// Replace this string with your local connection or Atlas connection string
+const DATABASE_URL = process.env.DATABASE_URL;
 
-        // ==========================================
-        // TASK 1: Handle Standalone Singles (No Album)
-        // ==========================================
-        console.log('--- Processing Standalone Singles ---');
-        const standaloneResult = await Song.updateMany(
-            { 
-                album: null,
-                $or: [
-                    { coverImageUrl: '' },
-                    { coverImageUrl: null }
-                ]
-            },
-            { $set: { coverImageUrl: '/Images/album-profile-images/epic.png' } }
-        );
-        console.log(`Updated ${standaloneResult.modifiedCount} standalone songs with the default static photo.\n`);
+async function runMigration() {
+  try {
+    console.log('Connecting to database...');
+    await mongoose.connect(DATABASE_URL);
+    console.log('Connected successfully.');
 
-        // ==========================================
-        // TASK 2: Handle Album Tracks / Single Tracks (Inherit Cover Art)
-        // ==========================================
-        console.log('--- Processing Album/Single Tracks ---');
-        // Find tracks belonging to an album that either have no image or are using the fallback asset placeholder
-        const tracksToUpdate = await Song.find({
-            album: { $ne: null },
-            $or: [
-                { coverImageUrl: '' },
-                { coverImageUrl: null },
-                { coverImageUrl: '/Images/album-profile-images/epic.png' }
-            ]
-        });
-
-        console.log(`Found ${tracksToUpdate.length} album tracks requiring artwork inheritance.`);
-
-        let dynamicUpdatesCount = 0;
-
-        for (const song of tracksToUpdate) {
-            // Find the parent album document linked via the object ID reference mapping field
-            const parentAlbum = await Album.findById(song.album);
-            
-            if (parentAlbum && parentAlbum.coverImageUrl) {
-                await Song.updateOne(
-                    { _id: song._id },
-                    { $set: { coverImageUrl: parentAlbum.coverImageUrl } }
-                );
-                console.log(` -> "${song.title}" inherited cover art from "${parentAlbum.title}"`);
-                dynamicUpdatesCount++;
-            } else {
-                console.log(` -> Skipped "${song.title}": Parent album artwork not found.`);
-            }
+    // Step 1: Initialize fields that are missing entirely
+    const initResult = await User.updateMany(
+      {
+        $or: [
+          { followers: { $exists: false } },
+          { followingUsers: { $exists: false } },
+          { followingArtists: { $exists: false } }
+        ]
+      },
+      {
+        $set: {
+          followers: [],
+          followingUsers: [],
+          followingArtists: []
         }
+      }
+    );
 
-        console.log(`\nSuccessfully matched and updated ${dynamicUpdatesCount} album tracks.`);
-        console.log('\n--- All Database Migrations Complete! ---');
+    // Step 2: Safety sweep—if fields exist but were saved as null, reset them to empty arrays
+    const fixNullResult = await User.updateMany(
+      {
+        $or: [
+          { followers: null },
+          { followingUsers: null },
+          { followingArtists: null }
+        ]
+      },
+      {
+        $set: {
+          followers: [],
+          followingUsers: [],
+          followingArtists: []
+        }
+      }
+    );
 
-    } catch (err) {
-        console.error('An error occurred during migration processing:', err);
-    } finally {
-        await mongoose.disconnect();
-        console.log('Disconnected safely from MongoDB.');
-    }
+    const totalModified = initResult.modifiedCount + fixNullResult.modifiedCount;
+
+    console.log(`\nMigration Complete!`);
+    console.log(`- Created missing arrays for ${initResult.modifiedCount} users.`);
+    console.log(`- Fixed null arrays for ${fixNullResult.modifiedCount} users.`);
+    console.log(`- Total users updated: ${totalModified}\n`);
+    
+  } catch (error) {
+    console.error('Migration failed:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('Disconnected from database.');
+    process.exit(0);
+  }
 }
 
-runDatabaseMigration();
+runMigration();
