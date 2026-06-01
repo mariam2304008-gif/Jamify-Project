@@ -60,6 +60,9 @@
                     <button id="anghami"
                         onclick="window.open('<%= song.songLinks.anghami %>', '_blank')"><img
                             src="/Images/album-profile-images/anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
+                            <button onclick="openAddToPlaylist('<%= song._id %>', 'song')" class="add-to-playlist-btn">
+    + Add to Playlist
+</button>
                 </div>
             </div>  
         </div>
@@ -145,5 +148,6 @@
     <% } %>
 </div>
     </div>
+    <script src="/JavaScript/addToPlaylist.js"></script>
 </body>
 </html>

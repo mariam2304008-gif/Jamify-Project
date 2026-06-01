@@ -12,6 +12,7 @@
 </head>
 
 <%- include('partials/navbar') %>
+
 <body>
     
     <div class="page-wrapper">
@@ -41,6 +42,9 @@
                     <button id="anghami"
                         onclick="window.open('<%= album.albumLinks.anghami %>', '_blank')"><img
                             src="/Images/album-profile-images/anghami.svg" style="width:1em; height: 1em; padding-right:2%;">Open in Anghami</button>
+                            <button onclick="openAddToPlaylist('<%= album._id %>', 'album')" class="add-to-playlist-btn">
+    + Add to Playlist
+</button>
                 </div>
             </div>  
         </div>
@@ -155,6 +159,6 @@
             <% } %>
         </div>
     </div>
-
+<script src="/JavaScript/addToPlaylist.js"></script>
 </body>
 </html>
