@@ -74,3 +74,26 @@
 
 </body>
 </html>
+
+<div class="pagination">
+
+    <% if (currentPage > 1) { %>
+        <a href="/?page=<%= currentPage - 1 %>">←</a>
+    <% } %>
+
+    <% for(let i = 1; i <= totalPages; i++) { %>
+
+        <a
+            href="/?page=<%= i %>"
+            class="<%= currentPage === i ? 'active-page' : '' %>"
+        >
+            <%= i %>
+        </a>
+
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="/?page=<%= currentPage + 1 %>">→</a>
+    <% } %>
+
+</div>

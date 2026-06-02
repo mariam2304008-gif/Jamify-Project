@@ -149,3 +149,37 @@ h1 {
   font-size: 14px;
   color: #666;
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 50px 0;
+}
+
+.pagination a {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: white;
+    color: #222;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 18px;
+    transition: 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.pagination a:hover {
+    background: #1db954;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.pagination .active-page {
+    background: #1db954;
+    color: white;
+}

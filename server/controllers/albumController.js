@@ -5,28 +5,46 @@ const Song = require('../models/Song');
 module.exports = {
     getAllAlbums: async (req, res) => {
     try {
-        // 1. Fetch ALL documents from your album collection
-        const allItems = await album.find({});
-        
-        // 2. Filter out ONLY true full-length multi-track albums
-        // (Ensuring we don't accidentally display standalone singles up top)
-        const trueAlbums = allItems.filter(item => item.trackType !== 'Standalone Single' && item.trackType !== 'Single track' && item.trackType !== 'Single');
-        
-        // 3. Query your SONG collection for BOTH 'Standalone Single' AND 'Single track'
-        // Using $or allows us to catch both schema variants in one trip to the database!
+
+        const page = parseInt(req.query.page) || 1;
+
+        const limit = 3;
+
+        const skip = (page - 1) * limit;
+
+        const filter = {
+            trackType: {
+                $nin: [
+                    'Standalone Single',
+                    'Single track',
+                    'Single'
+                ]
+            }
+        };
+
+        const totalAlbums = await album.countDocuments(filter);
+
+        const paginatedAlbums = await album.find(filter)
+            .skip(skip)
+            .limit(limit);
+
         const combinedSingles = await Song.find({
             $or: [
                 { album: null },
                 { trackType: 'Standalone Single' },
-                { trackType: 'Single track' } // Matched exactly to your lowercase schema enum!
+                { trackType: 'Single track' }
             ]
         });
 
-        // 4. Render your page with the clean, separated data packages
-        res.render('index', { 
-            albums: trueAlbums, 
-            standaloneSongs: combinedSingles 
+        const totalPages = Math.ceil(totalAlbums / limit);
+
+        res.render('index', {
+            albums: paginatedAlbums,
+            standaloneSongs: combinedSingles,
+            currentPage: page,
+            totalPages
         });
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
