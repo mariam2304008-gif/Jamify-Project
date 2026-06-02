@@ -54,7 +54,20 @@ router.get('/:id/public', getPublicProfile);
 router.post(
     '/profile/photo',
     isLoggedIn,
-    upload.single('profileImage'),
+    (req, res, next) => {
+
+        upload.single('profilePhoto')(req, res, function(err) {
+
+            if (err) {
+                console.log(err);
+                return res.redirect('/profile');
+            }
+
+            next();
+        });
+
+    },
+
     async (req, res) => {
 
         try {
@@ -75,7 +88,6 @@ router.post(
         } catch (err) {
 
             console.error(err);
-
             res.redirect('/profile');
         }
     }

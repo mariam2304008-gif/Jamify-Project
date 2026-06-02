@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
     if (req.session && req.session.user) {
         try {
             // 2. Fetch the fresh database document using the session ID
-            const dbUser = await User.findById(req.session.user.id);
+            const dbUser = await User.findById(req.session.user._id);
             
             if (dbUser) {
                 // 3. Attach it to res.locals so EVERY EJS file can see 'user' automatically!
