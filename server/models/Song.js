@@ -58,35 +58,27 @@ const songSchema = new mongoose.Schema({
 songSchema.index({ album: 1, trackNumber: 1 });
 
 // DYNAMIC PRE-SAVE HOOK: In models/Song.js
-songSchema.pre('save', async function(next) {
-    // Check if the song has a parent album link and is brand new
+songSchema.pre('save', async function() {
     if (this.album) {
         try {
             const Album = mongoose.model('Album');
             const parentAlbum = await Album.findById(this.album);
-            
+
             if (parentAlbum) {
-                // Inherit the release date
                 this.released = parentAlbum.releaseDate || parentAlbum.released;
-                
-                // Inherit cover art if none was explicitly given for a single
                 if (!this.coverImageUrl && parentAlbum.coverImageUrl) {
                     this.coverImageUrl = parentAlbum.coverImageUrl;
                 }
             }
         } catch (err) {
-            // FIX: Log the actual validation/query error and pass it cleanly to Mongoose
             console.error("Error in Song pre-save hook middleware:", err.message);
-            return next(err); 
+            throw err;
         }
     }
-    
-    // Fallback safety for standalone singles
+
     if (!this.coverImageUrl) {
         this.coverImageUrl = '/Images/album-profile-images/default-single.png';
     }
-    
-    next();
 });
 
 

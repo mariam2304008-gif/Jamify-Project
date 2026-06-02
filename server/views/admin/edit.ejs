@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit – Jamify</title>
+  <link rel="stylesheet" href="/CSS/navbar.css">
+  <link rel="stylesheet" href="/CSS/adminadd.css" />
+</head>
+<body>
+
+<%- include('../partials/navbar') %>
+
+<div class="container">
+  <h1>Edit <%= type === 'album' ? 'Album' : 'Song' %></h1>
+
+  <% if (error) { %>
+    <p style="color:#e74c3c; margin-bottom:12px;"><%= error %></p>
+  <% } %>
+
+  <div class="admin-form">
+    <form method="POST" action="/admin/edit/<%= type %>/<%= item._id %>" enctype="multipart/form-data">
+
+      <div class="form-row">
+        <label>Title *</label>
+        <input type="text" name="title" value="<%= item.title %>" required />
+      </div>
+
+      <div class="form-row">
+        <label>Artist *</label>
+        <input type="text" name="artist" value="<%= type === 'album' ? item.artist : (item.artists ? item.artists[0] : '') %>" required />
+      </div>
+
+      <% if (type === 'album') { %>
+      <div class="form-row two-col">
+        <div>
+          <label>Release Date</label>
+          <input type="text" name="releaseDate" value="<%= item.releaseDate || '' %>" placeholder="e.g. April 23, 2016" />
+        </div>
+        <div>
+          <label>Genre</label>
+          <input type="text" name="genre" value="<%= item.genre || '' %>" placeholder="Pop, Jazz, R&B..." />
+        </div>
+      </div>
+      <% } %>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Spotify Link</label>
+          <input type="text" name="spotifyLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.spotify || '') : (item.songLinks && item.songLinks.spotify || '') %>" placeholder="https://open.spotify.com/..." />
+        </div>
+        <div>
+          <label>Anghami Link</label>
+          <input type="text" name="anghamiLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.anghami || '') : (item.songLinks && item.songLinks.anghami || '') %>" placeholder="https://play.anghami.com/..." />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Current Cover</label>
+        <img src="<%= item.coverImageUrl %>" alt="cover" style="width:80px; height:80px; object-fit:cover; border-radius:8px; display:block; margin-bottom:8px;" />
+        <label>Upload New Cover (optional)</label>
+        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+        <small style="color:#888; display:block; margin-top:4px;">Leave empty to keep current cover</small>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:8px;">
+        <button type="submit" class="btn-add">Save Changes</button>
+        <a href="/admin/manage" style="padding:11px 20px; border:1.5px solid #ccc; border-radius:8px; text-decoration:none; color:#444; font-size:14px;">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

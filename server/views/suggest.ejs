@@ -26,7 +26,7 @@
   <div class="form-card" id="form-card">
     <h2>New Suggestion</h2>
 
-    <form method="POST" action="/suggestions">
+    <form method="POST" action="/suggestions" onsubmit="return validateForm()">
       <div class="form-group">
         <label>Type *</label>
         <div class="radio-group">
@@ -53,12 +53,14 @@
         <div class="form-group">
           <label>Genre</label>
           <input type="text" name="genre" id="genre" placeholder="Pop, Jazz, Rock..." />
+          <small id="genre-error" style="color:#e74c3c; display:none;">Genre cannot contain numbers</small>
         </div>
       </div>
 
       <div class="form-group">
         <label id="link-label">Album Link</label>
-        <input type="text" name="link" id="link-input" placeholder="e.g. Spotify, Anghami, SoundCloud" />
+        <input type="text" name="link" id="link-input" placeholder="e.g. https://open.spotify.com/..." />
+        <small id="link-error" style="color:#e74c3c; display:none;">Please enter a valid URL starting with http:// or https://</small>
       </div>
 
       <div class="form-actions">
@@ -78,7 +80,14 @@
     <div class="suggestion-card">
       <div class="suggestion-header">
         <span class="suggestion-title"><strong><%= s.title %></strong> — <%= s.artist %></span>
-        <span class="badge badge-<%= s.status %>"><%= s.status %></span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="badge badge-<%= s.status %>"><%= s.status %></span>
+          <% if (s.status === 'pending') { %>
+          <form method="POST" action="/suggestions/<%= s._id %>/delete" style="margin:0;">
+            <button type="submit" class="btn-delete">Delete</button>
+          </form>
+          <% } %>
+        </div>
       </div>
       <div class="suggestion-meta">
         <span><%= s.type.charAt(0).toUpperCase() + s.type.slice(1) %></span>
@@ -103,6 +112,29 @@ function changeType(type) {
     const linkLabel = document.getElementById('link-label');
     titleInput.placeholder = type === 'album' ? 'Album title' : 'Song title';
     linkLabel.textContent = type === 'album' ? 'Album Link' : 'Song Link';
+}
+function validateForm() {
+    let valid = true;
+
+    const link = document.getElementById('link-input').value.trim();
+    const linkError = document.getElementById('link-error');
+    if (link && !/^https?:\/\/.+/.test(link)) {
+        linkError.style.display = 'block';
+        valid = false;
+    } else {
+        linkError.style.display = 'none';
+    }
+
+    const genre = document.getElementById('genre').value.trim();
+    const genreError = document.getElementById('genre-error');
+    if (genre && /\d/.test(genre)) {
+        genreError.style.display = 'block';
+        valid = false;
+    } else {
+        genreError.style.display = 'none';
+    }
+
+    return valid;
 }
 </script>
 </body>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage – Jamify</title>
+  <link rel="stylesheet" href="/CSS/navbar.css">
+  <link rel="stylesheet" href="/CSS/adminmanage.css" />
+</head>
+<body>
+
+<%- include('../partials/navbar') %>
+
+<div class="container">
+  <h1>Manage Music</h1>
+
+  <h2>Albums</h2>
+  <% if (albums.length === 0) { %>
+    <p class="empty">No albums found.</p>
+  <% } %>
+  <% albums.forEach(a => { %>
+  <div class="music-card">
+    <img src="<%= a.coverImageUrl %>" alt="<%= a.title %>" class="music-thumb" />
+    <div class="music-info">
+      <strong><%= a.title %></strong>
+      <span><%= a.artist %></span>
+    </div>
+    <div class="music-actions">
+      <a href="/admin/edit/album/<%= a._id %>" class="btn-edit">Edit</a>
+      <form method="POST" action="/admin/delete/album/<%= a._id %>" style="display:inline;" onsubmit="return confirm('Delete this album?')">
+        <button type="submit" class="btn-delete">Delete</button>
+      </form>
+    </div>
+  </div>
+  <% }) %>
+
+  <h2 style="margin-top:40px;">Songs</h2>
+  <% if (songs.length === 0) { %>
+    <p class="empty">No songs found.</p>
+  <% } %>
+  <% songs.forEach(s => { %>
+  <div class="music-card">
+    <img src="<%= s.coverImageUrl || '/Images/album-profile-images/epic.png' %>" alt="<%= s.title %>" class="music-thumb" />
+    <div class="music-info">
+      <strong><%= s.title %></strong>
+      <span><%= Array.isArray(s.artists) ? s.artists.join(', ') : '' %></span>
+    </div>
+    <div class="music-actions">
+      <a href="/admin/edit/song/<%= s._id %>" class="btn-edit">Edit</a>
+      <form method="POST" action="/admin/delete/song/<%= s._id %>" style="display:inline;" onsubmit="return confirm('Delete this song?')">
+        <button type="submit" class="btn-delete">Delete</button>
+      </form>
+    </div>
+  </div>
+  <% }) %>
+</div>
+
+</body>
+</html>

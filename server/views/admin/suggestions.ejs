@@ -3,6 +3,7 @@
 <head>
   
   <title>Admin – Suggestions – Jamify</title>
+  <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminsuggestion.css" />
 </head>
 <body>
@@ -10,7 +11,7 @@
 <%- include('../partials/navbar') %>
 
 <div class="container">
-  <h1>🛡️ Suggestions</h1>
+  <h1>Suggestions</h1>
 
   <div class="filters">
     <a href="/admin/suggestions?status=all" class="filter-btn <%= activeFilter === 'all' ? 'active' : '' %>">All</a>
@@ -37,12 +38,11 @@
         <% if (s.year) { %><span> · <%= s.year %></span><% } %>
         <% if (s.genre) { %><span> · <%= s.genre %></span><% } %>
         <% if (s.submittedBy) { %><span> · by <%= s.submittedBy.displayName %></span><% } %>
+        <% if (s.link) { %><span> · <a href="<%= s.link %>" target="_blank" style="color:#e74c3c;">Open Link</a></span><% } %>
       </div>
       <% if (s.status === 'pending') { %>
       <div class="suggestion-actions">
-        <form method="POST" action="/admin/suggestions/<%= s._id %>/approve" style="display:inline;">
-          <button type="submit" class="btn-accept">✓ Accept</button>
-        </form>
+        <a href="/admin/add?suggestionId=<%= s._id %>" class="btn-accept">✓ Accept</a>
         <form method="POST" action="/admin/suggestions/<%= s._id %>/reject" style="display:inline;">
           <button type="submit" class="btn-reject">✕ Reject</button>
         </form>

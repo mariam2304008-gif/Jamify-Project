@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin Add – Jamify</title>
+  <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminadd.css" />
 </head>
 <body>
@@ -10,7 +11,7 @@
 <%- include('../partials/navbar') %>
 
 <div class="container">
-  <h1>➕ Add Song / Album</h1>
+  <h1>Add Song / Album</h1>
 
   <% if (error) { %>
     <p style="color:#e74c3c; margin-bottom:12px;"><%= error %></p>
@@ -22,39 +23,43 @@
   <div class="admin-form">
     <form method="POST" action="/admin/add" enctype="multipart/form-data">
 
+      <% if (prefill) { %>
+        <input type="hidden" name="suggestionId" value="<%= prefill._id %>" />
+      <% } %>
+
       <div class="form-row">
         <label>Type *</label>
         <div class="radio-group">
-          <label><input type="radio" name="type" value="album" checked onclick="toggleImageField(true)" /> Album</label>
-          <label><input type="radio" name="type" value="song"  onclick="toggleImageField(false)" /> Song</label>
+          <label><input type="radio" name="type" value="album" <%= (!prefill || prefill.type === 'album') ? 'checked' : '' %> onclick="updateForm('album')" /> Album</label>
+          <label><input type="radio" name="type" value="song"  <%= (prefill && prefill.type === 'song') ? 'checked' : '' %> onclick="updateForm('song')" /> Song</label>
         </div>
       </div>
 
       <div class="form-row">
         <label>Title *</label>
-        <input type="text" name="title" placeholder="Title" required />
+        <input type="text" name="title" placeholder="Title" value="<%= prefill ? prefill.title : '' %>" required />
       </div>
 
       <div class="form-row">
         <label>Artist *</label>
-        <input type="text" name="artist" placeholder="Artist name" required />
+        <input type="text" name="artist" placeholder="Artist name" value="<%= prefill ? prefill.artist : '' %>" required />
       </div>
 
       <div class="form-row two-col">
         <div>
           <label>Release Date</label>
-          <input type="text" name="releaseDate" placeholder="e.g. April 23, 2016" />
+          <input type="text" name="releaseDate" placeholder="e.g. April 23, 2016" value="<%= prefill && prefill.year ? prefill.year : '' %>" />
         </div>
         <div>
           <label>Genre</label>
-          <input type="text" name="genre" placeholder="Pop, Jazz, R&B..." />
+          <input type="text" name="genre" placeholder="Pop, Jazz, R&B..." value="<%= prefill ? prefill.genre : '' %>" />
         </div>
       </div>
 
       <div class="form-row two-col">
         <div>
           <label>Spotify Link</label>
-          <input type="text" name="spotifyLink" placeholder="https://open.spotify.com/..." />
+          <input type="text" name="spotifyLink" placeholder="https://open.spotify.com/..." value="<%= prefill ? prefill.link : '' %>" />
         </div>
         <div>
           <label>Anghami Link</label>
@@ -63,19 +68,27 @@
       </div>
 
       <div class="form-row" id="imageField">
-        <label>Album Cover Image *</label>
-        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+        <label id="imageLabel"><%= (prefill && prefill.type === 'song') ? 'Song Cover Image (optional)' : 'Album Cover Image *' %></label>
+        <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp" <%= (!prefill || prefill.type === 'album') ? 'required' : '' %> />
         <small style="color:#888; display:block; margin-top:4px;">JPG, PNG, GIF or WebP — max 5 MB</small>
       </div>
 
-      <button type="submit" class="btn-add">➕ Add</button>
+      <button type="submit" class="btn-add">Add</button>
     </form>
   </div>
 </div>
 
 <script>
-function toggleImageField(show) {
-  document.getElementById('imageField').style.display = show ? 'block' : 'none';
+function updateForm(type) {
+  const imageLabel = document.getElementById('imageLabel');
+  const imageInput = document.getElementById('imageInput');
+  if (type === 'song') {
+    imageLabel.textContent = 'Song Cover Image (optional)';
+    imageInput.removeAttribute('required');
+  } else {
+    imageLabel.textContent = 'Album Cover Image *';
+    imageInput.setAttribute('required', 'required');
+  }
 }
 </script>
 

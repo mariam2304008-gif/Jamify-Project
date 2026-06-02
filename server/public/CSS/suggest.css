@@ -14,13 +14,13 @@ body {
 
 
 .container {
-  max-width: 820px;
+  max-width: 900px;
   margin: 50px auto;
   padding: 0 24px;
 }
 
 h1 {
-  font-size: 32px;
+  font-size: 36px;
   margin-bottom: 8px;
 }
 
@@ -161,8 +161,63 @@ textarea {
 }
 
 .suggestions-title {
-  font-size: 24px;
+  font-size: 26px;
   margin-bottom: 20px;
+}
+
+/* Suggestion cards */
+.suggestion-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.suggestion-title {
+  font-size: 16px;
+}
+
+.suggestion-meta {
+  font-size: 13px;
+  color: #888;
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.badge-pending  { background: #fff3cd; color: #856404; }
+.badge-accepted { background: #d4edda; color: #155724; }
+.badge-rejected { background: #f8d7da; color: #721c24; }
+
+.btn-delete {
+  padding: 4px 12px;
+  background: transparent;
+  color: #e74c3c;
+  border: 1.5px solid #e74c3c;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-delete:hover {
+  background: #e74c3c;
+  color: white;
 }
 
 .empty-msg {

@@ -46,7 +46,7 @@
     <% if (typeof standaloneSongs !== 'undefined' && standaloneSongs.length > 0) { %>
         <% standaloneSongs.forEach(song => { %>
                   
-            <% const cardUrl = (song.trackType === 'Standalone Single' || song.trackType === 'Single') ? `/albums/${song._id}` : `/songs/${song._id}`; %>
+            <% const cardUrl = `/songs/${song._id}`; %>
 
             <a href="<%= cardUrl %>" class="album-card">
                 <div class="album-image-wrapper">

@@ -16,7 +16,9 @@ exports.index = async (req, res, next) => {
 exports.create = async (req, res, next) => {
   try {
     const { type, title, artist, year, genre, link, trackType, albumName, trackNumber } = req.body;
-    if (!title || !artist) return res.redirect('/suggestions');
+    if (!title || !artist) return res.redirect('/suggest');
+    if (link && !/^https?:\/\/.+/.test(link.trim())) return res.redirect('/suggest');
+    if (genre && /\d/.test(genre)) return res.redirect('/suggest');
 
     await Suggestion.create({
       title,
@@ -114,6 +116,20 @@ exports.reject = async (req, res, next) => {
   try {
     await Suggestion.findByIdAndUpdate(req.params.id, { status: 'rejected' });
     res.redirect('/admin/suggestions');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.delete = async (req, res, next) => {
+  try {
+    const suggestion = await Suggestion.findById(req.params.id);
+    if (!suggestion) return res.redirect('/suggest');
+    if (suggestion.submittedBy.toString() !== req.session.user.id) return res.redirect('/suggest');
+    if (suggestion.status !== 'pending') return res.redirect('/suggest');
+
+    await Suggestion.findByIdAndDelete(req.params.id);
+    res.redirect('/suggest');
   } catch (err) {
     next(err);
   }

@@ -7,13 +7,13 @@
     <li><a href="/profile">Profile</a></li>
     <li><a href="/search">Search</a></li>
 
-    <li id="admin-link" style="display:none">
-      <a href="/reviewadmin">Admin review</a>
-    </li>
+    <% if (user && user.isAdmin) { %>
+  <li><a href="/reviewadmin">Admin Review</a></li>
+  <li><a href="/admin/suggestions">Admin Suggestions</a></li>
+  <li><a href="/admin/add">Admin Add</a></li>
+  <li><a href="/admin/manage">Admin Manage</a></li>
+<% } %>
 
-    <li id="admin-link" style="display:none">
-      <a href="/admin/suggestions">Admin Suggestion</a>
-    </li>
 
     <li><a href="/logout">Logout</a></li>
   </ul>

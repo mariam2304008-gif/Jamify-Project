@@ -5,5 +5,6 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 
 router.get('/', isLoggedIn, ctrl.index);
 router.post('/', isLoggedIn, ctrl.create);
+router.post('/:id/delete', isLoggedIn, ctrl.delete);
 
 module.exports = router;

@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f7f3f3;
@@ -5,72 +9,120 @@ body {
   color: #2c2c2c;
 }
 
+.container {
+  max-width: 860px;
+  margin: 48px auto;
+  padding: 0 28px;
+}
 
-.container { max-width: 800px; margin: 40px auto; padding: 0 24px; }
-h1 { font-size: 26px; margin-bottom: 24px; }
+h1 {
+  font-size: 30px;
+  margin-bottom: 28px;
+}
 
-.filters { display: flex; gap: 10px; margin-bottom: 24px; }
-.filters button {
-  padding: 7px 18px;
+/* Filter buttons */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 22px;
   border: 1.5px solid #ddd;
   background: white;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #2c2c2c;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.filters button.active,
-.filters button:hover {
+
+.filter-btn.active,
+.filter-btn:hover {
   background: #e74c3c;
   color: white;
   border-color: #e74c3c;
 }
 
-.card {
+/* Suggestion cards */
+.suggestion-card {
   background: white;
-  border-radius: 10px;
-  padding: 18px 22px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.suggestion-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 16px;
 }
-.card-info .title { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
-.card-info .meta { font-size: 13px; color: #888; }
-.card-actions { display: flex; gap: 8px; }
 
+.suggestion-header strong {
+  font-size: 17px;
+}
+
+.suggestion-meta {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 14px;
+}
+
+.suggestion-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.badge-pending  { background: #fff3cd; color: #856404; }
+.badge-accepted { background: #d4edda; color: #155724; }
+.badge-rejected { background: #f8d7da; color: #721c24; }
+.badge-admin    { background: #e2d9f3; color: #4a235a; }
+
+/* Buttons */
 .btn-accept {
-  padding: 7px 16px;
+  padding: 8px 20px;
   background: #27ae60;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s;
 }
-.btn-accept:hover { background: #219a52; }
+
+.btn-accept:hover {
+  background: #219a52;
+}
+
 .btn-reject {
-  padding: 7px 16px;
-  background: #f5f5f5;
-  color: #888;
-  border: 1.5px solid #ddd;
+  padding: 8px 20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
+  transition: background 0.15s;
 }
-.btn-reject:hover { background: #eee; }
 
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: bold;
-  margin-left: 8px;
+.btn-reject:hover {
+  background: #c0392b;
 }
-.badge-pending  { background: #fff3cd; color: #856404; }
-.badge-accepted { background: #d4edda; color: #155724; }
-.badge-rejected { background: #f8d7da; color: #721c24; }
-
-.empty { text-align: center; padding: 50px; color: #aaa; font-size: 14px; }

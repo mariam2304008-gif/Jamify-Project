@@ -183,8 +183,8 @@ form{
 }
 
 #album-cover {
-    max-width: 36%;   
-    height: auto;      
+    max-width: 36%;
+    height: auto;
     border-radius: 5px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }

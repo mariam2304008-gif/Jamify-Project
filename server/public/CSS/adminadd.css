@@ -9,39 +9,43 @@ body {
 
 /* Layout */
 .container { max-width: 700px; margin: 40px auto; padding: 0 24px; }
-h1 { font-size: 26px; margin-bottom: 24px; }
+h1 { font-size: 32px; margin-bottom: 24px; }
 h2 { font-size: 20px; margin-bottom: 16px; }
 
 /* Form card */
 .admin-form {
   background: white;
+  border: 1.5px solid #c0392b;
   border-radius: 10px;
   padding: 28px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.form-row { margin-bottom: 16px; }
+.form-row { margin-bottom: 20px; }
 .form-row label {
   display: block;
   font-size: 13px;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   color: #444;
 }
 .form-row input[type="text"],
 .form-row input[type="number"] {
   width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid #ddd;
-  border-radius: 8px;
+  padding: 9px 12px;
+  background-color: #ccc9c6;
+  border: none;
+  border-bottom: 1.5px solid #aaa;
   font-size: 14px;
+  color: #444;
   box-sizing: border-box;
   outline: none;
 }
-.form-row input:focus { border-color: #e74c3c; }
+.form-row input:focus { border-bottom-color: #c0392b; }
 
 .radio-group { display: flex; gap: 20px; }
 .radio-group label { font-weight: normal; display: flex; align-items: center; gap: 6px; }
+.radio-group input[type="radio"] { accent-color: #c0392b; width: 16px; height: 16px; }
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
