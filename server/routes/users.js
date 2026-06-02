@@ -1,4 +1,5 @@
 const express = require('express');
+const upload = require('../middleware/upload');
 const router = express.Router();
 const isLoggedIn = require('../middleware/isLoggedIn');
 const User = require('../models/User');
@@ -50,5 +51,34 @@ router.route('/:id/unfollow').post(isLoggedIn, unfollowUser);
 // Changed to '/:id/public' to completely prevent router overlap issues!
 router.get('/:id/public', getPublicProfile);
 
+router.post(
+    '/profile/photo',
+    isLoggedIn,
+    upload.single('profileImage'),
+    async (req, res) => {
+
+        try {
+
+            const user = await User.findById(req.session.user._id);
+
+            if (req.file) {
+
+                user.profileImageUrl = '/uploads/' + req.file.filename;
+
+                await user.save();
+
+                req.session.user = user;
+            }
+
+            res.redirect('/profile');
+
+        } catch (err) {
+
+            console.error(err);
+
+            res.redirect('/profile');
+        }
+    }
+);
 
 module.exports = router;

@@ -16,7 +16,50 @@
 <div class="main-content">
 
     <div class="profile-card">
-        <img id="profileImg" src="<%= user.profileImageUrl %>" class="profile-img">
+        
+
+       
+<div class="profile-image-section">
+
+    
+    <img
+    src="<%= user.profileImageUrl || '/Images/default-avatar.png' %>"
+    alt="Profile"
+    class="profile-image"
+    id="profileImage"
+    onclick="openProfileModal()"
+>
+
+
+    <form
+        action="/api/users/profile/photo"
+        method="POST"
+        enctype="multipart/form-data"
+        class="photo-form"
+    >
+
+        <input
+            type="file"
+            name="profileImage"
+            id="profileImageInput"
+            accept="image/*"
+            hidden
+            onchange="this.form.submit()"
+        >
+
+        <button
+            type="button"
+            class="edit-photo-btn"
+            onclick="document.getElementById('profileImageInput').click()"
+        >
+            Edit Photo
+        </button>
+
+    </form>
+
+</div>
+
+
 
         <div class="profile-info">
             <h2 id="displayName" class="editable-text" contenteditable="false"><%= user.displayName %></h2>
@@ -194,5 +237,29 @@
 </div>
 
 <script src="/JavaScript/profile.js"></script>
+
+<script>
+
+
+
+</script>
+<div id="profileModal" class="profile-modal">
+    <span class="close-modal" onclick="closeProfileModal()">&times;</span>
+
+    <img
+        class="modal-image"
+        src="<%= user.profileImageUrl || '/Images/default-avatar.png' %>"
+    >
+</div>
+
+<script>
+function openProfileModal() {
+    document.getElementById('profileModal').style.display = 'flex';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+}
+</script>
 </body>
 </html>
