@@ -173,10 +173,11 @@ body {
 }
 
 .profile-image {
-    width: 120px;
-    height: 120px;
+    width: 120px !important;
+    height: 120px !important;
     border-radius: 50%;
     object-fit: cover;
+    cursor: pointer;
 }
 
 .edit-photo-btn {
