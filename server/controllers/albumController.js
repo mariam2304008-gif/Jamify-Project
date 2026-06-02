@@ -194,7 +194,27 @@ module.exports = {
         } catch (err) {
             console.error(err);
             return res.status(500).json({ success: false, message: "Error mutating review metric" });
-        }
-    }
+         }
+},
+searchAlbums: async (req, res) => {
+    try {
+        const q = req.query.q;
 
+        const albums = await album.find({
+            title: { $regex: q, $options: 'i' }
+        }).limit(10);
+
+        res.json({
+            success: true,
+            data: albums
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+}
 };

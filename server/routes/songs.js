@@ -1,4 +1,5 @@
 const express = require('express');
+const Song = require('../models/Song');
 const router = express.Router();
 const songController = require('../controllers/songController');
 
@@ -9,7 +10,48 @@ const protectSession = (req, res, next) => {
     }
     return res.status(401).json({ success: false, message: 'Please log in to like this track!' });
 };
+router.get('/search', async (req, res) => {
+    try {
+        const q = req.query.q;
 
+        const songs = await Song.find({
+            title: { $regex: q, $options: 'i' }
+        }).limit(10);
+
+        res.json({
+            success: true,
+            data: songs
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+});
+router.get('/search', async (req, res) => {
+    try {
+        const q = req.query.q;
+
+        const songs = await Song.find({
+            title: { $regex: q, $options: 'i' }
+        }).limit(10);
+
+        res.json({
+            success: true,
+            data: songs
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            success: false
+        });
+    }
+});
 // Define profile path endpoint matching your view link anchor tags
 router.get('/:id', songController.getSongById);
 

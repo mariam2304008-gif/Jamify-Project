@@ -8,8 +8,9 @@ updatePlaylist,
 deletePlaylist,
 addAlbumToPlaylist,
 removeAlbumFromPlaylist,
-  followUser,
-  unfollowUser
+followUser,
+unfollowUser,
+getPublicProfile
 } = require('../controllers/userController');
 
 const router = express.Router();
@@ -39,6 +40,8 @@ router.get('/search', async (req, res) => {
         });
     }
 });
+router.get('/:id', getPublicProfile);
+
 router.route('/:id/follow').post(isLoggedIn, followUser);
 router.route('/:id/unfollow').post(isLoggedIn, unfollowUser);
 

@@ -69,6 +69,8 @@ async function performSearch(query) {
     try {
         let users = [];
         let artists = [];
+        let albums = [];
+        let songs = [];
 
         if (currentFilter === 'all' || currentFilter === 'users') {
             const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
@@ -87,8 +89,24 @@ async function performSearch(query) {
                 artists = data.data;
             }
         }
+        if (currentFilter === 'all' || currentFilter === 'albums') {
+    const res = await fetch(`/albums/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
 
-        renderResults(users, artists);
+    if (data.success) {
+        albums = data.data;
+    }
+}
+        if (currentFilter === 'all' || currentFilter === 'songs') {
+    const res = await fetch(`/songs/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    if (data.success) {
+        songs = data.data;
+    }
+}
+
+        renderResults(users, artists, albums, songs);
 
     } catch (err) {
         console.error(err);
@@ -102,12 +120,12 @@ async function performSearch(query) {
     }
 }
 
-function renderResults(users, artists) {
+function renderResults(users, artists, albums, songs) {
     const container = document.getElementById('search-results');
 
     container.innerHTML = '';
 
-    if (users.length === 0 && artists.length === 0) {
+    if (users.length === 0 && artists.length === 0 && albums.length === 0 && songs.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-icon">😕</div>
@@ -121,8 +139,7 @@ function renderResults(users, artists) {
     if (users.length > 0) {
         const section = document.createElement('div');
 
-        section.className = 'results-section';
-
+section.className = 'results-section users';
         section.innerHTML = `
             <h3 class="results-title">👤 Users</h3>
         `;
@@ -133,7 +150,7 @@ function renderResults(users, artists) {
             card.className = 'result-card';
 
             card.innerHTML = `
-                <a href="/users/${user._id}">
+                <a href="/api/users/${user._id}">
                     <img 
                         src="${user.profileImageUrl || 'Images/album-profile-images/epic.png'}" 
                         alt="${escapeHtml(user.username)}"
@@ -155,7 +172,7 @@ function renderResults(users, artists) {
     if (artists.length > 0) {
         const section = document.createElement('div');
 
-        section.className = 'results-section';
+        section.className = 'results-section artists';
 
         section.innerHTML = `
             <h3 class="results-title">🎤 Artists</h3>
@@ -185,8 +202,75 @@ function renderResults(users, artists) {
 
         container.appendChild(section);
     }
-}
 
+    if (albums.length > 0) {
+    const section = document.createElement('div');
+
+    section.className = 'results-section albums';
+
+    section.innerHTML = `
+        <h3 class="results-title">💿 Albums</h3>
+    `;
+
+    albums.forEach(album => {
+        const card = document.createElement('div');
+
+        card.className = 'result-card';
+
+        card.innerHTML = `
+            <a href="/albums/${album._id}">
+                <img 
+                    src="${album.coverImageUrl || 'Images/album-profile-images/epic.png'}"
+                    alt="${escapeHtml(album.title)}"
+                >
+
+                <div class="result-info">
+                    <h4>${escapeHtml(album.title)}</h4>
+                    <p>${escapeHtml(album.artist || '')}</p>
+                </div>
+            </a>
+        `;
+
+        section.appendChild(card);
+    });
+
+    container.appendChild(section);
+    }
+
+if (songs.length > 0) {
+    const section = document.createElement('div');
+
+    section.className = 'results-section songs';
+
+    section.innerHTML = `
+        <h3 class="results-title">🎵 Songs</h3>
+    `;
+
+    songs.forEach(song => {
+        const card = document.createElement('div');
+
+        card.className = 'result-card';
+
+        card.innerHTML = `
+            <a href="/songs/${song._id}">
+                <img 
+                    src="${song.coverImageUrl || 'Images/album-profile-images/epic.png'}"
+                    alt="${escapeHtml(song.title)}"
+                >
+
+                <div class="result-info">
+                    <h4>${escapeHtml(song.title)}</h4>
+                    <p>${escapeHtml(song.artist || '')}</p>
+                </div>
+            </a>
+        `;
+
+        section.appendChild(card);
+    });
+
+    container.appendChild(section);
+}
+}
 function escapeHtml(str) {
     const div = document.createElement('div');
 
