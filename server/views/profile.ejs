@@ -117,7 +117,7 @@
                         <p class="empty-msg" style="font-size: 12px; text-align: left;">No followers yet.</p>
                     <% } else { %>
                         <% user.followers.forEach((f, index) => { %>
-                            <a href="/userProfile.html?id=<%= f._id %>" class="connection-row <%= index >= 3 ? 'collapsible-target' : '' %>">
+                            <a href="/api/users/<%= f._id %>/public" class="connection-row <%= index >= 3 ? 'collapsible-target' : '' %>">
                                 <img src="<%= f.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                 <div class="connection-meta">
                                     <p class="connection-name"><%= f.displayName || f.username %></p>
@@ -145,7 +145,7 @@
                         
                         <% if (user.followingUsers) { %>
                             <% user.followingUsers.forEach((u) => { %>
-                                <a href="/userProfile.html?id=<%= u._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
+                                <a href="/api/users/<%= u._id %>/public" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= u.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
                                         <p class="connection-name"><%= u.displayName || u.username %></p>

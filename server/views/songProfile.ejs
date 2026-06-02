@@ -118,7 +118,7 @@
         <% reviews.forEach(review => { %>
             <div class="reviewBox">
                 <div class="reviewerInfo">
-                    <a href="/users/<%= review.user._id %>/public" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+                    <a href="/api/users/<%= review.user._id %>/public" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
                         <img src="<%= review.user.profileImageUrl || '/Images/album-profile-images/epic.png' %>" alt="Profile" id="profile-icon" style="cursor: pointer;">
                         
                         <div class="user-meta-group">

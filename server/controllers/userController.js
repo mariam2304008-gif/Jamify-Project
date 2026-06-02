@@ -97,33 +97,45 @@ exports.updateProfile = async (req, res, next) => {
 // @access  Public
 exports.getPublicProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const targetUserId = req.params.id;
+
+    // 1. 🌟 REAL BROWSER REDIRECT: If it's your own profile, bounce out to the normal /profile path!
+    if (req.session && req.session.user) {
+      const loggedInId = req.session.user._id || req.session.user.id;
+      if (loggedInId && loggedInId.toString() === targetUserId) {
+        return res.redirect('/profile'); 
+      }
+    }
+
+    // 2. Fetch the target profile owner data
+    const user = await User.findById(targetUserId).select('-password');
     if (!user) {
       return res.status(404).render('error', { message: 'User not found' });
     }
 
-    // Find the target user's reviews using your schema's actual matching population paths
-    const reviews = await Review.find({ user: req.params.id })
+    // Populate user reviews smoothly
+    const reviews = await Review.find({ user: targetUserId })
       .populate('albumID')
       .populate({
         path: 'songID',
-        populate: { path: 'album' } 
+        populate: { path: 'album' },
+        options: { strictPopulate: false }
       });
 
-    // Find the target user's public playlists
-    const playlists = await Playlist.find({ user: req.params.id, isPublic: true })
+    // Fetch public playlists
+    const playlists = await Playlist.find({ user: targetUserId, isPublic: true })
       .populate('albums')
       .sort('-createdAt');
 
-    // Render the main 'publicProfile.ejs' template with ALL necessary structural values
+    // 3. 🌟 RENDER THE CORRECT TEMPLATE: Send it directly to publicProfile.ejs
     res.render('publicProfile', { 
-  user: user,
-  currentUser: req.session.user,
-  reviews: reviews,
-  playlists: playlists,
-  reviewCount: reviews.length,
-  playlistCount: playlists.length
-});
+      user: user, 
+      currentUser: req.session.user || null, // Essential for your follow button condition!
+      reviews: reviews, 
+      playlists: playlists,
+      reviewCount: reviews.length,     
+      playlistCount: playlists.length   
+    });
 
   } catch (err) {
     next(err);

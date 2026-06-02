@@ -136,38 +136,37 @@ function renderResults(users, artists, albums, songs) {
         return;
     }
 
-    if (users.length > 0) {
-        const section = document.createElement('div');
+    // 🌟 UPDATE THIS SECTION IN YOUR search.js:
+if (users.length > 0) {
+    const section = document.createElement('div');
+    section.className = 'results-section users';
+    section.innerHTML = `
+        <h3 class="results-title">👤 Users</h3>
+    `;
 
-section.className = 'results-section users';
-        section.innerHTML = `
-            <h3 class="results-title">👤 Users</h3>
+    users.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+
+        card.innerHTML = `
+            <a href="/api/users/${user._id}/public">
+                <img 
+                    src="${user.profileImageUrl || '/Images/album-profile-images/epic.png'}" 
+                    alt="${escapeHtml(user.username)}"
+                >
+
+                <div class="result-info">
+                    <h4>${escapeHtml(user.displayName || user.username)}</h4>
+                    <p>@${escapeHtml(user.username)}</p>
+                </div>
+            </a>
         `;
 
-        users.forEach(user => {
-            const card = document.createElement('div');
+        section.appendChild(card);
+    });
 
-            card.className = 'result-card';
-
-            card.innerHTML = `
-                <a href="/api/users/${user._id}">
-                    <img 
-                        src="${user.profileImageUrl || 'Images/album-profile-images/epic.png'}" 
-                        alt="${escapeHtml(user.username)}"
-                    >
-
-                    <div class="result-info">
-                        <h4>${escapeHtml(user.displayName || user.username)}</h4>
-                        <p>@${escapeHtml(user.username)}</p>
-                    </div>
-                </a>
-            `;
-
-            section.appendChild(card);
-        });
-
-        container.appendChild(section);
-    }
+    container.appendChild(section);
+}
 
     if (artists.length > 0) {
         const section = document.createElement('div');
@@ -186,7 +185,7 @@ section.className = 'results-section users';
             card.innerHTML = `
                 <a href="/artists/${artist._id}">
                     <img 
-                        src="${artist.image || 'Images/album-profile-images/epic.png'}" 
+                        src="${artist.image || '/Images/album-profile-images/epic.png'}" 
                         alt="${escapeHtml(artist.name)}"
                     >
 
@@ -220,7 +219,7 @@ section.className = 'results-section users';
         card.innerHTML = `
             <a href="/albums/${album._id}">
                 <img 
-                    src="${album.coverImageUrl || 'Images/album-profile-images/epic.png'}"
+                    src="${album.coverImageUrl || '/Images/album-profile-images/epic.png'}"
                     alt="${escapeHtml(album.title)}"
                 >
 
@@ -254,7 +253,7 @@ if (songs.length > 0) {
         card.innerHTML = `
             <a href="/songs/${song._id}">
                 <img 
-                    src="${song.coverImageUrl || 'Images/album-profile-images/epic.png'}"
+                    src="${song.coverImageUrl || '/Images/album-profile-images/epic.png'}"
                     alt="${escapeHtml(song.title)}"
                 >
 

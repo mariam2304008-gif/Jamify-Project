@@ -56,6 +56,7 @@ const suggestionRoutes = require('./routes/suggestions');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 
+
 // 2. Route Routing Middlewares
 app.use('/albums', albumRoutes);
 app.use('/songs', songRoutes);

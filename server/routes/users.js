@@ -1,56 +1,54 @@
-const isLoggedIn = require('../middleware/isLoggedIn');
 const express = require('express');
+const router = express.Router();
+const isLoggedIn = require('../middleware/isLoggedIn');
 const User = require('../models/User');
 const {
-getPlaylists,
-createPlaylist,
-updatePlaylist,
-deletePlaylist,
-addAlbumToPlaylist,
-removeAlbumFromPlaylist,
-followUser,
-unfollowUser,
-getPublicProfile
+  getPlaylists,
+  createPlaylist,
+  updatePlaylist,
+  deletePlaylist,
+  addAlbumToPlaylist,
+  removeAlbumFromPlaylist,
+  followUser,
+  unfollowUser,
+  getPublicProfile
 } = require('../controllers/userController');
 
-const router = express.Router();
-
+// 1. Base Static / Operational Routes
 router.route('/playlists')
-.get(isLoggedIn, getPlaylists)
-.post(isLoggedIn, createPlaylist);
-  // Place these near your other user profile routes
+  .get(isLoggedIn, getPlaylists)
+  .post(isLoggedIn, createPlaylist);
+
 router.get('/search', async (req, res) => {
-    try {
-        const q = req.query.q;
+  try {
+    const q = req.query.q;
+    const users = await User.find({
+      username: { $regex: q, $options: 'i' }
+    }).limit(10);
 
-        const users = await User.find({
-            username: { $regex: q, $options: 'i' }
-        }).limit(10);
-
-        res.json({
-            success: true,
-            data: users
-        });
-
-    } catch (err) {
-        console.error(err);
-
-        res.status(500).json({
-            success: false
-        });
-    }
+    res.json({ success: true, data: users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
 });
-router.get('/:id', getPublicProfile);
 
+// 2. Specific Playlist Instance Routes (Must come BEFORE /:id parameterized routes)
+router.route('/playlists/:id')
+  .put(isLoggedIn, updatePlaylist)
+  .delete(isLoggedIn, deletePlaylist);
+
+router.route('/playlists/:id/albums/:albumId')
+  .post(isLoggedIn, addAlbumToPlaylist)
+  .delete(isLoggedIn, removeAlbumFromPlaylist);
+
+// 3. User Social Interaction Routes
 router.route('/:id/follow').post(isLoggedIn, followUser);
 router.route('/:id/unfollow').post(isLoggedIn, unfollowUser);
 
-router.route('/playlists/:id')
-.put(isLoggedIn, updatePlaylist)
-.delete(isLoggedIn, deletePlaylist);
+// 4. Targeted Public Profile Route 
+// Changed to '/:id/public' to completely prevent router overlap issues!
+router.get('/:id/public', getPublicProfile);
 
-router.route('/playlists/:id/albums/:albumId')
-.post(isLoggedIn, addAlbumToPlaylist)
-.delete(isLoggedIn, removeAlbumFromPlaylist);
 
 module.exports = router;
