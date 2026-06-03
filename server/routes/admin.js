@@ -7,6 +7,7 @@ const isAdmin    = require('../middleware/isAdmin');
 const upload     = require('../middleware/upload');
 
 router.use(isLoggedIn, isAdmin);
+router.get('/', adminCtrl.showManage);
 
 // Suggestion management
 router.get('/suggestions',              suggCtrl.adminIndex);

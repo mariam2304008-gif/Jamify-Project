@@ -66,6 +66,7 @@ app.use('/api/artists', require('./routes/artists'));
 app.use('/suggestions', suggestionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);
+app.post('/reviews/:id/delete', isLoggedIn, albumController.deleteReview);
 
 // 3. Browser View Routes
 app.get('/login', (req, res) => {

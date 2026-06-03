@@ -35,6 +35,37 @@ body{
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.review-card-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 12px;
+}
+
+.review-delete-button {
+    background-color: #e74c3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.review-delete-button:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+.review-delete-button i {
+    font-size: 0.85rem;
+}
+
 #profile-icon {
     padding-right:2%;
     max-width: 8.5%;   

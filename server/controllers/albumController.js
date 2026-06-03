@@ -147,6 +147,28 @@ module.exports = {
         }
     },
 
+    deleteReview: async (req, res, next) => {
+        try {
+            const currentReview = await review.findById(req.params.id);
+            if (!currentReview) {
+                return res.status(404).send('Review not found');
+            }
+
+            const currentUserId = req.user && req.user._id ? req.user._id.toString() : null;
+            const reviewOwnerId = currentReview.user ? currentReview.user.toString() : null;
+
+            if (!currentUserId || (currentUserId !== reviewOwnerId && !req.user.isAdmin)) {
+                return res.status(403).send('You are not allowed to delete this review');
+            }
+
+            await review.findByIdAndDelete(req.params.id);
+            const redirectTarget = req.body.redirect || req.query.redirect || '/';
+            res.redirect(redirectTarget);
+        } catch (err) {
+            next(err);
+        }
+    },
+
     toggleAlbumLike: async (req, res) => {
         try {
             const albumId = req.params.id;

@@ -19,9 +19,15 @@
 <%- include('../partials/navbar') %>
 
 <div class="container">
-  <h1>Manage Music</h1>
+  <h1>Admin Dashboard</h1>
+  <div class="admin-dashboard-actions">
+    <a href="/admin/manage" class="dashboard-card active">Manage Music</a>
+    <a href="/admin/suggestions" class="dashboard-card">Review Suggestions</a>
+    <a href="/admin/add" class="dashboard-card">Add Music</a>
+    <a href="/admin/reviews" class="dashboard-card">Review Moderation</a>
+  </div>
 
-  <h2>Albums</h2>
+  <h2>Manage Music</h2>
   <% if (typeof albums !== 'undefined' && albums.length === 0) { %>
     <p class="empty">No albums found.</p>
   <% } else if (typeof albums !== 'undefined') { %>

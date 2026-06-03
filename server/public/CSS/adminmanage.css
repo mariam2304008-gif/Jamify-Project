@@ -17,7 +17,39 @@ body {
 
 h1 {
   font-size: 32px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+}
+
+.admin-dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.dashboard-card {
+  flex: 1 1 calc(50% - 14px);
+  min-width: 180px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-decoration: none;
+  color: #2c2c2c;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  font-weight: 600;
+}
+
+.dashboard-card:hover,
+.dashboard-card.active {
+  transform: translateY(-2px);
+  border-color: #e74c3c;
+  background: #fcf0f0;
+}
+
+.dashboard-card.active {
+  color: #e74c3c;
 }
 
 h2 {
