@@ -4,7 +4,7 @@ const reviewSchema = new mongoose.Schema({
     albumID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Album',
-        required: true
+        required: false
     },
     songID: {
     type: mongoose.Schema.Types.ObjectId,

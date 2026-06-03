@@ -41,7 +41,7 @@ module.exports = {
                 rating: parseInt(req.body.rating),
                 review: req.body.review,
                 date: new Date(),
-                likes: 0,
+                likes: [],
                 // Tie to logged-in session user ID, fallback to fallback placeholder if unauthenticated
                 user: req.session && req.session.user ? req.session.user.id : "65af3b23c12a4b567890abcd"
             });

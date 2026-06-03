@@ -100,7 +100,7 @@
                                 </a>
                             <% } else if (review.songID) { %>
                                 <a href="/songs/<%= review.songID._id %>">
-                                    <img src="<%= review.songID.album && review.songID.album.coverImageUrl ? review.songID.album.coverImageUrl : '/Images/album-profile-images/default-single.png' %>" alt="song art">
+                                    <img src="<%= review.songID.coverImageUrl || '/Images/album-profile-images/epic.png' %>" alt="song art">
                                 </a>
                             <% } else { %>
                                 <img src="/Images/default-album.png" alt="fallback art">
