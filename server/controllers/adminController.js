@@ -156,7 +156,8 @@ exports.approveReview = async (req, res, next) => {
 exports.denyReview = async (req, res, next) => {
   try {
     await Review.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/reviews');
+    const redirectTarget = req.body.redirect || req.query.redirect || '/admin/reviews';
+    res.redirect(redirectTarget);
   } catch (err) {
     next(err);
   }

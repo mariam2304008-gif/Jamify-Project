@@ -10,6 +10,14 @@
     <script src="/JavaScript/albumJS.js" defer></script>
     <script src="/JavaScript/navbar.js?v=2"></script>
     <link rel="stylesheet" href="/CSS/navbar.css">
+
+    <style>
+        a[href="/admin/reviews"],
+        .nav-links a[href="/admin/reviews"],
+        nav a[href="/admin/reviews"] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <%- include('partials/navbar') %>
@@ -139,6 +147,17 @@
                 </div>
                 <hr>
                 <p id="review"><%= review.review %></p>
+
+                <% if (typeof user !== 'undefined' && user && user.isAdmin) { %>
+                    <div style="margin: 12px 0;">
+                        <form method="POST" action="/admin/reviews/<%= review._id %>/deny" onsubmit="return confirm('Are you sure you want to permanently delete this user review?')">
+                            <input type="hidden" name="redirect" value="/songs/<%= song._id %>#reviews-stream">
+                            <button type="submit" style="background-color: #e74c3c; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">
+                                <i class="fa-solid fa-trash-can"></i> Delete Review
+                            </button>
+                        </form>
+                    </div>
+                <% } %>
 
                 <div class="like-container">
                     <i class="fa-solid fa-heart like-heart" data-id="<%= review._id %>"></i>

@@ -60,8 +60,7 @@ exports.login = async (req, res) => {
             return res.status(400).send("Invalid Credentials (Wrong password)");
         }
 
-        // Success! Set up the session object with standard keys
-       // Success! Set up the session object with standard keys
+       
         req.session.user = {
         id: user._id.toString(),   // Keeps your code working
         _id: user._id.toString(),  // FIX: This gives your friend's userController the exact key it wants!
