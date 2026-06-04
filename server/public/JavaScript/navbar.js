@@ -1,63 +1,31 @@
-// Navbar Management Utility
-function setupNavbar() {
-    const CURRENT_USER_KEY = 'user';
-    const userJson = localStorage.getItem(CURRENT_USER_KEY);
-    const user = userJson ? JSON.parse(userJson) : null;
-    const isAdmin = user && user.role === 'admin';
+function initNavbarStateCrossfade() {
+    const masterNav = document.querySelector('.navbar-master-container');
+    if (!masterNav) return;
 
-    // Find all nav-links lists
-    const navLinksList = document.querySelector('.nav-links');
-    if (!navLinksList) return;
+    // Highlight active paths on both horizontal and vertical links
+    const allLinks = masterNav.querySelectorAll('a');
+    const currentPath = window.location.pathname;
 
-    // Clear existing nav links
-    navLinksList.innerHTML = '';
+    allLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
 
-    // Always show Home
-    const homeLink = document.createElement('li');
-    homeLink.innerHTML = '<a href="/">Home</a>';
-    navLinksList.appendChild(homeLink);
-
-    if (isAdmin) {
-        // Admin navigation
-        const adminReviewLink = document.createElement('li');
-        adminReviewLink.innerHTML = '<a href="/reviewadmin">Admin Review</a>';
-        navLinksList.appendChild(adminReviewLink);
-
-        const searchLink = document.createElement('li');
-        searchLink.innerHTML = '<a href="/search">Search</a>';
-        navLinksList.appendChild(searchLink);
-
-        const adminsuggestionLink = document.createElement('li');
-        adminsuggestionLink.innerHTML = '<a href="/admin/suggestions">Admin Suggestion</a>';
-        navLinksList.appendChild(adminsuggestionLink);
-
-        const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="/profile">Profile</a>';
-        navLinksList.appendChild(profileLink);
-
-        const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="/logout">Logout</a>';
-        navLinksList.appendChild(logoutLink);
-    } else {
-        // Regular user navigation
-        const suggestLink = document.createElement('li');
-        suggestLink.innerHTML = '<a href="/suggest">Suggest</a>';
-        navLinksList.appendChild(suggestLink);
-
-        const searchLink = document.createElement('li');
-        searchLink.innerHTML = '<a href="/search">Search</a>';
-        navLinksList.appendChild(searchLink);
-
-        const profileLink = document.createElement('li');
-        profileLink.innerHTML = '<a href="/profile">Profile</a>';
-        navLinksList.appendChild(profileLink);
-
-        const logoutLink = document.createElement('li');
-        logoutLink.innerHTML = '<a href="/logout">Logout</a>';
-        navLinksList.appendChild(logoutLink);
-    }
-
+    // Toggle states cleanly based on vertical scroll boundary height
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 80) {
+            masterNav.classList.add('state-scrolled');
+        } else {
+            masterNav.classList.remove('state-scrolled');
+        }
+    });
 }
 
-// Run on page load
-document.addEventListener('DOMContentLoaded', setupNavbar);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNavbarStateCrossfade);
+} else {
+    initNavbarStateCrossfade();
+}

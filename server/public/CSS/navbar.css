@@ -1,31 +1,173 @@
-.navbar {
+:root {
+    --primary-color: #e74c3c;
+    --primary-hover: #c0392b;
+    --dark-bg: #121212;
+    --text-light: #ffffff;
+    --text-muted: #a7a7a7;
+    --glass-navbar: rgba(18, 18, 18, 0.98);
+}
+
+/* ─── FIXED CONTAINER VIEWPORT BASE ─── */
+.navbar-master-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    pointer-events: none; /* Let clicks pass through un-rendered wrapper space */
+}
+
+/* ─── COMPONENT 1: FULL HORIZONTAL TOP STRIP ─── */
+.top-navbar-strip {
+    pointer-events: auto; /* Re-enable pointer interactions */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
-    background: white;
-    border-bottom: 2px solid #e74c3c;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0 40px;
+    height: 75px;
+    background: var(--glass-navbar);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    
+    /* Smooth translation and fade transitions */
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.3s ease;
 }
 
-.logo {
-  font-weight: bold;
-  color: #e74c3c;
+.top-navbar-strip .logo a {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+.top-navbar-strip .logo i { color: var(--primary-color); }
 
-.nav-links {
+.nav-links-horizontal {
     list-style: none;
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 24px;
     margin: 0;
     padding: 0;
 }
 
-.nav-links a {
-  text-decoration: none;
-  color: #2c2c2c;
+.has-navbar {
+    margin-top: 95px ; /* Pushes content down safely below the 75px navbar */
+    position: relative;
+    z-index: 1;
+}
+.nav-links-horizontal a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+}
+.nav-links-horizontal a:hover, 
+.nav-links-horizontal a.active {
+    color: var(--text-light) !important;
+}
+.nav-profile-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 16px;
+    border-radius: 30px;
+}
+.nav-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
 }
 
-.nav-links a:hover {
-  color: #e74c3c;
+
+/* ─── COMPONENT 2: FLOATING SIDE CAPSULE DOCK ─── */
+.side-dock-capsule {
+    pointer-events: auto;
+    position: fixed;
+    top: 50vh;
+    left: 24px;
+    transform: translateY(-50%) translateX(-100px) scale(0.9); /* Hidden out to the left side off-screen */
+    opacity: 0;
+    visibility: hidden;
+    
+    width: 70px;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    
+    background: rgba(18, 18, 18, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 35px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                opacity 0.3s ease, 
+                visibility 0.3s ease;
+}
+
+.capsule-logo a { font-size: 26px; color: var(--primary-color); text-decoration: none; }
+
+.nav-links-vertical {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+}
+.nav-links-vertical li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.nav-links-vertical a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 22px;
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.nav-links-vertical a:hover,
+.nav-links-vertical a.active {
+    color: var(--text-light) !important;
+    transform: scale(1.1);
+}
+.nav-avatar-capsule {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+
+/* ─── CROSSFADE TRANSITION TRIGGER (ON SCROLL) ─── */
+
+.state-scrolled .top-navbar-strip {
+    opacity: 0;
+    transform: translateY(-75px); /* Glides upward cleanly out of sight */
+    pointer-events: none;
+}
+
+.state-scrolled .side-dock-capsule {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0) scale(1); /* Glides in from the left wall smoothly */
 }

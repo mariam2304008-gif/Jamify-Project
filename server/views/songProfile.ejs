@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/CSS/albumCSS.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/navbar.css" />
     <title>
         <%= song.title %>
     </title>
     <script src="/JavaScript/albumJS.js" defer></script>
     <script src="/JavaScript/navbar.js?v=2"></script>
-    <link rel="stylesheet" href="/CSS/navbar.css">
+
 
     <style>
         a[href="/admin/reviews"],
@@ -23,6 +24,9 @@
 </head>
 
 <%- include('partials/navbar') %>
+
+<div class="has-navbar">
+    </div>
 
     <body>
 
@@ -216,6 +220,7 @@
                         <% } %>
                     </div>
                 <script src="/JavaScript/addToPlaylist.js"></script>
+                <script src="/JavaScript/navbar.js"></script>
     </body>
 
 </html>

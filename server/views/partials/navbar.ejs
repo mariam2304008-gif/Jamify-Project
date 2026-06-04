@@ -1,16 +1,62 @@
-<nav class="navbar">
-  <div class="logo"><a href="/">Jamify</a></div>
+<% 
+  // Safely check for the user in locals, which is always available
+  const activeUser = (typeof locals !== 'undefined' && locals.user) ? locals.user : null;
+%>
 
-  <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="/suggest">Suggest</a></li>
-    <li><a href="/profile">Profile</a></li>
-    <li><a href="/search">Search</a></li>
+<body>
 
-    <% if (user && user.isAdmin) { %>
-      <li><a href="/admin">Admin Dashboard</a></li>
-    <% } %>
+<nav class="navbar-master-container">
+  
+  <div class="top-navbar-strip">
+    <div class="logo">
+      <a href="/"><i class="fa-solid fa-compact-disc"></i> <span>Jamify</span></a>
+    </div>
+    <ul class="nav-links-horizontal">
+      <li><a href="/"><i class="fa-solid fa-house"></i> <span>Home</span></a></li>
+      <li><a href="/search"><i class="fa-solid fa-magnifying-glass"></i> <span>Search</span></a></li>
+      
+      <% if (activeUser) { %>
+        <li><a href="/suggest"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Suggest</span></a></li>
+        <% if (activeUser.isAdmin) { %>
+          <li><a href="/admin"><i class="fa-solid fa-user-shield"></i> <span>Admin</span></a></li>
+        <% } %>
+        <li>
+          <a href="/profile" class="nav-profile-pill">
+            <img src="<%= (activeUser.profileImageUrl) ? activeUser.profileImageUrl : '/Images/album-profile-images/epic.png' %>" class="nav-avatar" alt="Avatar">
+            <span>Profile</span>
+          </a>
+        </li>
+        <li><a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+      <% } else { %>
+        <li><a href="/login" class="login-btn"><span>Login | Sign Up</span></a></li>
+      <% } %>
+    </ul>
+  </div>
 
-    <li><a href="/logout">Logout</a></li>
-  </ul>
+  <div class="side-dock-capsule">
+    <div class="capsule-logo">
+      <a href="/"><i class="fa-solid fa-compact-disc"></i></a>
+    </div>
+    <ul class="nav-links-vertical">
+      <li><a href="/" title="Home"><i class="fa-solid fa-house"></i></a></li>
+      <li><a href="/search" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a></li>
+      
+      <% if (activeUser) { %>
+        <li><a href="/suggest" title="Suggest"><i class="fa-solid fa-wand-magic-sparkles"></i></a></li>
+        <% if (activeUser.isAdmin) { %>
+          <li><a href="/admin" title="Admin"><i class="fa-solid fa-user-shield"></i></a></li>
+        <% } %>
+        <li>
+          <a href="/profile" title="Profile" class="capsule-avatar-link">
+            <img src="<%= (activeUser.profileImageUrl) ? activeUser.profileImageUrl : '/Images/album-profile-images/epic.png' %>" class="nav-avatar-capsule" alt="Avatar">
+          </a>
+        </li>
+        <li><a href="/logout" title="Logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></a></li>
+      <% } else { %>
+        <li><a href="/login" title="Login"><i class="fa-solid fa-right-to-bracket"></i></a></li>
+      <% } %>
+    </ul>
+  </div>
 </nav>
+<script src="/JavaScript/navbar.js"></script>
+</body>
