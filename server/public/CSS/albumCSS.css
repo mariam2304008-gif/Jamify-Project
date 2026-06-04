@@ -16,61 +16,91 @@ body{
     gap: 2px;
 }
 
-#review{
-    font-size: 14px;
-    color:rgb(81, 81, 81);
+#review {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: #2c3e50;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
-.reviewBox{
+.reviewBox {
     display: flex;
     flex-direction: column;
     width: auto;
     height: auto;
-    margin-top: 20px;
-    margin-bottom:20px;
-    border-left: 4px solid #e74c3c;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    border-left: 5px solid #e74c3c;
     background-color: white;
-    border-radius:5px;
-    padding: 2%;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 2.5%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+.reviewer-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Centers the profile image/text block and trashcan vertically together */
+    width: 100%;
 }
 
 .review-card-actions {
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: flex-start;
-    margin-top: 12px;
+    align-items: center;
 }
 
 .review-delete-button {
-    background-color: #e74c3c;
-    color: #ffffff;
+    background: none;
+    color: #a0a0a0; 
     border: none;
-    border-radius: 20px;
-    padding: 6px 10px;
-    font-size: 0.82rem;
-    font-weight: 600;
+    border-radius: 0;
+    padding: 6px;
+    font-size: 1.85rem; /* Increased from 1.6rem to stand out cleanly */
+    cursor: pointer;
+    box-shadow: none;
+    transition: color 0.2s ease, transform 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    justify-content: center;
 }
 
-.review-delete-button:hover {
-    background-color: #c0392b;
-    transform: translateY(-1px);
+.review-delete-button i.fa-trash-can,
+.review-delete-button i.fa-solid {
+    font-size: 24px;  /* Explicit pixel scaling bypasses root rem issues */
+    color: #a0a0a0;
+    display: inline-block;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+button.review-delete-button:hover i.fa-trash-can,
+button.review-delete-button:hover i.fa-solid {
+    color: #e74c3c;
+    transform: scale(1.15);
 }
 
 .review-delete-button i {
     font-size: 0.85rem;
 }
 
-#profile-icon {
-    padding-right:2%;
-    max-width: 8.5%;   
-    height: auto;
-    opacity: 0.7;
+.review-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    width: 100%;
+}
+
+.reviewBox #profile-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 /* i added these so the username and date are on opposite sides */
@@ -81,18 +111,51 @@ body{
     justify-content: space-between; /* this pushes content to left and right */
     width: 100%;
 }
+.reviewerInfo-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    text-align: left; /* Force left alignment for everything inside */
+}
 
 /* this insures that the icon + name + and stars stay together on the left */
 .user-meta-group {
     display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers the content block vertically */
+    gap: 4px;                /* Tightened spacing between name and sub-tier info */
+    height: 55px;            /* Keeps exact height parity with the profile pic */
+    text-align: left;
+}
+
+.user-meta-group #main {
+    font-size: 19px; 
+    font-weight: 600; 
+    color: #e74c3c; 
+    cursor: pointer; 
+    line-height: 1.1;
+    margin: 0;
+    padding: 0;
+}
+
+.user-sub-tier {
+    display: flex;
     align-items: center;
-    flex-grow: 1; /* takes up available space to push the date */
+    gap: 8px;
+    color: #7f8c8d;
+    font-size: 14px;
+    text-align: left;
+    line-height: 1.1;
 }
 
 .review-date {
-    color: rgb(81, 81, 81);
-    font-size: 13px;
-    white-space: nowrap; /* this prevents the date from wrapping to a new line :) */
+    color: rgb(120, 120, 120);
+    font-size: 14px;
+    white-space: nowrap; 
+    margin: 0;
+    margin-left: auto; 
 }
 
 hr{
@@ -154,9 +217,10 @@ form{
     color:rgb(234, 39, 39);
 }
 
-.page-wrapper{
-    width: 650px;
+.page-wrapper {
+    width: 850px; /* Increased from 650px for a wider look */
     margin: 0 auto;
+    padding-bottom: 50px; /* Added some breathing room at the bottom */
 }
 
 #main{
@@ -164,28 +228,28 @@ form{
     color:#e74c3c
 }
 
-#head{
-    font-size: 30px;
-    justify-content: space-between;
+#head {
+    font-size: 32px; /* Slightly larger for the wider page */
     font-weight: bold;
-    color:#e74c3c;
+    color: #e74c3c;
+    margin-bottom: 5px;
+    line-height: 1.2;
 }
 
 .mainInfoContainer {
     box-sizing: border-box; 
     border-left: 4px solid #e74c3c;
     margin-top: 70px;
-    padding: 20px;
+    padding: 20px; 
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 15px;
+    align-items: stretch; /* This stretches the info box to match the image height */
+    gap: 30px;
     background-color: white;
-    height: 250px;
+    height: auto; /* Let the content (the image) define the height */
     width: 100%; 
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s ease;
 }
 
 .headerINFO {
@@ -205,19 +269,26 @@ form{
 }
 
 .albumInfo {
-    padding-top: 2%;
-    padding-bottom:2%;
-    flex: 1;
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    justify-content: flex-start; /* Group elements naturally instead of forcing spaces */
+    flex: 1;
+    padding: 0; 
     min-width: 0;        
 }
 
+.albumInfo p, .albumInfo .header-with-heart {
+    margin: 0;
+    padding-bottom: 8px; /* Clean, consistent gaps between text lines */
+}
+
 #album-cover {
-    max-width: 36%;
-    height: auto;
+    width: 220px; /* Dictates the height of the whole row */
+    height: 220px;
+    object-fit: cover;
     border-radius: 5px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0; /* Prevents the image from squishing */
 }
 
 #small-icon {
@@ -270,30 +341,44 @@ button {
     flex-direction: row;
     gap: 10px;
     width: 100%;
-    margin-top: 10px;
+    margin-top: auto; /* 🌟 THIS pushes the buttons to the absolute bottom of the cover! */
+    padding-top: 15px;
 }
 
 .miniContainer {
     box-sizing: border-box;
     border-left: 4px solid #e74c3c;
     display: flex; 
-    padding:2%;  
-    flex-direction: row;
+    flex-direction: column; /* Stacks label over value vertically */
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Aligns contents nicely to the left side */
+    padding: 16px 20px;  
     background-color: white;
-    width: 31%;   
-    height: 100px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 32%;   
+    min-height: 85px; /* min-height prevents text overflows if it wraps */
+    height: auto; 
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06); /* Softer, modern shadow */
+    transition: transform 0.2s ease;
+}
+
+.miniContainer:hover {
+    transform: translateY(-2px); /* Adds a subtle, nice interactive lifting effect */
 }
 
 .containsContainers {
     display: flex;
     width: 100%;        
-    margin-top: 20px;  
+    margin-top: 25px;  
     justify-content: space-between; 
+    gap: 16px; /* Added explicit gap instead of relying entirely on space-between */
     padding: 0;   
+}
+
+.like-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .like-heart {

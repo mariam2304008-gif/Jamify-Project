@@ -2,47 +2,48 @@ const User = require('../models/User');
 const Review = require('../models/review');
 const Playlist = require('../models/Playlist');
 const ErrorResponse = require('../utils/errorResponse');
+
+
 exports.getProfile = async (req, res, next) => {
-try {
-if (!req.session || !req.session.user) {
-return res.redirect('/login');
-}
+  try {
+    if (!req.session || !req.session.user) {
+      return res.redirect('/login');
+    }
 
-const userId = req.session.user._id;
+    const userId = req.session.user._id;
 
-    // 2. Fetch the logged-in user directly from Atlas and populate relationships
-const user = await User.findById(userId).populate([
-  {
-    path: 'followers',
-    select: 'username profileImage' // Only fetch what you need to display
-  },
-  {
-    path: 'followingUsers', // Or 'followingUsers', match your schema's field name
-    select: 'username profileImage'
-  }
-]);
+    // 🌟 FIX: Updated 'profileImage' to 'profileImageUrl' to match your upload naming
+    const user = await User.findById(userId).populate([
+      {
+        path: 'followers',
+        select: 'username displayName profileImageUrl' 
+      },
+      {
+        path: 'followingUsers', 
+        select: 'username displayName profileImageUrl'
+      }
+    ]);
 
-if (!user) {
-  return next(
-    new ErrorResponse(
-      'User session profile data could not be found in the database.',
-      404
-    )
-  );
-}
+    if (!user) {
+      return next(
+        new ErrorResponse(
+          'User session profile data could not be found in the database.',
+          404
+        )
+      );
+    }
 
-const reviews = await Review.find({ user: userId })
-  .populate('albumID')
-  .populate({
-    path: 'songID',
-    populate: { path: 'album' }
-  });
+    const reviews = await Review.find({ user: userId })
+      .populate('albumID')
+      .populate({
+        path: 'songID',
+        populate: { path: 'album' }
+      });
 
-const playlists = await Playlist.find({ user: userId })
-  .populate('albums')
-  .sort('-createdAt');
+    const playlists = await Playlist.find({ user: userId })
+      .populate('albums')
+      .sort('-createdAt');
 
-    // 4. Send the living database results right to EJS
     res.render('profile', {
       user: user,
       reviews: reviews,
@@ -99,7 +100,6 @@ exports.getPublicProfile = async (req, res, next) => {
   try {
     const targetUserId = req.params.id;
 
-    // 1. 🌟 REAL BROWSER REDIRECT: If it's your own profile, bounce out to the normal /profile path!
     if (req.session && req.session.user) {
       const loggedInId = req.session.user._id || req.session.user.id;
       if (loggedInId && loggedInId.toString() === targetUserId) {
@@ -107,13 +107,28 @@ exports.getPublicProfile = async (req, res, next) => {
       }
     }
 
-    // 2. Fetch the target profile owner data
-    const user = await User.findById(targetUserId).select('-password');
+    // 🌟 FIX: Added population here so public profiles can read follower/following list details
+    // 🌟 FIX: Checked for 'profileImageUrl' instead of 'profileImage'
+    const user = await User.findById(targetUserId)
+      .select('-password')
+      .populate([
+        {
+          path: 'followers',
+          select: 'username displayName profileImageUrl'
+        },
+        {
+          path: 'followingUsers',
+          select: 'username displayName profileImageUrl'
+        },
+        {
+          path: 'followingArtists'
+        }
+      ]);
+
     if (!user) {
       return res.status(404).render('error', { message: 'User not found' });
     }
 
-    // Populate user reviews smoothly
     const reviews = await Review.find({ user: targetUserId })
       .populate('albumID')
       .populate({
@@ -122,15 +137,13 @@ exports.getPublicProfile = async (req, res, next) => {
         options: { strictPopulate: false }
       });
 
-    // Fetch public playlists
     const playlists = await Playlist.find({ user: targetUserId, isPublic: true })
       .populate('albums')
       .sort('-createdAt');
 
-    // 3. 🌟 RENDER THE CORRECT TEMPLATE: Send it directly to publicProfile.ejs
     res.render('publicProfile', { 
       user: user, 
-      currentUser: req.session.user || null, // Essential for your follow button condition!
+      currentUser: req.session.user || null, 
       reviews: reviews, 
       playlists: playlists,
       reviewCount: reviews.length,     
@@ -141,7 +154,6 @@ exports.getPublicProfile = async (req, res, next) => {
     next(err);
   }
 };
-
 // @desc    Search users by username or displayName
 // @route   GET /api/users/search?q=query
 // @access  Public
@@ -153,7 +165,7 @@ exports.searchUsers = async (req, res, next) => {
         { username: { $regex: query, $options: 'i' } },
         { displayName: { $regex: query, $options: 'i' } }
       ]
-    }).select('username displayName profileImage').limit(10);
+    }).select('username displayName profileImageUrl').limit(10);
 
     res.status(200).json({ success: true, count: users.length, data: users });
   } catch (err) {

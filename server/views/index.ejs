@@ -28,7 +28,7 @@
               <div class="album-image-wrapper">
                   <img src="<%= album.coverImageUrl %>" alt="<%= album.title %>">
                   
-                  <span class="avg-rating"><i class="fa-solid fa-star"></i> 5.0</span>
+                  <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= album.rating || 1 %></span>
               </div>
               <div class="album-card-info">
                   <h3><%= album.title %></h3>
@@ -51,7 +51,7 @@
             <a href="<%= cardUrl %>" class="album-card">
                 <div class="album-image-wrapper">
                     <img src="<%= song.coverImageUrl || '/Images/album-profile-images/default-single.png' %>" alt="<%= song.title %>">
-                    <span class="avg-rating"><i class="fa-solid fa-star"></i> 5.0</span>
+                    <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= song.rating || 1 %></span>
                 </div>
                 <div class="album-card-info">
                     <h3><%= song.title %></h3>

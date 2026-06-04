@@ -17,6 +17,12 @@ const songSchema = new mongoose.Schema({
         ref: 'Album',
         default: null
     },
+    genre: {
+        type: String,
+        required: true,
+        trim: true,
+        default: 'Pop'
+    },
     // Track type logic indicator
     trackType: {
         type: String,
@@ -34,9 +40,9 @@ const songSchema = new mongoose.Schema({
             default: ''
         }
     },
-    coverImageUrl: { 
-        type: String, 
-        default: '' 
+    coverImageUrl: {
+        type: String,
+        default: ''
     },
     // Track number on the album (null if standalone single)
     trackNumber: {
@@ -50,7 +56,15 @@ const songSchema = new mongoose.Schema({
     }],
     released: {
         type: Date,
-        default:  Date.now
+        default: Date.now
+    },
+    rating: {
+        type: Number,
+        default: 0
+    },
+    reviewCount:{
+        type: Number,
+        default: 0
     }
 });
 
@@ -58,7 +72,7 @@ const songSchema = new mongoose.Schema({
 songSchema.index({ album: 1, trackNumber: 1 });
 
 // DYNAMIC PRE-SAVE HOOK: In models/Song.js
-songSchema.pre('save', async function() {
+songSchema.pre('save', async function () {
     if (this.album) {
         try {
             const Album = mongoose.model('Album');

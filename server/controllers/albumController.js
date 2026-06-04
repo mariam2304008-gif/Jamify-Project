@@ -1,6 +1,7 @@
 const album = require('../models/album');
 const review = require('../models/review');
 const Song = require('../models/Song'); 
+const {updateAverageRating}  = require('../utils/ratingHelper');
 
 module.exports = {
     getAllAlbums: async (req, res) => {
@@ -123,29 +124,36 @@ module.exports = {
     },
 
     // FIXED: Cleaned up to properly map to your updated Review database schema configuration
-    addReview: async (req, res) => {
-        try {
-            const currentAlbum = await album.findById(req.params.id);
-            if (!currentAlbum) {
-                return res.status(404).json({ message: 'Album not found' });
-            }
-            
-            const newReview = new review({
-                albumID: req.params.id, 
-                rating: parseInt(req.body.rating) || 0,
-                review: req.body.review, // Verified matching your schema property
-                date: new Date(),
-                likes: [],
-                // Automatically capture active user session, or fallback to the seed placeholder
-                user: req.session && req.session.user ? req.session.user.id : "65af3b23c12a4b567890abcd"
-            });
-            
-            await newReview.save();
-            res.redirect(`/albums/${req.params.id}`);
-        } catch (err) {
-            res.status(400).send("Error Saving Review: " + err.message);
+   addReview: async (req, res) => {
+    try {
+        // 1. Check if the user is authenticated. If not, send them to the login page!
+        if (!req.session || !req.session.user) {
+            return res.redirect('/login'); 
         }
-    },
+
+        const currentAlbum = await album.findById(req.params.id);
+        if (!currentAlbum) {
+            return res.status(404).json({ message: 'Album not found' });
+        }
+        
+        const newReview = new review({
+            albumID: req.params.id, 
+            rating: parseInt(req.body.rating) || 0,
+            review: req.body.review, 
+            date: new Date(),
+            likes: [],
+            // Safe to access now because we verified the session above
+            user: req.session.user.id || req.session.user._id
+        });
+        
+        await newReview.save();
+        await updateAverageRating(req.params.id, 'Album');
+        
+        res.redirect(`/albums/${req.params.id}`);
+    } catch (err) {
+        res.status(400).send("Error Saving Review: " + err.message);
+    }
+},
 
     deleteReview: async (req, res, next) => {
         try {
@@ -161,7 +169,22 @@ module.exports = {
                 return res.status(403).send('You are not allowed to delete this review');
             }
 
+            // 1. Capture both asset IDs before deleting the document from the DB
+            const targetAlbumId = currentReview.albumID;
+            const targetSongId = currentReview.songID;
+
+            // 2. Destroy the review document
             await review.findByIdAndDelete(req.params.id);
+
+            // 3. Conditional Recalculation Check
+            if (targetAlbumId) {
+                // If it was an album review, recalculate album metrics
+                await updateAverageRating(targetAlbumId, 'Album');
+            } else if (targetSongId) {
+                // If it was a song review, recalculate song metrics
+                await updateAverageRating(targetSongId, 'Song');
+            }
+            
             const redirectTarget = req.body.redirect || req.query.redirect || '/';
             res.redirect(redirectTarget);
         } catch (err) {

@@ -1,5 +1,6 @@
 const Song = require('../models/Song');
 const review = require('../models/review'); // Match your lowercase review import
+const { updateAverageRating } = require('../utils/ratingHelper');
 
 module.exports = {
     // GET /songs/:id -> Render individual song profile page
@@ -27,33 +28,36 @@ module.exports = {
 
 
     
-    // POST /songs/:id/reviews -> Create a track review submission
-    addSongReview: async (req, res) => {
-        try {
-            const currentSong = await Song.findById(req.params.id);
-            if (!currentSong) {
-                return res.status(404).send('Song profile not found');
-            }
-
-            // Create a review document mapped to this specific song
-            const newReview = new review({
-                songID: req.params.id, // Attaches review to the track asset container
-                rating: parseInt(req.body.rating),
-                review: req.body.review,
-                date: new Date(),
-                likes: [],
-                // Tie to logged-in session user ID, fallback to fallback placeholder if unauthenticated
-                user: req.session && req.session.user ? req.session.user.id : "65af3b23c12a4b567890abcd"
-            });
-
-            await newReview.save();
-            
-            // Redirect the client browser back to refresh the current song profile page smooth view
-            res.redirect(`/songs/${req.params.id}`);
-        } catch (err) {
-            res.status(400).send("Error Saving Track Review: " + err.message);
+   addSongReview: async (req, res) => {
+    try {
+        // 1. Check if the user is authenticated. If not, send them to the login page!
+        if (!req.session || !req.session.user) {
+            return res.redirect('/login');
         }
-    },
+
+        const currentSong = await Song.findById(req.params.id);
+        if (!currentSong) {
+            return res.status(404).send('Song profile not found');
+        }
+
+        const newReview = new review({
+            songID: req.params.id, 
+            rating: parseInt(req.body.rating) || 0,
+            review: req.body.review,
+            date: new Date(),
+            likes: [],
+            // Safe to access now because we verified the session above
+            user: req.session.user.id || req.session.user._id
+        });
+
+        await newReview.save();
+        await updateAverageRating(req.params.id, 'Song');
+        
+        res.redirect(`/songs/${req.params.id}`);
+    } catch (err) {
+        res.status(400).send("Error Saving Track Review: " + err.message);
+    }
+},
     toggleSongLike: async (req, res) => {
         try {
             const songId = req.params.id;

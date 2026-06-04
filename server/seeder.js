@@ -1,68 +1,78 @@
+
+
+// migrationScript.js
 const mongoose = require('mongoose');
-const User = require('./models/User'); 
+const album = require('./models/album'); // Adjust these paths to match your project structure
+const Song = require('./models/Song');
 config = require('dotenv').config();
 
-// Adjust path to your User model if needed
-
-// Replace this string with your local connection or Atlas connection string
 const DATABASE_URL = process.env.DATABASE_URL;
 
-async function runMigration() {
-  try {
-    console.log('Connecting to database...');
-    await mongoose.connect(DATABASE_URL);
-    console.log('Connected successfully.');
+async function migrateLegacyData() {
+    try {
+          console.log('Connecting to database...');
+          await mongoose.connect(DATABASE_URL);
+          console.log('Connected successfully.');
 
-    // Step 1: Initialize fields that are missing entirely
-    const initResult = await User.updateMany(
-      {
-        $or: [
-          { followers: { $exists: false } },
-          { followingUsers: { $exists: false } },
-          { followingArtists: { $exists: false } }
-        ]
-      },
-      {
-        $set: {
-          followers: [],
-          followingUsers: [],
-          followingArtists: []
-        }
-      }
-    );
+        console.log("Starting database backfill migration...");
 
-    // Step 2: Safety sweep—if fields exist but were saved as null, reset them to empty arrays
-    const fixNullResult = await User.updateMany(
-      {
-        $or: [
-          { followers: null },
-          { followingUsers: null },
-          { followingArtists: null }
-        ]
-      },
-      {
-        $set: {
-          followers: [],
-          followingUsers: [],
-          followingArtists: []
-        }
-      }
-    );
+        const songGenreResult = await Song.updateMany(
+            { 
+                $or: [
+                    { genre: { $exists: false } }, 
+                    { genre: null }, 
+                    { genre: '' }
+                ] 
+            },
+            { $set: { genre: 'Pop' } }
+        );
+        console.log(`-> Genre backfill: Seeded ${songGenreResult.modifiedCount} tracks with 'Pop'.`);
 
-    const totalModified = initResult.modifiedCount + fixNullResult.modifiedCount;
+        const songRatingResult = await Song.updateMany(
+            { 
+                $or: [
+                    { rating: { $exists: false } }, 
+                    { reviewCount: { $exists: false } }
+                ] 
+            },
+            { 
+                $style: {}, // Placeholder to cleanly structuralize $setOnInsert equivalents via standard $set
+                $set: { 
+                    rating: 0, 
+                    reviewCount: 0 
+                } 
+            }
+        );
+        console.log(`-> Song metrics: Initialized ratings for ${songRatingResult.modifiedCount} tracks.`);
 
-    console.log(`\nMigration Complete!`);
-    console.log(`- Created missing arrays for ${initResult.modifiedCount} users.`);
-    console.log(`- Fixed null arrays for ${fixNullResult.modifiedCount} users.`);
-    console.log(`- Total users updated: ${totalModified}\n`);
-    
-  } catch (error) {
-    console.error('Migration failed:', error);
-  } finally {
+
+
+        const albumRatingResult = await album.updateMany(
+            { 
+                $or: [
+                    { averageRating: { $exists: false } }, 
+                    { reviewCount: { $exists: false } }
+                ] 
+            },
+            { 
+                $set: { 
+                    averageRating: 0, 
+                    reviewCount: 0 
+                } 
+            }
+        );
+        console.log(`-> Album metrics: Initialized ratings for ${albumRatingResult.modifiedCount} albums.`);
+        
+        console.log("\nSuccess! All legacy documents have been cleanly backfilled.");
+
+    } catch (err) {
+        console.error("Migration error backfilling collection records:", err.message);
+    } finally {
     await mongoose.disconnect();
     console.log('Disconnected from database.');
     process.exit(0);
-  }
+}
 }
 
-runMigration();
+// Execute the migration
+migrateLegacyData();

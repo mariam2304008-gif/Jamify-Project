@@ -27,6 +27,10 @@ const albumSchema = new mongoose.Schema({
         min: 0,
         max: 5
     },
+    reviewCount:{
+        type: Number,
+        default: 0
+    },
     albumLinks: {
         spotify: {
             type: String
