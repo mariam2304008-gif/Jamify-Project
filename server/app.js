@@ -38,9 +38,33 @@ app.use(session({
     }
 }));
 
-app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    res.locals.sessionUser = req.session.user || null;
+const User = require('./models/User');
+
+app.use(async (req, res, next) => {
+
+    res.locals.user = null;
+    res.locals.sessionUser = null;
+
+    if (req.session && req.session.user) {
+
+        try {
+
+            const dbUser = await User.findById(req.session.user._id);
+
+            if (dbUser) {
+
+                res.locals.user = dbUser;
+                res.locals.sessionUser = dbUser;
+
+                req.user = dbUser;
+            }
+
+        } catch (err) {
+
+            console.error(err);
+        }
+    }
+
     next();
 });
 
