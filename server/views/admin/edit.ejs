@@ -30,18 +30,20 @@
         <input type="text" name="artist" value="<%= type === 'album' ? item.artist : (item.artists ? item.artists[0] : '') %>" required />
       </div>
 
-      <% if (type === 'album') { %>
       <div class="form-row two-col">
         <div>
           <label>Release Date</label>
-          <input type="text" name="releaseDate" value="<%= item.releaseDate || '' %>" placeholder="e.g. April 23, 2016" />
+          <% if (type === 'album') { %>
+            <input type="date" name="releaseDate" value="<%= item.releaseDate ? new Date(item.releaseDate).toISOString().split('T')[0] : '' %>" />
+          <% } else { %>
+            <input type="date" name="releaseDate" value="<%= item.released ? new Date(item.released).toISOString().split('T')[0] : '' %>" />
+          <% } %>
         </div>
         <div>
           <label>Genre</label>
           <input type="text" name="genre" value="<%= item.genre || '' %>" placeholder="Pop, Jazz, R&B..." />
         </div>
       </div>
-      <% } %>
 
       <div class="form-row two-col">
         <div>

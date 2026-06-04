@@ -46,6 +46,7 @@ exports.addMusic = async (req, res, next) => {
         artists:      [artist],
         trackType:    'Standalone Single',
         album:        null,
+        genre:        genre || '',
         released:     releaseDate ? new Date(releaseDate) : new Date(),
         coverImageUrl: req.file ? `/uploads/${req.file.filename}` : '/Images/album-profile-images/epic.png',
         songLinks: {
@@ -105,8 +106,10 @@ exports.updateMusic = async (req, res, next) => {
       const update = {
         title,
         artists: [artist],
+        genre:   genre || '',
         songLinks: { spotify: spotifyLink || '', anghami: anghamiLink || '' }
       };
+      if (releaseDate) update.released = new Date(releaseDate);
       if (req.file) update.coverImageUrl = `/uploads/${req.file.filename}`;
       await Song.findByIdAndUpdate(id, update);
     }

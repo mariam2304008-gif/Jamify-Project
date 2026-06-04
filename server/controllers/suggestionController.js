@@ -15,7 +15,7 @@ exports.index = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { type, title, artist, year, genre, link, trackType, albumName, trackNumber } = req.body;
+    const { type, title, artist, releaseDate, genre, link, trackType, albumName, trackNumber } = req.body;
     if (!title || !artist) return res.redirect('/suggest');
     if (link && !/^https?:\/\/.+/.test(link.trim())) return res.redirect('/suggest');
     if (genre && /\d/.test(genre)) return res.redirect('/suggest');
@@ -24,7 +24,7 @@ exports.create = async (req, res, next) => {
       title,
       artist,
       type:        type || 'album',
-      year:        year ? parseInt(year) : undefined,
+      year:        releaseDate ? new Date(releaseDate).getFullYear() : undefined,
       genre,
       link,
       submittedBy: req.session.user.id,

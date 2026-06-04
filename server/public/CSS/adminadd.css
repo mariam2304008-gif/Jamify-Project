@@ -30,7 +30,8 @@ h2 { font-size: 20px; margin-bottom: 16px; }
   color: #444;
 }
 .form-row input[type="text"],
-.form-row input[type="number"] {
+.form-row input[type="number"],
+.form-row input[type="date"] {
   width: 100%;
   padding: 9px 12px;
   background-color: #ccc9c6;

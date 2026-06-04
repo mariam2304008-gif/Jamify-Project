@@ -48,7 +48,7 @@
       <div class="form-row two-col">
         <div>
           <label>Release Date</label>
-          <input type="text" name="releaseDate" placeholder="e.g. April 23, 2016" value="<%= prefill && prefill.year ? prefill.year : '' %>" />
+          <input type="date" name="releaseDate" value="<%= prefill && prefill.year ? prefill.year + '-01-01' : '' %>" />
         </div>
         <div>
           <label>Genre</label>
