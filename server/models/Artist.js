@@ -36,6 +36,7 @@ const ArtistSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
 }]
+
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
@@ -49,4 +50,4 @@ ArtistSchema.virtual('albums', {
   justOne: false
 });
 
-module.exports = mongoose.model('Artist', ArtistSchema);
+module.exports = mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);

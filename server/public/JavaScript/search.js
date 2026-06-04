@@ -168,73 +168,54 @@ if (users.length > 0) {
     container.appendChild(section);
 }
 
-    if (artists.length > 0) {
-        const section = document.createElement('div');
+if (artists.length > 0) {
 
-        section.className = 'results-section artists';
-
-        section.innerHTML = `
-            <h3 class="results-title">🎤 Artists</h3>
-        `;
-
-        artists.forEach(artist => {
-            const card = document.createElement('div');
-
-            card.className = 'result-card';
-
-            card.innerHTML = `
-                <a href="/artists/${artist._id}">
-                    <img 
-                        src="${artist.image || '/Images/album-profile-images/epic.png'}" 
-                        alt="${escapeHtml(artist.name)}"
-                    >
-
-                    <div class="result-info">
-                        <h4>${escapeHtml(artist.name)}</h4>
-                        <p>${escapeHtml(artist.genre || '')}</p>
-                    </div>
-                </a>
-            `;
-
-            section.appendChild(card);
-        });
-
-        container.appendChild(section);
-    }
-
-    if (albums.length > 0) {
     const section = document.createElement('div');
 
-    section.className = 'results-section albums';
+    section.className = 'results-section artists';
 
     section.innerHTML = `
-        <h3 class="results-title">💿 Albums</h3>
+        <h3 class="results-title">🎤 Artists</h3>
     `;
 
-    albums.forEach(album => {
+    artists.forEach(artist => {
+
+        console.log(artist);
+
+        const sectionLink = document.createElement('a');
+
+        sectionLink.href = `/artists/${artist._id}`;
+
+        sectionLink.className = 'artist-link';
+
         const card = document.createElement('div');
 
         card.className = 'result-card';
 
         card.innerHTML = `
-            <a href="/albums/${album._id}">
-                <img 
-                    src="${album.coverImageUrl || '/Images/album-profile-images/epic.png'}"
-                    alt="${escapeHtml(album.title)}"
-                >
+            <img 
+                src="${artist.image || '/Images/default-album.png'}" 
+                alt="${escapeHtml(artist.name)}"
+            >
 
-                <div class="result-info">
-                    <h4>${escapeHtml(album.title)}</h4>
-                    <p>${escapeHtml(album.artist || '')}</p>
-                </div>
-            </a>
+            <div class="result-info">
+                <h4>${escapeHtml(artist.name)}</h4>
+                <p>${escapeHtml(artist.genre || '')}</p>
+            </div>
         `;
 
-        section.appendChild(card);
+        sectionLink.appendChild(card);
+
+        section.appendChild(sectionLink);
+
     });
 
     container.appendChild(section);
-    }
+}
+
+    
+    
+    
 
 if (songs.length > 0) {
     const section = document.createElement('div');

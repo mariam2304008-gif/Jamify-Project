@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamify - Artist Profile</title>
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <link rel="stylesheet" href="/CSS/artistProfile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<%- include('partials/navbar') %>
+
+<div class="main-content">
+
+    <!-- Artist Header -->
+    <div class="artist-header">
+
+        <img
+    src="<%= artist.image || '/Images/default-album.png' %>"
+    class="artist-img"
+    alt="<%= artist.name %>"
+>
+
+        <div class="artist-info">
+
+            <span class="artist-badge">🎤 Artist</span>
+
+            <h1><%= artist.name %></h1>
+
+            <p class="artist-genre">
+                <%= artist.genre %>
+            </p>
+
+            <p class="artist-country">
+                <%= artist.country %>
+            </p>
+            <div class="artist-stats">
+    <span
+    id="followersCount"
+    data-count="<%= artist.followers?.length || 0 %>"
+>
+    👥 <%= artist.followers?.length || 0 %> Followers
+</span>
+    <button class="follow-btn" id="followBtn">
+    <%= artist.followers?.includes('61ac192b1619c87991658b99')
+        ? 'Unfollow'
+        : 'Follow'
+    %>
+</button>
+<input type="hidden" id="artistId" value="<%= artist._id %>">
+</div>
+
+            <p class="artist-bio">
+                <%= artist.bio %>
+            </p>
+
+            <div class="artist-stats">
+
+                <span>
+                    <%= albums.filter(album => !album.isSingle).length %> Albums
+                </span>
+
+                <span>
+                    <%= albums.filter(album => album.isSingle).length %> Singles
+                </span>
+
+            </div>
+
+            <% if (artist.spotifyUrl) { %>
+
+                <div class="artist-links">
+                    <a href="<%= artist.spotifyUrl %>" target="_blank">
+                        <i class="fa-brands fa-spotify"></i>
+                        Spotify
+                    </a>
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+
+        <button 
+            class="tab active"
+            onclick="showTab('albums', this)"
+        >
+            Albums
+        </button>
+
+        <button 
+            class="tab"
+            onclick="showTab('singles', this)"
+        >
+            Singles
+        </button>
+
+    </div>
+
+    <!-- Albums -->
+    <div id="albums" class="tab-content active">
+
+        <div class="albums-grid">
+
+            <% albums
+                .filter(album => !album.isSingle)
+                .forEach(album => { %>
+                <a href="/albums/<%= album._id %>" class="album-card">
+         
+                   <img 
+    src="<%= album.coverImageUrl %>" 
+    alt="<%= album.title %>"
+>
+
+                    <div class="album-info">
+
+                        <h3><%= album.title %></h3>
+
+                        <p><%= album.artist %></p>
+
+                        <% if (album.averageRating) { %>
+
+                            <span class="rating-badge">
+                                ⭐ <%= album.averageRating.toFixed(1) %>
+                            </span>
+
+                        <% } %>
+
+                    </div>
+
+                </a>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+    <!-- Singles -->
+    <div id="singles" class="tab-content">
+
+        <div class="albums-grid">
+
+            <% albums
+                .filter(album => album.isSingle)
+                .forEach(album => { %>
+
+                <a href="/albums/<%= album._id %>" class="album-card">
+
+                    <img 
+                        src="<%= album.coverImageUrl %>"
+                        alt="<%= album.title %>"
+                    >
+
+                    <div class="album-info">
+
+                        <h3><%= album.title %></h3>
+
+                        <p><%= album.artist %></p>
+
+                        <% if (album.averageRating) { %>
+
+                            <span class="rating-badge">
+                                ⭐ <%= album.averageRating.toFixed(1) %>
+                            </span>
+
+                        <% } %>
+
+                    </div>
+
+                </a>
+
+            <% }) %>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function showTab(tabId, button) {
+
+        document.querySelectorAll('.tab-content')
+            .forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+        document.querySelectorAll('.tab')
+            .forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+        document.getElementById(tabId)
+            .classList.add('active');
+
+        button.classList.add('active');
+    }
+</script>
+
+<script src="/JavaScript/navbar.js"></script>
+
+<script>
+
+const followBtn = document.getElementById('followBtn');
+
+const followersText = document.getElementById('followersCount');
+
+followBtn.addEventListener('click', async () => {
+
+    const artistId = document.getElementById('artistId').value;
+
+    const isFollowing = followBtn.innerText.trim() === 'Unfollow';
+
+    try {
+
+        const url = isFollowing
+            ? `/api/artists/${artistId}/unfollow`
+            : `/api/artists/${artistId}/follow`;
+
+        const res = await fetch(url, {
+            method: 'POST'
+        });
+
+        const data = await res.json();
+
+        console.log(data);
+
+        if (data.success) {
+
+            // CHANGE BUTTON TEXT
+            followBtn.innerText = isFollowing
+                ? 'Follow'
+                : 'Unfollow';
+
+            // UPDATE FOLLOWERS COUNT
+            let currentFollowers = parseInt(
+                followersText.dataset.count
+            );
+
+            currentFollowers = isFollowing
+                ? currentFollowers - 1
+                : currentFollowers + 1;
+
+            followersText.dataset.count = currentFollowers;
+
+            followersText.innerText =
+                `👥 ${currentFollowers} Followers`;
+        }
+
+    } catch(err) {
+
+        console.log(err);
+
+    }
+
+});
+
+</script>
+</body>
+</html>
+

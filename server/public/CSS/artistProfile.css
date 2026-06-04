@@ -192,3 +192,26 @@
     text-align: center;
     margin: 20px 0;
 }
+.artist-stats{
+    display:flex;
+    gap:20px;
+    margin-top:10px;
+    font-size:15px;
+    color:#666;
+    font-weight:500;
+}
+.follow-btn{
+    margin-top:15px;
+    padding:10px 22px;
+    border:none;
+    border-radius:25px;
+    background:#ff5a4e;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.follow-btn:hover{
+    background:#e14a3f;
+}

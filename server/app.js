@@ -122,6 +122,51 @@ app.get('/search', (req, res) => {
     res.render('search');
 });
 
+
+app.get('/artists/:id', async (req, res) => {
+
+    try {
+
+        console.log('Artist ID:', req.params.id);
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.redirect('/search');
+        }
+
+        const Artist = require('./models/Artist');
+        const Album = require('./models/album');
+
+        console.log('Models loaded');
+
+        const artist = await Artist.findById(req.params.id);
+
+        console.log('Artist found:', artist);
+
+        if (!artist) {
+            return res.status(404).send('Artist not found');
+        }
+
+        const albums = await Album.find({
+            artist: artist.name
+        });
+
+        console.log('Albums found:', albums.length);
+
+        res.render('artistProfile', {
+            artist,
+            albums
+        });
+
+        console.log('Render success');
+
+    } catch (err) {
+
+        console.error('FULL ERROR:', err);
+
+        res.status(500).send(err.message);
+    }
+});
+
 // Home Route
 app.get('/', albumController.getAllAlbums);
 
