@@ -50,8 +50,8 @@ router.get('/:id/profile', async (req, res) => {
         const Album = require('../models/album');
 
         const albums = await Album.find({
-            artist: artist.name
-        });
+    artist: artist._id
+});
 
         res.render('artistProfile', {
             artist,

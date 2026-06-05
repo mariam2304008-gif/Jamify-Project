@@ -26,8 +26,9 @@ module.exports = {
         const totalAlbums = await album.countDocuments(filter);
 
         const paginatedAlbums = await album.find(filter)
-            .skip(skip)
-            .limit(limit);
+    .populate('artist')
+    .skip(skip)
+    .limit(limit);
 
         const combinedSingles = await Song.find({
             $or: [
@@ -55,7 +56,9 @@ module.exports = {
     getAlbumById: async (req, res) => {
         try {
             // .populate('songs') matches your updated models/album.js schema definition
-            const currentAlbum = await album.findById(req.params.id).populate('songs');
+            const currentAlbum = await album.findById(req.params.id)
+    .populate('songs')
+    .populate('artist');
             
             if (!currentAlbum) {
                 return res.status(404).json({ message: 'Album not found' });

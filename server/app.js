@@ -88,6 +88,7 @@ app.use('/songs', songRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
 app.use('/api/artists', require('./routes/artists'));
+app.use('/artists', require('./routes/artists'));
 app.use('/suggestions', suggestionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);

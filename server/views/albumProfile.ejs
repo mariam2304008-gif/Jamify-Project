@@ -39,9 +39,17 @@
                             <label id="head">
                                 <%= album.title %>
                             </label><br>
-                            <label style="color:rgb(81, 81, 81)">
-                                <%= album.artist %>
-                            </label>
+                           <% if (album.artist && album.artist.name) { %>
+
+    <a href="/artists/<%= album.artist._id %>/profile">
+        <%= album.artist.name %>
+    </a>
+
+<% } else { %>
+
+    <span><%= album.artist.name %></span>
+
+<% } %>
                         </div>
 
                         <div class="album-like-wrapper"

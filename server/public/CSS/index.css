@@ -102,6 +102,8 @@ h1 {
   color: inherit;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .album-card:hover {
@@ -132,22 +134,11 @@ h1 {
   font-weight: bold;
 }
 
-.album-card-info {
-  padding: 15px;
-}
-
-.album-card-info h3 {
-  margin: 0;
-  font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .album-card-info p {
-  margin: 5px 0 0;
-  font-size: 14px;
-  color: #666;
+    margin: 0;
+    font-size: 14px;
+    color: #666;
 }
 .pagination {
     display: flex;
@@ -182,4 +173,26 @@ h1 {
 .pagination .active-page {
     background: #1db954;
     color: white;
+}
+
+
+.album-card-info {
+    padding: 15px;
+    display: block;
+}
+
+.album-card-info h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.album-card-info a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.album-card-info a:hover {
+    color: #1db954;
+    text-decoration: underline;
 }
