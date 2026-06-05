@@ -5,7 +5,8 @@
   <title>Admin Add – Jamify</title>
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminadd.css" />
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+  <script src="/JavaScript/adminAdd.js" defer></script>
 </head>
 <body>
 <%- include('../partials/navbar') %>
@@ -81,19 +82,6 @@
   </div>
 </div>
 
-<script>
-function updateForm(type) {
-  const imageLabel = document.getElementById('imageLabel');
-  const imageInput = document.getElementById('imageInput');
-  if (type === 'song') {
-    imageLabel.textContent = 'Song Cover Image (optional)';
-    imageInput.removeAttribute('required');
-  } else {
-    imageLabel.textContent = 'Album Cover Image *';
-    imageInput.setAttribute('required', 'required');
-  }
-}
-</script>
 <script src="/JavaScript/navbar.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ const Song = require('../models/Song');
 const Suggestion = require('../models/Suggestion');
 const Review = require('../models/review');
 
+//Function 1
 exports.showAdd = async (req, res, next) => {
   try {
     let prefill = null;
@@ -15,6 +16,7 @@ exports.showAdd = async (req, res, next) => {
   }
 };
 
+//Function 2
 exports.addMusic = async (req, res, next) => {
   try {
     const { type, title, artist, year, genre, releaseDate, spotifyLink, anghamiLink, suggestionId } = req.body;
@@ -66,6 +68,7 @@ exports.addMusic = async (req, res, next) => {
   }
 };
 
+// Function 3
 exports.showManage = async (req, res, next) => {
   try {
     const albums = await Album.find().sort({ title: 1 }).lean();
@@ -76,6 +79,7 @@ exports.showManage = async (req, res, next) => {
   }
 };
 
+//Function 4
 exports.showEdit = async (req, res, next) => {
   try {
     const { type, id } = req.params;
@@ -89,6 +93,7 @@ exports.showEdit = async (req, res, next) => {
   }
 };
 
+// Function 5
 exports.updateMusic = async (req, res, next) => {
   try {
     const { type, id } = req.params;
@@ -120,6 +125,7 @@ exports.updateMusic = async (req, res, next) => {
   }
 };
 
+//Function 6
 exports.deleteMusic = async (req, res, next) => {
   try {
     const { type, id } = req.params;
@@ -134,6 +140,7 @@ exports.deleteMusic = async (req, res, next) => {
   }
 };
 
+//Function 7
 exports.reviewIndex = async (req, res, next) => {
   try {
     const reviews = await Review.find()
@@ -147,6 +154,7 @@ exports.reviewIndex = async (req, res, next) => {
   }
 };
 
+// Function 8
 exports.approveReview = async (req, res, next) => {
   try {
     // Review is kept as-is (approved by doing nothing — denial deletes it)
@@ -156,6 +164,7 @@ exports.approveReview = async (req, res, next) => {
   }
 };
 
+//Function 9
 exports.denyReview = async (req, res, next) => {
   try {
     await Review.findByIdAndDelete(req.params.id);

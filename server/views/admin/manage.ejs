@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminmanage.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+  <script src="/JavaScript/adminManage.js" defer></script>
 
   <style>
       a[href="/admin/reviews"],
@@ -89,20 +90,6 @@
   </div>
 </div>
 
-<script>
-  let activeForm = null;
-  function showDeleteModal(btn) {
-    activeForm = btn.closest('form');
-    document.getElementById('deleteModal').style.display = 'flex';
-  }
-  function confirmDelete() {
-    if (activeForm) activeForm.submit();
-  }
-  function closeDeleteModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-    activeForm = null;
-  }
-</script>
 <script src="/JavaScript/navbar.js"></script>
 </body>
 </html>

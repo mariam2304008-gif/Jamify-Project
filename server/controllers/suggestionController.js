@@ -2,6 +2,7 @@ const Suggestion = require('../models/Suggestion');
 const Album = require('../models/album');
 const Song = require('../models/Song');
 
+// Function 1
 exports.index = async (req, res, next) => {
   try {
     const suggestions = await Suggestion.find({ submittedBy: req.session.user._id })
@@ -13,6 +14,7 @@ exports.index = async (req, res, next) => {
   }
 };
 
+// Function 2
 exports.create = async (req, res, next) => {
   try {
     const { type, title, artist, releaseDate, genre, link, trackType, albumName, trackNumber } = req.body;
@@ -39,6 +41,7 @@ exports.create = async (req, res, next) => {
   }
 };
 
+// Function 3
 // Admin: list all suggestions with optional status filter
 exports.adminIndex = async (req, res, next) => {
   try {
@@ -54,6 +57,7 @@ exports.adminIndex = async (req, res, next) => {
   }
 };
 
+//Function 4
 exports.approve = async (req, res, next) => {
   try {
     const suggestion = await Suggestion.findById(req.params.id);
@@ -112,6 +116,7 @@ exports.approve = async (req, res, next) => {
   }
 };
 
+// Function 5
 exports.reject = async (req, res, next) => {
   try {
     await Suggestion.findByIdAndUpdate(req.params.id, { status: 'rejected' });
@@ -121,6 +126,7 @@ exports.reject = async (req, res, next) => {
   }
 };
 
+//Function 6
 exports.delete = async (req, res, next) => {
   try {
     const suggestion = await Suggestion.findById(req.params.id);
