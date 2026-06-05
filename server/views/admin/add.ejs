@@ -25,7 +25,7 @@
   <% } %>
 
   <div class="admin-form">
-    <form method="POST" action="/admin/add" enctype="multipart/form-data">
+    <form method="POST" action="/admin/add" enctype="multipart/form-data" onsubmit="return validateAdminForm()">
 
       <% if (prefill) { %>
         <input type="hidden" name="suggestionId" value="<%= prefill._id %>" />
@@ -63,17 +63,18 @@
       <div class="form-row two-col">
         <div>
           <label>Spotify Link</label>
-          <input type="text" name="spotifyLink" placeholder="https://open.spotify.com/..." value="<%= prefill ? prefill.link : '' %>" />
+          <input type="text" name="spotifyLink" id="spotifyLink" placeholder="https://open.spotify.com/..." value="<%= prefill ? prefill.link : '' %>" />
         </div>
         <div>
           <label>Anghami Link</label>
-          <input type="text" name="anghamiLink" placeholder="https://play.anghami.com/..." />
+          <input type="text" name="anghamiLink" id="anghamiLink" placeholder="https://play.anghami.com/..." />
         </div>
       </div>
+      <small id="link-error" style="color:#e74c3c; display:none;">At least one link (Spotify or Anghami) is required.</small>
 
       <div class="form-row" id="imageField">
-        <label id="imageLabel"><%= (prefill && prefill.type === 'song') ? 'Song Cover Image (optional)' : 'Album Cover Image *' %></label>
-        <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp" <%= (!prefill || prefill.type === 'album') ? 'required' : '' %> />
+        <label id="imageLabel"><%= (prefill && prefill.type === 'song') ? 'Song Cover Image *' : 'Album Cover Image *' %></label>
+        <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp" required />
         <small style="color:#888; display:block; margin-top:4px;">JPG, PNG, GIF or WebP — max 5 MB</small>
       </div>
 

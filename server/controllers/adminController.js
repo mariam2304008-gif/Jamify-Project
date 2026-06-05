@@ -25,10 +25,15 @@ exports.addMusic = async (req, res, next) => {
       return res.render('admin/add', { error: 'Title and Artist are required.', success: false, prefill: null });
     }
 
+    if (!spotifyLink && !anghamiLink) {
+      return res.render('admin/add', { error: 'At least one link (Spotify or Anghami) is required.', success: false, prefill: null });
+    }
+
+    if (!req.file) {
+      return res.render('admin/add', { error: 'Cover image is required.', success: false, prefill: null });
+    }
+
     if (type === 'album') {
-      if (!req.file) {
-        return res.render('admin/add', { error: 'Album cover image is required for albums.', success: false, prefill: null });
-      }
 
       await Album.create({
         title,
@@ -50,7 +55,7 @@ exports.addMusic = async (req, res, next) => {
         album:        null,
         genre:        genre || '',
         released:     releaseDate ? new Date(releaseDate) : new Date(),
-        coverImageUrl: req.file ? `/uploads/${req.file.filename}` : '/Images/album-profile-images/epic.png',
+        coverImageUrl: `/uploads/${req.file.filename}`,
         songLinks: {
           spotify: spotifyLink || '',
           anghami: anghamiLink || ''

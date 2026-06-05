@@ -13,11 +13,9 @@
 <div class="has-navbar">
     </div>
 
+<div class="popup" id="popup" <% if (flash) { %>style="display:block;"<% } %>>✅ Thank you for your suggestion!</div>
 <% if (flash) { %>
-  <div class="popup" id="popup" style="display:block;">✅ Thank you for your suggestion!</div>
-  <script>setTimeout(() => { document.getElementById('popup').style.display = 'none'; }, 3000);</script>
-<% } else { %>
-  <div class="popup" id="popup">✅ Thank you for your suggestion!</div>
+  <script>setTimeout(() => { document.getElementById('popup').style.display = 'none'; }, 5000);</script>
 <% } %>
 
 <div class="container">

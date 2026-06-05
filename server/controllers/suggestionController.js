@@ -5,7 +5,7 @@ const Song = require('../models/Song');
 // Function 1
 exports.index = async (req, res, next) => {
   try {
-    const suggestions = await Suggestion.find({ submittedBy: req.session.user._id })
+    const suggestions = await Suggestion.find({ submittedBy: req.session.user.id })
       .sort({ createdAt: -1 })
       .lean();
     res.render('suggest', { suggestions, flash: req.query.success });
