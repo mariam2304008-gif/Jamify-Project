@@ -1,6 +1,43 @@
+function showLoginModal() {
+    // We must define 'modal' here so the function knows what to show!
+    const modal = document.getElementById("login-modal");
+    if (modal) {
+        modal.classList.add("show");
+    }
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById("login-modal");
+    if (modal) {
+        modal.classList.remove("show");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     
-    // 1. Star Rating UI Handler Loop
+    // --- 1. Toast Notification Helper ---
+    function showToast(message, isRedirect = false) {
+        if (isRedirect) {
+            window.location.href = "/login";
+            return;
+        }
+        
+        const toast = document.getElementById("toast-notification");
+        const toastMsg = document.getElementById("toast-message");
+        
+        if (toast && toastMsg) {
+            toastMsg.textContent = message;
+            toast.classList.add("show");
+            
+            // Hide automatically after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    }
+    
+
+    // --- 2. Star Rating UI Handler Loop ---
     const stars = document.querySelectorAll(".stars i");
     const hiddenRatingInput = document.getElementById("rating");
 
@@ -17,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-  // 2. Heart Like Mutation Engine (Dynamic path routing for Songs & Albums)
+    // --- 3. Heart Like Mutation Engine ---
     const hearts = document.querySelectorAll(".like-heart");
 
     hearts.forEach((heart) => {
@@ -25,12 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const reviewId = heart.getAttribute("data-id");
             const pathParts = window.location.pathname.split('/');
             
-            // Determine dynamically if we are currently standing inside an album stack or song stack view
             const isAlbumPage = pathParts.includes('albums');
             const parentContext = isAlbumPage ? 'albums' : 'songs';
             const resourceId = pathParts[pathParts.indexOf(parentContext) + 1];
 
-            // --- SCENARIO A: THIS IS A MAIN ENTITY HEADER HEART BUTTON ---
+            // Scenario A: Main Entity Heart
             if (!reviewId) {
                 try {
                     const response = await fetch(`/${parentContext}/${resourceId}/like`, {
@@ -41,16 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (data.success) {
                         heart.classList.toggle("active", data.hasLiked);
-                        
-                        // Sync wrapper numeric span text counters
                         const mainCountSpan = heart.parentElement.querySelector(".like-count");
                         if (mainCountSpan) mainCountSpan.textContent = data.likeCount;
                         
-                        // Sync your secondary grid info counter label simultaneously
                         const secondaryCounter = document.querySelector(".total-likes-counter");
                         if (secondaryCounter) secondaryCounter.textContent = data.likeCount;
                     } else {
-                        alert(data.message || "Please sign in to update collections!");
+                        // Redirect to login if not authenticated
+                        showLoginModal();
                     }
                 } catch (err) {
                     console.error("Failed syncing route like mutation:", err);
@@ -58,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- SCENARIO B: THIS IS A MINILIKER INSIDE THE REVIEWS STREAM ---
+            // Scenario B: Mini Liker (Reviews)
             try {
                 const response = await fetch(`/${parentContext}/reviews/${reviewId}/like`, {
                     method: 'POST',
@@ -73,14 +107,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         countSpan.textContent = typeof data.likeCount === 'number' ? `${data.likeCount} Likes` : data.likeCount;
                     }
                 } else {
-                    alert(data.message || "Please sign in to vote!");
+                    showLoginModal();
                 }
             } catch (err) {
                 console.error("Failed syncing review mutation:", err);
             }
         });
     });
-    // 3. Validation interceptor
+
+    // --- 4. Validation Interceptor ---
     const reviewForm = document.querySelector("form");
     if (reviewForm) {
         reviewForm.addEventListener("submit", (e) => {
@@ -89,19 +124,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (currentScore === 0) {
                 e.preventDefault(); 
-                alert("Please select a star rating level!");
+                showToast("Please select a star rating level!");
             } else if (!textContent) {
                 e.preventDefault();
-                alert("Please type a quick comment before saving!");
+                showToast("Please type a quick comment before saving!");
             }
         });
     }
 
-    // 4. Tracklist Toggle Section Controller
+    // --- 5. Tracklist Toggle Section Controller ---
     const toggleBtn = document.getElementById('toggleTracklistBtn');
     const tracklistSection = document.getElementById('tracklistSection');
 
-    // FIXED: Guard clause protects song pages that do not have this toggle container
     if (toggleBtn && tracklistSection) {
         toggleBtn.addEventListener('click', () => {
             if (tracklistSection.style.display === 'none') {

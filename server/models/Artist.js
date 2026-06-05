@@ -14,7 +14,7 @@ const ArtistSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'Images/default-avatar.png'
+    default: 'Images/album-profile-images/epic.png'
   },
   genre: {
     type: String,
