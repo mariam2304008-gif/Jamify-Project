@@ -25,12 +25,12 @@ exports.getArtist = async (req, res, next) => {
     }
 
     // Get all albums where artist name matches
-    const albums = await Album.find({ artist: artist.name }).sort('-releaseDate');
+    const albums = await Album.find({ artist: artist._id });
 
-    res.status(200).json({
-      success: true,
-      data: { artist, albums }
-    });
+    res.render('artistProfile', {
+  artist,
+  albums
+});
   } catch (err) {
     next(err);
   }
