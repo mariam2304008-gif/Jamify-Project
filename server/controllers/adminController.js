@@ -10,7 +10,8 @@ exports.showAdd = async (req, res, next) => {
     if (req.query.suggestionId) {
       prefill = await Suggestion.findById(req.query.suggestionId).lean();
     }
-    res.render('admin/add', { error: null, success: false, prefill });
+    const albums = await Album.find().sort({ title: 1 }).lean();
+    res.render('admin/add', { error: null, success: false, prefill, albums });
   } catch (err) {
     next(err);
   }
@@ -19,18 +20,20 @@ exports.showAdd = async (req, res, next) => {
 //Function 2
 exports.addMusic = async (req, res, next) => {
   try {
-    const { type, title, artist, year, genre, releaseDate, spotifyLink, anghamiLink, suggestionId } = req.body;
+    const { type, title, artist, year, genre, releaseDate, spotifyLink, anghamiLink, suggestionId, albumId, trackNumber } = req.body;
+
+    const albums = await Album.find().sort({ title: 1 }).lean();
 
     if (!title || !artist) {
-      return res.render('admin/add', { error: 'Title and Artist are required.', success: false, prefill: null });
+      return res.render('admin/add', { error: 'Title and Artist are required.', success: false, prefill: null, albums });
     }
 
     if (!spotifyLink && !anghamiLink) {
-      return res.render('admin/add', { error: 'At least one link (Spotify or Anghami) is required.', success: false, prefill: null });
+      return res.render('admin/add', { error: 'At least one link (Spotify or Anghami) is required.', success: false, prefill: null, albums });
     }
 
-    if (!req.file) {
-      return res.render('admin/add', { error: 'Cover image is required.', success: false, prefill: null });
+    if (!req.file && (type !== 'song' || !albumId)) {
+      return res.render('admin/add', { error: 'Cover image is required.', success: false, prefill: null, albums });
     }
 
     if (type === 'album') {
@@ -48,26 +51,31 @@ exports.addMusic = async (req, res, next) => {
       });
 
     } else {
-      await Song.create({
+      const song = await Song.create({
         title,
         artists:      [artist],
-        trackType:    'Standalone Single',
-        album:        null,
+        trackType:    albumId ? 'Album Track' : 'Standalone Single',
+        album:        albumId || null,
+        trackNumber:  trackNumber ? Number(trackNumber) : null,
         genre:        genre || '',
         released:     releaseDate ? new Date(releaseDate) : new Date(),
-        coverImageUrl: `/uploads/${req.file.filename}`,
+        coverImageUrl: req.file ? `/uploads/${req.file.filename}` : '',
         songLinks: {
           spotify: spotifyLink || '',
           anghami: anghamiLink || ''
         }
       });
+
+      if (albumId) {
+        await Album.findByIdAndUpdate(albumId, { $addToSet: { songs: song._id } });
+      }
     }
 
     if (suggestionId) {
       await Suggestion.findByIdAndUpdate(suggestionId, { status: 'accepted' });
     }
 
-    res.render('admin/add', { error: null, success: true, prefill: null });
+    res.render('admin/add', { error: null, success: true, prefill: null, albums });
   } catch (err) {
     next(err);
   }
