@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Review = require('../models/review');
 const Playlist = require('../models/Playlist');
 const ErrorResponse = require('../utils/errorResponse');
+const Song = require('../models/Song')
 
 
 exports.getProfile = async (req, res, next) => {
@@ -41,7 +42,6 @@ exports.getProfile = async (req, res, next) => {
       });
 
     const playlists = await Playlist.find({ user: userId })
-      .populate('albums')
       .sort('-createdAt');
 
     res.render('profile', {
@@ -138,7 +138,6 @@ exports.getPublicProfile = async (req, res, next) => {
       });
 
     const playlists = await Playlist.find({ user: targetUserId, isPublic: true })
-      .populate('albums')
       .sort('-createdAt');
 
     res.render('publicProfile', { 
@@ -206,7 +205,6 @@ exports.getPlaylists = async (req, res, next) => {
     const playlists = await Playlist.find({
       user: req.session.user._id
     })
-      .populate('albums', 'title artist image')
       .sort('-createdAt');
 
     res.status(200).json({
@@ -301,65 +299,79 @@ exports.deletePlaylist = async (req, res, next) => {
 exports.addAlbumToPlaylist = async (req, res, next) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
+    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
 
-    if (!playlist) {
-      return next(new ErrorResponse('Playlist not found', 404));
-    }
-
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
-    if (playlist.albums.includes(req.params.albumId)) {
-      return next(
-        new ErrorResponse('Album already in playlist', 400)
-      );
+    // 1. Get all song IDs belonging to the album
+    const albumSongs = await Song.find({ album: req.params.albumId }).select('_id');
+    const songIdsToAdd = albumSongs.map(song => song._id.toString());
+
+    // 2. Filter: Only keep IDs not already in the playlist
+    const newSongs = songIdsToAdd.filter(id => !playlist.songs.includes(id));
+
+    if (newSongs.length === 0) {
+      return res.status(200).json({ success: true, message: "No new songs to add." });
     }
 
-    playlist.albums.push(req.params.albumId);
-
+    // 3. Add only the new, unique songs
+    playlist.songs.push(...newSongs);
     await playlist.save();
 
-    const updated = await Playlist.findById(playlist._id)
-      .populate('albums', 'title artist image');
-
-    res.status(200).json({
-      success: true,
-      data: updated
-    });
+    const updated = await Playlist.findById(playlist._id).populate('songs');
+    res.status(200).json({ success: true, data: updated });
   } catch (err) {
     next(err);
   }
 };
 
-exports.removeAlbumFromPlaylist = async (req, res, next) => {
+exports.removeSongFromPlaylist = async (req, res, next) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
+    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
 
-    if (!playlist) {
-      return next(new ErrorResponse('Playlist not found', 404));
-    }
-
-    if (
-      playlist.user.toString() !==
-      req.session.user._id.toString()
-    ) {
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
-    playlist.albums = playlist.albums.filter(
-      id => id.toString() !== req.params.albumId
+    // Remove the specific song ID
+    playlist.songs = playlist.songs.filter(
+      id => id.toString() !== req.params.songId
     );
 
     await playlist.save();
-    const updated = await Playlist.findById(playlist._id).populate('albums', 'title artist image');
+    
+    // Populate the new 'songs' field
+    const updated = await Playlist.findById(playlist._id).populate('songs');
     res.status(200).json({ success: true, data: updated });
   } catch (err) { next(err); }
 };
 
+exports.addSongToPlaylist = async (req, res, next) => {
+  try {
+    const playlist = await Playlist.findById(req.params.id);
+    if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
+
+    if (playlist.user.toString() !== req.session.user._id.toString()) {
+      return next(new ErrorResponse('Not authorized', 403));
+    }
+
+    const songId = req.params.songId;
+
+    // Prevent duplicates
+    if (playlist.songs.includes(songId)) {
+      return next(new ErrorResponse('Song already in playlist', 400));
+    }
+
+    playlist.songs.push(songId);
+    await playlist.save();
+
+    const updated = await Playlist.findById(playlist._id).populate('songs');
+    res.status(200).json({ success: true, data: updated });
+  } catch (err) { next(err); }
+};
 
 // @desc    Follow another User
 // @route   POST /api/users/:id/follow

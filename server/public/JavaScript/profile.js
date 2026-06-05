@@ -5,6 +5,7 @@ let editingPlaylistId = null;
 document.addEventListener('DOMContentLoaded', function () {
     bindEditProfile();
     bindPlaylistModal();
+    loadUserPlaylists();
 });
 
 // ─── Tab Switching ────────────────────────────────────────────────────────────
@@ -13,6 +14,10 @@ function showTab(tabId, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     if (btn) btn.classList.add('active');
+
+    if (tabId === 'playlists') {
+        loadUserPlaylists();
+    }
 }
 
 // ─── Edit Profile ─────────────────────────────────────────────────────────────
@@ -144,9 +149,16 @@ function openEditPlaylist(id, name, description, isPublic) {
 async function deletePlaylist(id) {
     if (!confirm('Delete this playlist?')) return;
     try {
-        const res = await fetch(`/api/users/playlists/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/users/playlists/${id}`, { 
+            method: 'DELETE',
+            credentials: 'include' 
+        });
         const data = await res.json();
-        if (data.success) window.location.reload();
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || "Failed to delete.");
+        }
     } catch (err) {
         console.error(err);
     }
@@ -164,5 +176,112 @@ function toggleSocialExpansion(listId, buttonElement) {
         buttonElement.textContent = "Show Less";
     } else {
         buttonElement.textContent = "Show More";
+    }
+}
+
+// ─── Song Management in Playlists ──────────────────────────────────────────
+
+// Open modal and fetch songs
+async function openSongsModal(playlistId, playlistName) {
+    const modal = document.getElementById('songsModal');
+    const container = document.getElementById('songsListContainer');
+    document.getElementById('songsModalTitle').textContent = playlistName;
+    
+    container.innerHTML = 'Loading...';
+    modal.style.display = 'flex';
+    
+    // Wire up the delete button
+    const deleteBtn = document.getElementById('deletePlaylistBtn');
+    deleteBtn.onclick = () => deletePlaylist(playlistId);
+
+    try {
+        const res = await fetch(`/api/users/playlists/${playlistId}`, {
+            credentials: 'include'
+        });
+        const result = await res.json();
+        
+        container.innerHTML = '';
+        
+        // Check if the request was successful and data exists
+        if (!result.success || !result.data) {
+            throw new Error("Invalid data structure");
+        }
+
+        const songs = result.data.songs || [];
+        
+        if (songs.length === 0) {
+            container.innerHTML = '<p>No songs in this playlist.</p>';
+            return;
+        }
+
+        songs.forEach(song => {
+            const div = document.createElement('div');
+            div.className = 'song-row';
+            div.innerHTML = `
+                <a href="/songs/${song._id}">${song.title} - ${song.artist}</a>
+                <button onclick="removeSong('${playlistId}', '${song._id}')">Remove</button>
+            `;
+            container.appendChild(div);
+        });
+    } catch (err) {
+        console.error("Fetch error:", err);
+        container.innerHTML = '<p>Error loading songs.</p>';
+    }
+}
+
+function closeSongsModal() {
+    document.getElementById('songsModal').style.display = 'none';
+}
+
+// Remove a song
+async function removeSong(playlistId, songId) {
+    if (!confirm('Remove this song from the playlist?')) return;
+    try {
+        const res = await fetch(`/api/users/playlists/${playlistId}/songs/${songId}`, { 
+            method: 'DELETE' 
+        });
+        const data = await res.json();
+        if (data.success) {
+            // Refresh the modal view
+            openSongsModal(playlistId, document.getElementById('songsModalTitle').textContent);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// ─── Render Playlists ──────────────────────────────────────────────────────────
+async function loadUserPlaylists() {
+    const container = document.getElementById('user-playlists-container');
+    try {
+        const res = await fetch('/api/users/playlists');
+        const data = await res.json(); // Assuming your controller returns { success: true, data: [...] }
+
+        container.innerHTML = '';
+        if (data.data.length === 0) {
+            container.innerHTML = '<p class="empty-msg">No playlists yet.</p>';
+            return;
+        }
+
+        data.data.forEach(playlist => {
+            const card = document.createElement('div');
+            card.className = 'playlist-card';
+            card.style.cursor = 'pointer';
+            
+            // This allows clicking the card to open your songs modal
+            card.onclick = () => openSongsModal(playlist._id, playlist.name);
+            
+            card.innerHTML = `
+                <div class="playlist-info">
+                    <h3>${playlist.name}</h3>
+                    <p class="playlist-desc">${playlist.description || 'No description'}</p>
+                    <p class="playlist-meta">${playlist.isPublic ? 'Public' : 'Private'}</p>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (err) {
+        console.error("Failed to load playlists:", err);
+        container.innerHTML = '<p>Error loading playlists.</p>';
     }
 }

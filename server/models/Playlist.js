@@ -17,10 +17,10 @@ const PlaylistSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  albums: [
+  songs: [ // renamed from albums
     {
       type: mongoose.Schema.ObjectId,
-      ref: 'Album'
+      ref: 'Song' // Ensure this points to your Song model
     }
   ],
   isPublic: {

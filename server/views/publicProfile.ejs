@@ -124,7 +124,7 @@
                     <p class="empty-msg">No public playlists available.</p>
                 <% } else { %>
                     <% playlists.forEach(playlist => { %>
-                        <div class="playlist-card">
+                        <div class="playlist-card" onclick="openSongsModal('<%= playlist._id %>', '<%= playlist.name %>')">
                             <div class="playlist-info">
                                 <h4><%= playlist.name %></h4>
                                 <p><%= playlist.description || 'No description provided.' %></p>
@@ -212,7 +212,37 @@
 
 </div>
 
+<div id="songsModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <div id="songsList"></div>
+        <button onclick="closeModal()">Close</button>
+    </div>
+</div>
+
 <script>
+
+async function openSongsModal(playlistId, playlistName) {
+    try {
+        const response = await fetch(`/api/users/playlists/${playlistId}`);
+        const result = await response.json();
+        
+        if (!result.success) throw new Error('Failed to load');
+        
+        document.getElementById('modalTitle').innerText = playlistName;
+        const songsList = document.getElementById('songsList');
+        songsList.innerHTML = result.data.songs.map(song => `<p>${song.title}</p>`).join('');
+        
+        document.getElementById('songsModal').style.display = 'block';
+    } catch (err) {
+    console.error("Fetch error:", err); // Keep this
+    alert('Error: ' + err.message); // Change this to see the actual error
+}
+}
+
+function closeSongsModal() {
+    document.getElementById('songsModal').style.display = 'none';
+}
 // Tab Switching Handler for Public Profile
 function showTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));

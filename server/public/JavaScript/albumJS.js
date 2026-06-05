@@ -1,15 +1,18 @@
 function showLoginModal() {
-    // We must define 'modal' here so the function knows what to show!
     const modal = document.getElementById("login-modal");
+    // Only add class if the element actually exists on this page
     if (modal) {
         modal.classList.add("show");
+    } else {
+        console.warn("Login modal element not found on this page.");
     }
 }
-
 function closeLoginModal() {
     const modal = document.getElementById("login-modal");
     if (modal) {
         modal.classList.remove("show");
+    } else {
+        console.warn("Login modal element not found on this page.");
     }
 }
 
@@ -71,7 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                     const response = await fetch(`/${parentContext}/${resourceId}/like`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
                     });
                     const data = await response.json();
 
@@ -96,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const response = await fetch(`/${parentContext}/reviews/${reviewId}/like`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
                 });
                 const data = await response.json();
 

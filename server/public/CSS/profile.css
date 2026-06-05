@@ -552,3 +552,38 @@ body {
     font-weight: bold;
     z-index: 10000;
 }
+
+/* Song Modal Specifics */
+#songsListContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.song-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.song-row a {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+
+.song-row a:hover { color: #e74c3c; }
+
+.song-row button {
+    background: #ff7675;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}

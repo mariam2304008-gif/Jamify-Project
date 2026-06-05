@@ -237,6 +237,20 @@
         </div>
     </div>
 
+    <div class="modal" id="songsModal">
+    <div class="modal-content">
+        <i class="fa-solid fa-xmark close-modal" onclick="closeSongsModal()" style="cursor:pointer; float:right; font-size: 20px;"></i>
+        
+        <h3 id="songsModalTitle">Playlist Songs</h3>
+        <div id="songsListContainer"></div>
+        
+        <div id="modalFooter" style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <i class="fa-solid fa-trash" id="deletePlaylistBtn" style="cursor:pointer; color: #e74c3c; font-size: 20px;"></i>
+            <button onclick="closeSongsModal()" class="btn-secondary">Close</button>
+        </div>
+    </div>
+    </div>
+
 </div>
 
 <script src="/JavaScript/profile.js"></script>
@@ -254,6 +268,7 @@
         src="<%= user.profileImageUrl || '/Images/default-avatar.png' %>"
     >
 </div>
+
 
 <script>
 function openProfileModal() {

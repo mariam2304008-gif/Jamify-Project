@@ -9,10 +9,11 @@ const {
   updatePlaylist,
   deletePlaylist,
   addAlbumToPlaylist,
-  removeAlbumFromPlaylist,
   followUser,
   unfollowUser,
-  getPublicProfile
+  getPublicProfile,
+  addSongToPlaylist,
+  removeSongFromPlaylist
 } = require('../controllers/userController');
 
 // 1. Base Static / Operational Routes
@@ -34,14 +35,30 @@ router.get('/search', async (req, res) => {
   }
 });
 
+router.get('/playlists/:playlistId', async (req, res) => {
+    try {
+        console.log("Fetching playlist:", req.params.playlistId); // Debug line
+        const playlist = await Playlist.findById(req.params.playlistId).populate('songs');
+        if (!playlist) return res.status(404).json({ success: false, message: 'Not found' });
+        
+        res.json({ success: true, data: playlist });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // 2. Specific Playlist Instance Routes (Must come BEFORE /:id parameterized routes)
 router.route('/playlists/:id')
   .put(isLoggedIn, updatePlaylist)
   .delete(isLoggedIn, deletePlaylist);
 
-router.route('/playlists/:id/albums/:albumId')
-  .post(isLoggedIn, addAlbumToPlaylist)
-  .delete(isLoggedIn, removeAlbumFromPlaylist);
+router.route('/playlists/:id/album/:albumId')
+  .post(isLoggedIn, addAlbumToPlaylist);
+
+  router.route('/playlists/:id/songs/:songId')
+  .post(isLoggedIn, addSongToPlaylist)
+  .delete(isLoggedIn, removeSongFromPlaylist);
 
 // 3. User Social Interaction Routes
 router.route('/:id/follow').post(isLoggedIn, followUser);
