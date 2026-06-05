@@ -122,7 +122,7 @@
 
                         <h3><%= album.title %></h3>
 
-                        <p><%= album.artist %></p>
+                        <p><%= artist.name %></p>
 
                         <% if (album.averageRating) { %>
 
@@ -160,20 +160,19 @@
 
                     <div class="album-info">
 
-                        <h3><%= album.title %></h3>
+    <h3><%= album.title %></h3>
 
-                        <p><%= album.artist %></p>
+    <p><%= artist.name %></p>
 
-                        <% if (album.averageRating) { %>
+    <% if (album.averageRating) { %>
 
-                            <span class="rating-badge">
-                                ⭐ <%= album.averageRating.toFixed(1) %>
-                            </span>
+        <span class="rating-badge">
+            ⭐ <%= album.averageRating.toFixed(1) %>
+        </span>
 
-                        <% } %>
+    <% } %>
 
-                    </div>
-
+</div>
                 </a>
 
             <% }) %>
