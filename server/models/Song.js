@@ -6,11 +6,11 @@ const songSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // Array of strings to support solo artists, collaborations, or features
-    artists: [{
-        type: String,
-        required: true
-    }],
+    artists: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Artist',
+    required: true
+},
     // Optional reference: If null, it's a Standalone Single!
     album: {
         type: mongoose.Schema.Types.ObjectId,
@@ -99,4 +99,4 @@ songSchema.pre('save', async function () {
 
 
 
-module.exports = mongoose.model('Song', songSchema, 'songs');
+module.exports = mongoose.models.Song || mongoose.model('Song', songSchema);

@@ -7,7 +7,9 @@ module.exports = {
     getSongById: async (req, res) => {
         try {
             // Fetch the song document and deeply populate the parent album data if it exists
-            const currentSong = await Song.findById(req.params.id).populate('album');
+            const currentSong = await Song.findById(req.params.id)
+    .populate('album')
+    .populate('artists');
             
             if (!currentSong) {
                 return res.status(404).send('Song profile not found');

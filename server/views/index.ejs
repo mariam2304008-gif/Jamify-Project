@@ -70,8 +70,8 @@
                 <div class="album-card-info">
                     <h3><%= song.title %></h3>
                     <p>
-                        <%= Array.isArray(song.artists) ? song.artists.join(', ') : (song.artist || 'Unknown Artist') %>
-                    </p>
+    <%= song.artists?.name || 'Unknown Artist' %>
+</p>
                 </div>
             </a>
     

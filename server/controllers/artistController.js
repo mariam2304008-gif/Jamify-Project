@@ -1,5 +1,6 @@
 const Artist = require('../models/Artist');
 const Album = require('../models/album');
+const Song = require('../models/Song');
 const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Get all artists
@@ -27,9 +28,13 @@ exports.getArtist = async (req, res, next) => {
     // Get all albums where artist name matches
     const albums = await Album.find({ artist: artist._id });
 
+    // Get all songs where artist name matches
+    const songs = await Song.find({ artists: artist._id });
+
     res.render('artistProfile', {
   artist,
-  albums
+  albums,
+  songs
 });
   } catch (err) {
     next(err);

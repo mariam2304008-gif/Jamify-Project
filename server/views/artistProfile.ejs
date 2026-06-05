@@ -60,15 +60,15 @@
 
             <div class="artist-stats">
 
-                <span>
-                    <%= albums.filter(album => !album.isSingle).length %> Albums
-                </span>
+    <span>
+        <%= albums.filter(album => !album.isSingle).length %> Albums
+    </span>
 
-                <span>
-                    <%= albums.filter(album => album.isSingle).length %> Singles
-                </span>
+    <span>
+        <%= songs.length %> Singles
+    </span>
 
-            </div>
+</div>
 
             <% if (artist.spotifyUrl) { %>
 
@@ -146,41 +146,38 @@
     <!-- Singles -->
     <div id="singles" class="tab-content">
 
-        <div class="albums-grid">
+    <div class="albums-grid">
 
-            <% albums
-                .filter(album => album.isSingle)
-                .forEach(album => { %>
+        <% songs.forEach(song => { %>
 
-                <a href="/albums/<%= album._id %>" class="album-card">
+            <a href="/songs/<%= song._id %>" class="album-card">
 
-                    <img 
-                        src="<%= album.coverImageUrl %>"
-                        alt="<%= album.title %>"
-                    >
+                <img 
+                    src="<%= song.coverImageUrl %>"
+                    alt="<%= song.title %>"
+                >
 
-                    <div class="album-info">
+                <div class="album-info">
 
-    <h3><%= album.title %></h3>
+                    <h3><%= song.title %></h3>
 
-    <p><%= artist.name %></p>
+                    <p><%= artist.name %></p>
 
-    <% if (album.averageRating) { %>
+                    <% if (song.rating) { %>
+                        <span class="rating-badge">
+                            ⭐ <%= song.rating.toFixed(1) %>
+                        </span>
+                    <% } %>
 
-        <span class="rating-badge">
-            ⭐ <%= album.averageRating.toFixed(1) %>
-        </span>
+                </div>
 
-    <% } %>
+            </a>
 
-</div>
-                </a>
-
-            <% }) %>
-
-        </div>
+        <% }) %>
 
     </div>
+
+</div>
 
 </div>
 

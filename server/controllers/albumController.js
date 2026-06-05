@@ -31,12 +31,12 @@ module.exports = {
     .limit(limit);
 
         const combinedSingles = await Song.find({
-            $or: [
-                { album: null },
-                { trackType: 'Standalone Single' },
-                { trackType: 'Single track' }
-            ]
-        });
+    $or: [
+        { album: null },
+        { trackType: 'Standalone Single' },
+        { trackType: 'Single track' }
+    ]
+}).populate('artists');
 
         const totalPages = Math.ceil(totalAlbums / limit);
 

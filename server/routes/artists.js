@@ -1,5 +1,7 @@
 const express = require('express');
 const Artist = require('../models/Artist');
+const Album = require('../models/album');
+const Song = require('../models/Song');
 const {
   getArtists,
   getArtist,
@@ -50,12 +52,17 @@ router.get('/:id/profile', async (req, res) => {
         const Album = require('../models/album');
 
         const albums = await Album.find({
-    artist: artist._id
-});
+            artist: artist._id
+        });
+
+        const songs = await Song.find({
+            artists: artist._id
+        });
 
         res.render('artistProfile', {
             artist,
-            albums
+            albums,
+            songs
         });
 
     } catch (err) {
@@ -63,7 +70,6 @@ router.get('/:id/profile', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
 // KEEP THIS LAST
 
 

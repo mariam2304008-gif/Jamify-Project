@@ -42,9 +42,16 @@
                                 <%= song.title %>
                             </label><br>
                             <label style="color:rgb(81, 81, 81)">
-                                <%= song.artists.join(', ') %></label>
-                    </div>
-                    
+    <% if (song.artists) { %>
+        <a href="/artists/<%= song.artists._id %>/profile"
+           style="text-decoration: none; color:rgb(81,81,81); font-weight:bold;">
+            <%= song.artists.name %>
+        </a>
+    <% } else { %>
+        Unknown Artist
+    <% } %>
+</label>
+                        </div>
                     <div class="album-like-wrapper" style="display: flex; flex-direction: column; align-items: center;">
                         <i class="fa-solid fa-heart like-heart <%= (typeof user !== ' undefined' && user &&
                                     Array.isArray(song.likes) && song.likes.includes(user.id || (user._id &&
