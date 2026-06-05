@@ -180,39 +180,32 @@ if (artists.length > 0) {
 
     artists.forEach(artist => {
 
-        console.log(artist);
-
-        const sectionLink = document.createElement('a');
-
-        sectionLink.href = `/artists/${artist._id}`;
-
-        sectionLink.className = 'artist-link';
-
         const card = document.createElement('div');
 
         card.className = 'result-card';
 
         card.innerHTML = `
-            <img 
-                src="${artist.image || '/Images/default-album.png'}" 
-                alt="${escapeHtml(artist.name)}"
-            >
+            <a href="/artists/${artist._id}/profile">
 
-            <div class="result-info">
-                <h4>${escapeHtml(artist.name)}</h4>
-                <p>${escapeHtml(artist.genre || '')}</p>
-            </div>
+                <img 
+                    src="${artist.image || '/Images/default-album.png'}" 
+                    alt="${escapeHtml(artist.name)}"
+                >
+
+                <div class="result-info">
+                    <h4>${escapeHtml(artist.name)}</h4>
+                    <p>${escapeHtml(artist.genre || '')}</p>
+                </div>
+
+            </a>
         `;
 
-        sectionLink.appendChild(card);
-
-        section.appendChild(sectionLink);
+        section.appendChild(card);
 
     });
 
     container.appendChild(section);
 }
-
     
     
     

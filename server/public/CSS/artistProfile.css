@@ -215,3 +215,21 @@
 .follow-btn:hover{
     background:#e14a3f;
 }
+.album-card {
+    text-decoration: none;
+    color: inherit;
+}
+
+.album-card:visited {
+    color: inherit;
+}
+
+.album-info h3,
+.album-info p {
+    color: black;
+}
+.artist-links a,
+.artist-links a:visited {
+    color: #1DB954;
+    text-decoration: none;
+}

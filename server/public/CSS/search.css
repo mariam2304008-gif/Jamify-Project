@@ -94,46 +94,6 @@
     font-size: 18px;
 }
 
-.result-card {
-    background: white;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-    transition: all 0.25s ease;
-}
-
-.result-card:hover {
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
-
-.result-card a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 14px;
-    text-decoration: none;
-    color: inherit;
-}
-
-.result-card img {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.result-info h4 {
-    margin: 0 0 4px;
-    font-size: 16px;
-}
-
-.result-info p {
-    margin: 0;
-    color: #888;
-    font-size: 14px;
-}
 
 .empty-state,
 .loading-state {
@@ -181,47 +141,65 @@
     .search-bar button {
         width: 100%;
     }
-
-    .result-card a {
-        align-items: flex-start;
-    }
 }
-.result-card{
+
+.result-card {
+    background: white;
+    border-radius: 18px;
+    margin-bottom: 14px;
+    border: 1px solid #f1d7d7;
+    transition: all 0.25s ease;
+    overflow: hidden;
+    max-width: 700px;
+    width: 100%;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-color: #e74c3c;
+}
+
+.result-card a,
+.result-card a:visited,
+.result-card a:hover,
+.result-card a:active {
     display: flex;
     align-items: center;
-    gap: 15px;
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
+    gap: 16px;
+    width: 100%;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #222;
+    box-sizing: border-box;
 }
 
-.result-card a{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    text-decoration:none;
-    color:inherit;
-    width:100%;
+.result-info {
+    flex: 1;
+}
+.result-card img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
-.result-card img{
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    object-fit:cover;
+.result-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.result-info{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
+.result-info h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
 }
 
-.result-info h4{
-    margin:0;
-}
-
-.result-info p{
-    margin:0;
-    color:gray;
+.result-info p {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #777;
 }
