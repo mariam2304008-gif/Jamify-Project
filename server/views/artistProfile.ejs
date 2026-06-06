@@ -20,9 +20,10 @@
     <div class="artist-header">
 
         <img
-    src="<%= artist.image || '/Images/default-album.png' %>"
-    class="artist-img"
-    alt="<%= artist.name %>"
+    id="artistImg"
+    src="<%= artist.image %>"
+    class="artist-image"
+    style="cursor:pointer;"
 >
 
         <div class="artist-info">
@@ -259,6 +260,58 @@ followBtn.addEventListener('click', async () => {
 
 });
 
+</script>
+<script>
+document.getElementById('artistImg').addEventListener('click', function () {
+
+    const overlay = document.createElement('div');
+
+    overlay.innerHTML = `
+        <div id="imageOverlay" style="
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            z-index:9999;
+        ">
+            <span id="closeOverlay" style="
+                position:absolute;
+                top:20px;
+                right:30px;
+                font-size:40px;
+                color:white;
+                cursor:pointer;
+            ">
+                &times;
+            </span>
+
+            <img
+                src="${this.src}"
+                style="
+                    max-width:80%;
+                    max-height:80%;
+                    border-radius:12px;
+                "
+            >
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById('closeOverlay')
+        .addEventListener('click', () => {
+            overlay.remove();
+        });
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target.id === 'imageOverlay') {
+            overlay.remove();
+        }
+    });
+
+});
 </script>
 </body>
 </html>

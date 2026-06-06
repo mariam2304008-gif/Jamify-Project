@@ -19,13 +19,13 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-.artist-img {
-    width: 130px;
-    height: 130px;
+.artist-image {
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     object-fit: cover;
+    cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 .artist-badge {
