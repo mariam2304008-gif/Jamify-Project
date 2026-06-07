@@ -3,15 +3,16 @@ const Song = require('../models/Song');
 const Suggestion = require('../models/Suggestion');
 const Review = require('../models/review');
 
-//Function 1
 exports.showAdd = async (req, res, next) => {
   try {
+    const Artist = require('../models/Artist');
     let prefill = null;
     if (req.query.suggestionId) {
       prefill = await Suggestion.findById(req.query.suggestionId).lean();
     }
     const albums = await Album.find().sort({ title: 1 }).lean();
-    res.render('admin/add', { error: null, success: false, prefill, albums });
+    const albums_artists = await Artist.find().sort({ name: 1 }).lean();
+    res.render('admin/add', { error: null, success: false, prefill, albums, albums_artists });
   } catch (err) {
     next(err);
   }
@@ -20,24 +21,26 @@ exports.showAdd = async (req, res, next) => {
 //Function 2
 exports.addMusic = async (req, res, next) => {
   try {
+    const Artist = require('../models/Artist');
+
     const { type, title, artist, year, genre, releaseDate, spotifyLink, anghamiLink, suggestionId, albumId, trackNumber } = req.body;
 
     const albums = await Album.find().sort({ title: 1 }).lean();
+    const albums_artists = await Artist.find().sort({ name: 1 }).lean();
 
     if (!title || !artist) {
-      return res.render('admin/add', { error: 'Title and Artist are required.', success: false, prefill: null, albums });
+      return res.render('admin/add', { error: 'Title and Artist are required.', success: false, prefill: null, albums, albums_artists });
     }
 
     if (!spotifyLink && !anghamiLink) {
-      return res.render('admin/add', { error: 'At least one link (Spotify or Anghami) is required.', success: false, prefill: null, albums });
+      return res.render('admin/add', { error: 'At least one link (Spotify or Anghami) is required.', success: false, prefill: null, albums, albums_artists });
     }
 
     if (!req.file && (type !== 'song' || !albumId)) {
-      return res.render('admin/add', { error: 'Cover image is required.', success: false, prefill: null, albums });
+      return res.render('admin/add', { error: 'Cover image is required.', success: false, prefill: null, albums, albums_artists });
     }
 
     if (type === 'album') {
-
       await Album.create({
         title,
         artist,
@@ -75,7 +78,7 @@ exports.addMusic = async (req, res, next) => {
       await Suggestion.findByIdAndUpdate(suggestionId, { status: 'accepted' });
     }
 
-    res.render('admin/add', { error: null, success: true, prefill: null, albums });
+    res.render('admin/add', { error: null, success: true, prefill: null, albums, albums_artists });
   } catch (err) {
     next(err);
   }

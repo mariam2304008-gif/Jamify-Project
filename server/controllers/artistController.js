@@ -75,8 +75,9 @@ exports.searchArtists = async (req, res) => {
 // @access  Private/Admin
 exports.createArtist = async (req, res, next) => {
   try {
+    if (req.file) req.body.image = `/uploads/${req.file.filename}`;
     const artist = await Artist.create(req.body);
-    res.status(201).json({ success: true, data: artist });
+    res.redirect('/admin/add');
   } catch (err) {
     next(err);
   }

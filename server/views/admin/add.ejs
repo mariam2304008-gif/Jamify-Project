@@ -21,7 +21,7 @@
     <p style="color:#e74c3c; margin-bottom:12px;"><%= error %></p>
   <% } %>
   <% if (success) { %>
-    <p style="color:green; margin-bottom:12px;">✅ Added successfully!</p>
+    <p style="color:green; margin-bottom:12px;">Added successfully!</p>
   <% } %>
 
   <div class="admin-form">
@@ -46,7 +46,12 @@
 
       <div class="form-row">
         <label>Artist *</label>
-        <input type="text" name="artist" placeholder="Artist name" value="<%= prefill ? prefill.artist : '' %>" required />
+        <select name="artist" required style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none;">
+        <option value="">-- Select Artist --</option>
+        <% albums_artists.forEach(a => { %>
+        <option value="<%= a._id %>" <%= prefill && prefill.artist === a.name ? 'selected' : '' %>><%= a.name %></option>
+        <% }) %>
+        </select>
       </div>
 
       <div class="form-row" id="albumField" style="display:none;">
@@ -96,6 +101,46 @@
       <button type="submit" class="btn-add">Add</button>
     </form>
   </div>
+  <h2 style="margin-top: 40px;">Add New Artist</h2>
+<div class="admin-form">
+  <form method="POST" action="/artists" enctype="multipart/form-data">
+
+    <div class="form-row">
+      <label>Name *</label>
+      <input type="text" name="name" placeholder="Artist name" required />
+    </div>
+
+    <div class="form-row">
+      <label>Bio</label>
+      <textarea name="bio" rows="3" placeholder="Short bio..." style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit;"></textarea>
+    </div>
+
+    <div class="form-row two-col">
+      <div>
+        <label>Genre</label>
+        <input type="text" name="genre" placeholder="Pop, Rock..." />
+      </div>
+      <div>
+        <label>Country</label>
+        <input type="text" name="country" placeholder="e.g. Egypt" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Spotify URL</label>
+      <input type="text" name="spotifyUrl" placeholder="https://open.spotify.com/artist/..." />
+    </div>
+
+    <div class="form-row">
+      <label>Artist Photo</label>
+      <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+      <small style="color:#888; display:block; margin-top:4px;">Leave empty to use default photo</small>
+    </div>
+
+    <button type="submit" class="btn-add">Add Artist</button>
+  </form>
+</div>
+
 </div>
 
 <script src="/JavaScript/navbar.js"></script>

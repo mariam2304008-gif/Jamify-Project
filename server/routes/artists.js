@@ -72,7 +72,8 @@ router.get('/:id/profile', async (req, res) => {
 });
 // KEEP THIS LAST
 
-router.route('/').get(getArtists).post(isLoggedIn, isAdmin, createArtist);
+const upload = require('../middleware/upload');
+router.route('/').get(getArtists).post(isLoggedIn, isAdmin, upload.single('image'), createArtist);
 router.route('/:id/follow').post(isLoggedIn, followArtist);
 router.route('/:id/unfollow').post(isLoggedIn, unfollowArtist);
 router.route('/:id/like').post(isLoggedIn, toggleArtistLike);
