@@ -72,6 +72,11 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const artistRoutes = require('./routes/artists');
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 // 2. Route Routing Middlewares
 app.use('/albums', albumRoutes);
 app.use('/songs', songRoutes);
@@ -114,11 +119,15 @@ app.get('/search', (req, res) => {
     res.render('search');
 });
 
-
-
-
-// Home Route
-app.get('/', albumController.getAllAlbums);
+// Home Route - wrapped with error handling
+app.get('/', async (req, res, next) => {
+    try {
+        await albumController.getAllAlbums(req, res);
+    } catch (err) {
+        console.error('Error in getAllAlbums:', err);
+        next(err);
+    }
+});
 
 // Global error handler for invalid IDs and unhandled errors
 app.use((err, req, res, next) => {
