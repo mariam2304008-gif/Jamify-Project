@@ -13,7 +13,8 @@ const {
   unfollowUser,
   getPublicProfile,
   addSongToPlaylist,
-  removeSongFromPlaylist
+  removeSongFromPlaylist,
+  updateProfile
 } = require('../controllers/userController');
 
 // 1. Base Static / Operational Routes
@@ -32,10 +33,12 @@ router.get('/search', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false });
-  }
+  } 
 });
 
-
+// Profile update route
+router.route('/profile')
+  .put(isLoggedIn, updateProfile);
 
 // 2. Specific Playlist Instance Routes (Must come BEFORE /:id parameterized routes)
 const Playlist = require('../models/Playlist');

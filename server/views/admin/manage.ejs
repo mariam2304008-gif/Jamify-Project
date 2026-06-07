@@ -43,7 +43,7 @@
       </a>
       <div class="music-info">
         <strong><%= a.title %></strong>
-        <span><%= a.artist %></span>
+        <span><%= a.artist ? a.artist.name : 'Unknown Artist' %></span>
       </div>
       <div class="music-actions">
         <a href="/admin/edit/album/<%= a._id %>" class="btn-edit">Edit</a>
@@ -66,7 +66,7 @@
       </a>
       <div class="music-info">
         <strong><%= s.title %></strong>
-        <span><%= Array.isArray(s.artists) ? s.artists.join(', ') : '' %></span>
+        <span><%= s.artists ? s.artists.name : 'Unknown Artist' %></span>
       </div>
       <div class="music-actions">
         <a href="/admin/edit/song/<%= s._id %>" class="btn-edit">Edit</a>

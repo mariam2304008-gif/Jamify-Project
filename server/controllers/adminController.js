@@ -84,8 +84,8 @@ exports.addMusic = async (req, res, next) => {
 // Function 3
 exports.showManage = async (req, res, next) => {
   try {
-    const albums = await Album.find().sort({ title: 1 }).lean();
-    const songs  = await Song.find().sort({ title: 1 }).lean();
+    const albums = await Album.find().sort({ title: 1 }).populate('artist', 'name').lean();
+    const songs  = await Song.find().sort({ title: 1 }).populate('artists', 'name').lean();
     res.render('admin/manage', { albums, songs });
   } catch (err) {
     next(err);

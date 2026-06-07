@@ -24,126 +24,114 @@ signupTab.addEventListener('click', () => {
     loginForm.classList.add('hidden');
 });
 
-function getUsers() {
-    const usersJson = localStorage.getItem(USERS_KEY);
-    return usersJson ? JSON.parse(usersJson) : [];
-}
-
-function saveUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
+// ── Validation helpers ────────────────────────────────────────────────────────
 
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function isvalidpassword(password) {
-    return /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+function isValidPassword(password) {
+    // Min 8 chars, at least 1 uppercase, 1 digit, 1 special character
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);
 }
 
-function isUsernameTaken(username) {
-    return getUsers().some(user => user.username.toLowerCase() === username.toLowerCase());
-}
+// ── Signup ────────────────────────────────────────────────────────────────────
 
-function validateSignup() {
-    const name = document.getElementById('reg-name').value.trim();
-    const username = document.getElementById('reg-user').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const password = document.getElementById('reg-pass').value;
-    const confirmPassword = document.getElementById('reg-confirm').value;
+async function handleSignup(event) {
+    event.preventDefault();
 
-    const errorMessage = document.getElementById('signup-error-message');
-    errorMessage.style.display = 'none';
-    errorMessage.textContent = '';
+    const displayName = document.getElementById('reg-name').value.trim();
+    const username    = document.getElementById('reg-user').value.trim();
+    const email       = document.getElementById('reg-email').value.trim();
+    const password    = document.getElementById('reg-pass').value;
+    const confirm     = document.getElementById('reg-confirm').value;
 
-    if (name === '') {
-        errorMessage.textContent = 'Please enter your display name';
-        errorMessage.style.display = 'block';
-        return;
+    // Client-side validation with toast notifications
+    if (displayName === '') {
+        return showToast('Please enter your display name.', 'error');
     }
-
     if (username === '') {
-        errorMessage.textContent = 'Please enter a username';
-        errorMessage.style.display = 'block';
-        return;
+        return showToast('Please enter a username.', 'error');
     }
-
-    if (username.toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase()) {
-        errorMessage.textContent = "The username 'admin' is reserved. Please choose another username.";
-        errorMessage.style.display = 'block';
-        return;
-    }
-
-    if (isUsernameTaken(username)) {
-        errorMessage.textContent = 'That username is already taken. Please choose another one.';
-        errorMessage.style.display = 'block';
-        return;
-    }
-
     if (!isValidEmail(email)) {
-        errorMessage.textContent = 'Please enter a valid email address';
-        errorMessage.style.display = 'block';
-        return;
+        return showToast('Please enter a valid email address.', 'error');
+    }
+    if (password === '') {
+        return showToast('Please enter a password.', 'error');
+    }
+    if (password.length < 8) {
+        return showToast('Password must be at least 8 characters long.', 'error');
+    }
+    if (!/[A-Z]/.test(password)) {
+        return showToast('Password must include at least one uppercase letter.', 'error');
+    }
+    if (!/\d/.test(password)) {
+        return showToast('Password must include at least one number.', 'error');
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        return showToast('Password must include at least one special character (e.g. !@#$%).', 'error');
+    }
+    if (password !== confirm) {
+        return showToast('Passwords do not match.', 'error');
     }
 
-    if (password === '' || password !== confirmPassword) {
-        errorMessage.textContent = 'Passwords do not match or are empty';
-        errorMessage.style.display = 'block';
-        return;
+    // Send to authController via fetch
+    try {
+        const res = await fetch('/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, displayName })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            return showToast(data.message || 'Signup failed. Please try again.', 'error');
+        }
+
+        showToast('Account created! Redirecting...', 'success');
+        setTimeout(() => { window.location.href = '/login'; }, 1500);
+
+    } catch (err) {
+        showToast('Network error. Please try again.', 'error');
     }
-
-    if (!isvalidpassword(password)) {
-        errorMessage.textContent = 'Password must contain at least one uppercase letter, one digit, and be at least 8 characters long.';
-        errorMessage.style.display = 'block';
-        return;
-    }
-
-    const newUser = {
-        name,
-        username,
-        email,
-        phone,
-        password
-    };
-
-    const users = getUsers();
-    users.push(newUser);
-    saveUsers(users);
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
-
-    window.location.href = 'index.html';
 }
 
-function loginAction() {
+// ── Login ─────────────────────────────────────────────────────────────────────
+
+async function handleLogin(event) {
+    event.preventDefault();
+
     const username = document.getElementById('login-user').value.trim();
     const password = document.getElementById('login-pass').value;
 
-    const errorMessage = document.getElementById('login-error-message');
-    errorMessage.style.display = 'none';
-    errorMessage.textContent = '';
-
     if (username === '' || password === '') {
-        errorMessage.textContent = 'Please enter both username and password';
-        errorMessage.style.display = 'block';
-        return;
+        return showToast('Please enter both username and password.', 'error');
     }
 
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ username, role: 'admin' }));
-        window.location.href = 'index.html';
-        return;
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            if (data.error === 'user_not_found') {
+                return showToast('User does not exist.', 'error');
+            }
+            if (data.error === 'wrong_password') {
+                return showToast('Wrong password.', 'error');
+            }
+            return showToast(data.message || 'Login failed. Please try again.', 'error');
+        }
+
+        // Success — server set the session, redirect home
+        window.location.href = '/';
+
+    } catch (err) {
+        showToast('Network error. Please try again.', 'error');
     }
-
-    const users = getUsers();
-    const user = users.find(user => user.username.toLowerCase() === username.toLowerCase() && user.password === password);
-
-    if (!user) {
-        errorMessage.textContent = 'Invalid username or password';
-        errorMessage.style.display = 'block';
-        return;
-    }
-
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    window.location.href = 'index.html';
 }

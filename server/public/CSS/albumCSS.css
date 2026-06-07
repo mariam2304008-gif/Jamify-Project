@@ -457,3 +457,92 @@ button {
     margin-top: 15px; background: #e74c3c; color: white; 
     border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px;
 }
+
+/* ── Tracklist ────────────────────────────────────────────────────────────── */
+
+.tracklist-container {
+    margin-top: 20px;
+    background-color: white;
+    border-left: 4px solid #e74c3c;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 24px;
+    animation: fadeSlideIn 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.tracklist-container h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e74c3c;
+    margin: 0 0 16px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(81, 81, 81, 0.2);
+    letter-spacing: 0.3px;
+}
+
+.tracklist-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.track-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 12px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.track-row:hover {
+    background-color: #fbe9e7;
+}
+
+.track-number {
+    font-size: 13px;
+    color: #b0b0b0;
+    min-width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 500;
+}
+
+.track-title {
+    font-size: 14.5px;
+    color: #2c2c2c;
+    text-decoration: none;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+}
+
+.track-title:hover {
+    color: #e74c3c;
+}
+
+.tracklist-container .empty-msg {
+    color: rgb(81, 81, 81);
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 0;
+    opacity: 0.7;
+}
+
+.tracklist-btn:hover {
+    opacity: 1;
+    background-color: #e74c3c;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.15);
+}
