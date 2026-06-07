@@ -17,7 +17,7 @@ const songRoutes = require('./routes/songs');
 const searchRoutes = require('./routes/search');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Setup Template Engine & Parsers
 app.set('view engine', 'ejs');
@@ -33,9 +33,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, 
-        maxAge: 1000 * 60 * 60 * 24 
-    }
+    secure: process.env.NODE_ENV === 'production', 
+    maxAge: 1000 * 60 * 60 * 24 
+}
 }));
 
 const User = require('./models/User');
