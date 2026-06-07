@@ -65,7 +65,7 @@
 
       <div class="form-row" id="albumField" style="display:none;">
         <label>Belongs to Album <span style="color:#888; font-weight:normal;">(optional)</span></label>
-        <select name="albumId" id="albumSelect" onchange="updateImageRequired()">
+        <select name="albumId"style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none;" id="albumSelect" onchange="updateImageRequired()">
           <option value="">-- Standalone Single --</option>
           <% albums.forEach(a => { %>
             <option value="<%= a._id %>"><%= a.title %> — <%= a.artist %></option>
