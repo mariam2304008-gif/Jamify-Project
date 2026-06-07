@@ -1,5 +1,13 @@
 let activeForm = null;
 
+function filterCards() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.music-card').forEach(function(card) {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(query) ? 'block' : 'none';
+    });
+}
+
 function showDeleteModal(btn) {
     activeForm = btn.closest('form');
     document.getElementById('deleteModal').style.display = 'flex';

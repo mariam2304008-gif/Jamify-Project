@@ -32,6 +32,8 @@
     <a href="/admin/reviews" class="dashboard-card">Review Moderation</a>
   </div>
 
+  <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search albums or songs..." class="search-input" />
+
   <h2>Manage Music</h2>
   <% if (typeof albums !== 'undefined' && albums.length === 0) { %>
     <p class="empty">No albums found.</p>
