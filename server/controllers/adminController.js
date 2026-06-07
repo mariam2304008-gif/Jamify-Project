@@ -100,7 +100,8 @@ exports.showEdit = async (req, res, next) => {
       ? await Album.findById(id).lean()
       : await Song.findById(id).lean();
     if (!item) return res.redirect('/admin/manage');
-    res.render('admin/edit', { type, item, error: null, success: false });
+    const albums = await Album.find().sort({ title: 1 }).lean();
+    res.render('admin/edit', { type, item, error: null, success: false, albums });
   } catch (err) {
     next(err);
   }
@@ -110,7 +111,7 @@ exports.showEdit = async (req, res, next) => {
 exports.updateMusic = async (req, res, next) => {
   try {
     const { type, id } = req.params;
-    const { title, artist, genre, releaseDate, spotifyLink, anghamiLink } = req.body;
+    const { title, artist, genre, releaseDate, spotifyLink, anghamiLink, albumId, trackNumber } = req.body;
 
     if (type === 'album') {
       const update = {
@@ -123,12 +124,19 @@ exports.updateMusic = async (req, res, next) => {
     } else {
       const update = {
         title,
-        artists: [artist],
-        genre:   genre || '',
-        songLinks: { spotify: spotifyLink || '', anghami: anghamiLink || '' }
+        artists:     [artist],
+        genre:       genre || '',
+        album:       albumId || null,
+        trackNumber: trackNumber ? Number(trackNumber) : null,
+        trackType:   albumId ? 'Album Track' : 'Standalone Single',
+        songLinks:   { spotify: spotifyLink || '', anghami: anghamiLink || '' }
       };
       if (releaseDate) update.released = new Date(releaseDate);
       if (req.file) update.coverImageUrl = `/uploads/${req.file.filename}`;
+      if (albumId && !req.file && !update.coverImageUrl) {
+        const parentAlbum = await Album.findById(albumId).lean();
+        if (parentAlbum && parentAlbum.coverImageUrl) update.coverImageUrl = parentAlbum.coverImageUrl;
+      }
       await Song.findByIdAndUpdate(id, update);
     }
 
