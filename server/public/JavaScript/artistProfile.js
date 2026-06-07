@@ -56,17 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 }
 
-    function openLoginModal() {
-        if (loginModal) {
-            loginModal.style.display = 'flex';
-        }
+   function openLoginModal() {
+    if (loginModal) {
+        loginModal.classList.add('show');
     }
+}
 
-    function closeLoginModal() {
-        if (loginModal) {
-            loginModal.style.display = 'none';
-        }
+function closeLoginModal() {
+    if (loginModal) {
+        loginModal.classList.remove('show');
     }
+}
 
     if (closeLoginModalBtn) {
         closeLoginModalBtn.addEventListener('click', closeLoginModal);
