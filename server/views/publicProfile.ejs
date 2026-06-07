@@ -130,11 +130,11 @@
                     <p class="empty-msg">No public playlists available.</p>
                 <% } else { %>
                     <% playlists.forEach(playlist => { %>
-                        <div class="playlist-card" onclick="openSongsModal('<%= playlist._id %>', '<%= playlist.name %>')">
-                            <div class="playlist-info">
-                                <h4><%= playlist.name %></h4>
-                                <p><%= playlist.description || 'No description provided.' %></p>
-                                <small><%= playlist.albums ? playlist.albums.length : 0 %> Albums Included</small>
+                        <div class="playlist-card" style="cursor:pointer;" onclick="openSongsModal('<%= playlist._id %>', '<%= playlist.name %>')">
+                             <div class="playlist-info">
+                            <h3><%= playlist.name %></h3>
+                            <p class="playlist-desc"><%= playlist.description || 'No description' %></p>
+                            <p class="playlist-meta"><%= playlist.songs ? playlist.songs.length : 0 %> Songs</p>
                             </div>
                         </div>
                     <% }) %>
@@ -218,36 +218,71 @@
 
 </div>
 
-<div id="songsModal" class="modal">
+<div class="modal" id="songsModal">
     <div class="modal-content">
-        <h3 id="modalTitle"></h3>
-        <div id="songsList"></div>
-        <button onclick="closeModal()">Close</button>
+        <i class="fa-solid fa-xmark modal-close-btn" onclick="closeSongsModal()"></i>
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <div id="songsList" style="max-height:300px; overflow-y:auto; margin:15px 0; border-top:1px solid #eee; padding-top:10px;"></div>
     </div>
 </div>
 </div>
 <script>
 
 async function openSongsModal(playlistId, playlistName) {
+    const modal = document.getElementById('songsModal');
+    const songsList = document.getElementById('songsList');
+
+    document.getElementById('modalTitle').textContent = playlistName;
+    songsList.innerHTML = '<p style="color:#888; font-style:italic;">Loading...</p>';
+    modal.style.display = 'flex';
+
     try {
         const response = await fetch(`/api/users/playlists/${playlistId}`);
         const result = await response.json();
-        
-        if (!result.success) throw new Error('Failed to load');
-        
-        document.getElementById('modalTitle').innerText = playlistName;
-        const songsList = document.getElementById('songsList');
-        songsList.innerHTML = result.data.songs.map(song => `<p>${song.title}</p>`).join('');
-        
-        document.getElementById('songsModal').style.display = 'block';
+
+        if (!result.success || !result.data) {
+            songsList.innerHTML = '<p style="color:#e74c3c;">Error loading playlist.</p>';
+            return;
+        }
+
+        const songs = result.data.songs || [];
+
+        if (songs.length === 0) {
+            songsList.innerHTML = '<p style="color:#888; font-style:italic;">No songs added.</p>';
+            return;
+        }
+
+        songsList.innerHTML = '';
+        songs.forEach(song => {
+            const div = document.createElement('div');
+            div.className = 'song-row';
+            div.innerHTML = `
+                <a href="/songs/${song._id}" style="display:flex; align-items:center; gap:12px; flex:1;">
+                    <img src="${song.coverImageUrl || '/Images/album-profile-images/epic.png'}"
+                         style="width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;">
+                    <div>
+                        <div style="font-weight:600; font-size:14px;">${escapeHtml(song.title)}</div>
+                        <div style="font-size:12px; color:#888;">${escapeHtml(song.artists?.name || 'Unknown Artist')}</div>
+                    </div>
+                </a>
+            `;
+            songsList.appendChild(div);
+        });
+
     } catch (err) {
-    console.error("Fetch error:", err); // Keep this
-    showToast('Error: ' + err.message, 'error');
-}
+        console.error('Fetch error:', err);
+        songsList.innerHTML = '<p style="color:#e74c3c;">Error loading songs.</p>';
+    }
 }
 
 function closeSongsModal() {
     document.getElementById('songsModal').style.display = 'none';
+}
+
+function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(str || ''));
+    return d.innerHTML;
 }
 // Tab Switching Handler for Public Profile
 function showTab(tabId, btn) {

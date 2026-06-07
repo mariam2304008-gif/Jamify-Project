@@ -183,52 +183,65 @@ function toggleSocialExpansion(listId, buttonElement) {
 
 // ─── Song Management in Playlists ──────────────────────────────────────────
 
-// Open modal and fetch songs
 async function openSongsModal(playlistId, playlistName) {
     const modal = document.getElementById('songsModal');
     const container = document.getElementById('songsListContainer');
     document.getElementById('songsModalTitle').textContent = playlistName;
-    
-    container.innerHTML = 'Loading...';
-    modal.style.display = 'flex';
-    
-    // Wire up the delete button
+
     const deleteBtn = document.getElementById('deletePlaylistBtn');
     deleteBtn.onclick = () => deletePlaylist(playlistId);
+
+    container.innerHTML = '<p style="color:#888; font-style:italic;">Loading...</p>';
+    modal.style.display = 'flex';
 
     try {
         const res = await fetch(`/api/users/playlists/${playlistId}`, {
             credentials: 'include'
         });
         const result = await res.json();
-        
-        container.innerHTML = '';
-        
-        // Check if the request was successful and data exists
-        if (!result.success || !result.data) {
-            throw new Error("Invalid data structure");
-        }
 
-        const songs = result.data.songs || [];
-        
-        if (songs.length === 0) {
-            container.innerHTML = '<p>No songs in this playlist.</p>';
+        if (!result.success || !result.data) {
+            container.innerHTML = '<p style="color:#e74c3c;">Error loading playlist.</p>';
             return;
         }
 
+        const songs = result.data.songs || [];
+
+        if (songs.length === 0) {
+            container.innerHTML = '<p style="color:#888; font-style:italic;">No songs added.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
         songs.forEach(song => {
             const div = document.createElement('div');
             div.className = 'song-row';
             div.innerHTML = `
-                <a href="/songs/${song._id}">${song.title} - ${song.artist}</a>
-                <button onclick="removeSong('${playlistId}', '${song._id}')">Remove</button>
+                <a href="/songs/${song._id}" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex:1;">
+                    <img src="${song.coverImageUrl || '/Images/album-profile-images/epic.png'}"
+                         style="width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;">
+                    <div>
+                        <div style="font-weight:600; font-size:14px;">${escapeHtml(song.title)}</div>
+                        <div style="font-size:12px; color:#888;">${escapeHtml(song.artists?.name || 'Unknown Artist')}</div>
+                    </div>
+                </a>
+                <button onclick="removeSong('${playlistId}', '${song._id}')"
+                        style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:18px; padding:4px 8px;"
+                        title="Remove">✕</button>
             `;
             container.appendChild(div);
         });
+
     } catch (err) {
-        console.error("Fetch error:", err);
-        container.innerHTML = '<p>Error loading songs.</p>';
+        console.error('Fetch error:', err);
+        container.innerHTML = '<p style="color:#e74c3c;">Error loading songs.</p>';
     }
+}
+
+function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(str || ''));
+    return d.innerHTML;
 }
 
 function closeSongsModal() {

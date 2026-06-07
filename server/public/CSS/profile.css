@@ -413,11 +413,34 @@ body {
     z-index: 999;
 }
 .modal-content {
-    background: white; padding: 25px; border-radius: 10px; width: 320px;
-    display: flex; flex-direction: column; gap: 10px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
 }
 .modal-content input, .modal-content textarea {
     padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; font-size: 14px;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+}
+
+.modal-close-btn:hover {
+    color: #e74c3c;
+}
+
+.modal-title {
+    margin-top: 0;
+    padding-right: 30px;
 }
 .modal-buttons { display: flex; gap: 10px; }
 .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 14px; }

@@ -35,21 +35,26 @@ router.get('/search', async (req, res) => {
   }
 });
 
-router.get('/playlists/:playlistId', async (req, res) => {
-    try {
-        console.log("Fetching playlist:", req.params.playlistId); // Debug line
-        const playlist = await Playlist.findById(req.params.playlistId).populate('songs');
-        if (!playlist) return res.status(404).json({ success: false, message: 'Not found' });
-        
-        res.json({ success: true, data: playlist });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
+
 
 // 2. Specific Playlist Instance Routes (Must come BEFORE /:id parameterized routes)
+const Playlist = require('../models/Playlist');
+
 router.route('/playlists/:id')
+  .get(async (req, res) => {
+    try {
+      const playlist = await Playlist.findById(req.params.id)
+        .populate({
+          path: 'songs',
+          populate: { path: 'artists', select: 'name' }
+        });
+      if (!playlist) return res.status(404).json({ success: false, message: 'Not found' });
+      res.json({ success: true, data: playlist });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  })
   .put(isLoggedIn, updatePlaylist)
   .delete(isLoggedIn, deletePlaylist);
 
