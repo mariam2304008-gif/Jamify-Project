@@ -25,30 +25,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
     const confirmLoginBtn = document.getElementById('confirmLoginBtn');
 
-    async function handleArtistAction(url, btn, countElement, countDelta, activeText, inactiveText) {
-        try {
-            const res = await fetch(url, {
-                method: 'POST'
-            });
+   async function handleArtistAction(url) {
+    try {
+        const res = await fetch(url, { method: 'POST' });
 
-            if (!res.ok) {
-                if (res.status === 401) {
-                    return { notAuthorized: true };
-                }
-                return { error: true };
-            }
+        const contentType = res.headers.get('content-type') || '';
 
-            const data = await res.json();
-            if (!data.success) {
-                return { error: true };
-            }
+        if (!contentType.includes('application/json')) {
+            // Server returned HTML (e.g. login redirect) — treat as unauthorized
+            return { notAuthorized: true };
+        }
 
-            return { success: true, data };
-        } catch (err) {
-            console.log(err);
+        if (res.status === 401) {
+            return { notAuthorized: true };
+        }
+
+        if (!res.ok) {
             return { error: true };
         }
+
+        const data = await res.json();
+        if (!data.success) {
+            return { error: true };
+        }
+
+        return { success: true, data };
+    } catch (err) {
+        console.log(err);
+        return { error: true };
     }
+}
 
     function openLoginModal() {
         if (loginModal) {
@@ -96,44 +102,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     const currentFollowers = parseInt(followersText.dataset.count, 10) || 0;
                     const nextCount = isFollowing ? currentFollowers - 1 : currentFollowers + 1;
                     followersText.dataset.count = nextCount;
-                    followersText.innerText = `👥 ${nextCount} Followers`;
+                    followersText.innerText = `${nextCount} Followers`;
                 }
             }
         });
     }
 
     if (likeBtn && artistIdInput) {
-        likeBtn.addEventListener('click', async () => {
-            const artistId = artistIdInput.value;
-            const result = await handleArtistAction(
-                `/api/artists/${artistId}/like`,
-                likeBtn,
-                likesText,
-                0,
-                'Unlike',
-                'Like'
-            );
+    likeBtn.addEventListener('click', async () => {
+        const artistId = artistIdInput.value;
+        const result = await handleArtistAction(
+            `/api/artists/${artistId}/like`,
+            likeBtn,
+            likesText,
+            0,
+            'Unlike',
+            'Like'
+        );
 
-            if (result && result.notAuthorized) {
-                openLoginModal();
-                return;
+        if (result && result.notAuthorized) {
+            openLoginModal();
+            return;
+        }
+
+        if (result && result.success) {
+            const data = result.data;
+
+            likeBtn.classList.toggle('active', data.hasLiked);
+
+            if (likesText) {
+                const nextCount = typeof data.likeCount === 'number'
+                    ? data.likeCount
+                    : parseInt(likesText.dataset.count, 10) || 0;
+
+                likesText.dataset.count = nextCount;
+                likesText.innerText = `${nextCount}`;
             }
-
-            if (result && result.success) {
-                const data = result.data;
-
-                likeBtn.innerText = data.hasLiked ? 'Unlike' : 'Like';
-                if (likesText) {
-                    const nextCount = typeof data.likeCount === 'number'
-                        ? data.likeCount
-                        : parseInt(likesText.dataset.count, 10) || 0;
-
-                    likesText.dataset.count = nextCount;
-                    likesText.innerText = `❤️ ${nextCount} Likes`;
-                }
-            }
-        });
-    }
+        }
+    });
+}
 
     if (artistImg) {
         artistImg.addEventListener('click', function () {

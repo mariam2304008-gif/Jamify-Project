@@ -8,186 +8,96 @@
     <link rel="stylesheet" href="/CSS/artistProfile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body>
 
-<%- include('partials/navbar') %>
+<%- include('partials/navbar') %>   
 <div class="has-navbar"></div>
 
 <div class="main-content">
 
-    <!-- Artist Header -->
-    <div class="artist-header">
+    <% const currentUserId = user && user._id ? user._id.toString() : null; %>
+    <% const isFollowing = currentUserId && artist.followers?.some(f => f.toString() === currentUserId); %>
+    <% const hasLiked = currentUserId && artist.likes?.some(l => l.toString() === currentUserId); %>
 
-        <img
-    id="artistImg"
-    src="<%= artist.image %>"
-    class="artist-image"
-    style="cursor:pointer;"
-    >
+    <div class="artist-header">
+        <img id="artistImg" src="<%= artist.image %>" class="artist-image" style="cursor:pointer;">
 
         <div class="artist-info">
-
-            <span class="artist-badge">🎤 Artist</span>
-
+            <span class="artist-badge">Artist</span>
             <h1><%= artist.name %></h1>
+            <p class="artist-genre"><%= artist.genre %> • <span class="artist-country"><%= artist.country %></span> • <span id="followersCount" data-count="<%= artist.followers?.length || 0 %>">
+                    <%= artist.followers?.length || 0 %> Followers
+                </span></p>
+            <p class="artist-bio"><%= artist.bio %></p>
 
-            <p class="artist-genre">
-                <%= artist.genre %>
-            </p>
 
-            <p class="artist-country">
-                <%= artist.country %>
-            </p>
-            <% const currentUserId = user && user._id ? user._id.toString() : null; %>
-            <% const isFollowing = currentUserId && artist.followers?.some(follower => follower.toString() === currentUserId); %>
-            <% const hasLiked = currentUserId && artist.likes?.some(like => like.toString() === currentUserId); %>
             <div class="artist-stats">
-                <span
-                    id="followersCount"
-                    data-count="<%= artist.followers?.length || 0 %>"
-                >
-                    👥 <%= artist.followers?.length || 0 %> Followers
-                </span>
+               
+                
                 <button class="follow-btn" id="followBtn">
                     <%= isFollowing ? 'Unfollow' : 'Follow' %>
                 </button>
-                <button class="follow-btn" id="likeBtn">
-                    <%= hasLiked ? 'Unlike' : 'Like' %>
-                </button>
-                <span
-                    id="likesCount"
-                    data-count="<%= artist.likes?.length || 0 %>"
-                >
-                    ❤️ <%= artist.likes?.length || 0 %> Likes
-                </span>
-                <input type="hidden" id="artistId" value="<%= artist._id %>">
+                <% if (artist.spotifyUrl) { %>
+            <div class="artist-links">
+                <a href="<%= artist.spotifyUrl %>" target="_blank">
+                    <i class="fa-brands fa-spotify"></i> Spotify
+                </a>
             </div>
-
-            <p class="artist-bio">
-                <%= artist.bio %>
-            </p>
-
-            <div class="artist-stats">
-
-    <span>
-        <%= albums.filter(album => !album.isSingle).length %> Albums
-    </span>
-
-    <span>
-        <%= songs.length %> Singles
-    </span>
-
-</div>
-
-            <% if (artist.spotifyUrl) { %>
-
-                <div class="artist-links">
-                    <a href="<%= artist.spotifyUrl %>" target="_blank">
-                        <i class="fa-brands fa-spotify"></i>
-                        Spotify
-                    </a>
-                </div>
-
             <% } %>
-
+            </div>
         </div>
 
+        <div class="like-container">
+            <i class="fa-solid fa-heart like-heart <%= hasLiked ? 'active' : '' %>" id="likeBtn"></i>
+            <span id="likesCount" data-count="<%= artist.likes?.length || 0 %>">
+                <%= artist.likes?.length || 0 %>
+            </span>
+        </div>
+
+        <input type="hidden" id="artistId" value="<%= artist._id %>">
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
-
-        <button 
-            class="tab active"
-            onclick="showTab('albums', this)"
-        >
-            Albums
-        </button>
-
-        <button 
-            class="tab"
-            onclick="showTab('singles', this)"
-        >
-            Singles
-        </button>
-
+        <button class="tab active" onclick="showTab('albums', this)">Albums</button>
+        <button class="tab" onclick="showTab('singles', this)">Singles</button>
     </div>
 
     <!-- Albums -->
     <div id="albums" class="tab-content active">
-
         <div class="albums-grid">
-
-            <% albums
-                .filter(album => !album.isSingle)
-                .forEach(album => { %>
-                <a href="/albums/<%= album._id %>" class="album-card">
-         
-                   <img 
-    src="<%= album.coverImageUrl %>" 
-    alt="<%= album.title %>"
->
-
-                    <div class="album-info">
-
-                        <h3><%= album.title %></h3>
-
-                        <p><%= artist.name %></p>
-
-                        <% if (album.averageRating) { %>
-
-                            <span class="rating-badge">
-                                ⭐ <%= album.averageRating.toFixed(1) %>
-                            </span>
-
-                        <% } %>
-
-                    </div>
-
-                </a>
-
+            <% albums.filter(a => !a.isSingle).forEach(album => { %>
+            <a href="/albums/<%= album._id %>" class="album-card">
+                <img src="<%= album.coverImageUrl %>" alt="<%= album.title %>">
+                <div class="album-info">
+                    <h3><%= album.title %></h3>
+                    <p><%= artist.name %></p>
+                    <% if (album.averageRating) { %>
+                    <span class="rating-badge"><%= album.averageRating.toFixed(1) %></span>
+                    <% } %>
+                </div>
+            </a>
             <% }) %>
-
         </div>
-
     </div>
 
     <!-- Singles -->
     <div id="singles" class="tab-content">
-
-    <div class="albums-grid">
-
-        <% songs.forEach(song => { %>
-
+        <div class="albums-grid">
+            <% songs.forEach(song => { %>
             <a href="/songs/<%= song._id %>" class="album-card">
-
-                <img 
-                    src="<%= song.coverImageUrl %>"
-                    alt="<%= song.title %>"
-                >
-
+                <img src="<%= song.coverImageUrl %>" alt="<%= song.title %>">
                 <div class="album-info">
-
                     <h3><%= song.title %></h3>
-
                     <p><%= artist.name %></p>
-
                     <% if (song.rating) { %>
-                        <span class="rating-badge">
-                            ⭐ <%= song.rating.toFixed(1) %>
-                        </span>
+                    <span class="rating-badge"><%= song.rating.toFixed(1) %></span>
                     <% } %>
-
                 </div>
-
             </a>
-
-        <% }) %>
-
+            <% }) %>
+        </div>
     </div>
-
-</div>
 
 </div>
 
@@ -206,7 +116,3 @@
 <script src="/JavaScript/artistProfile.js"></script>
 </body>
 </html>
-
-
-
-
