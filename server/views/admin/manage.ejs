@@ -5,6 +5,7 @@
   <title>Manage – Jamify</title>
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminmanage.css" />
+  <link rel="stylesheet" href="/CSS/adminNav.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 
   <style>
@@ -20,15 +21,13 @@
 <%- include('../partials/navbar') %>
 
 <div class="has-navbar"></div>
-
 <div class="container">
-  <h1>Admin Dashboard</h1>
-  <div class="admin-dashboard-actions">
-    <a href="/admin/manage" class="dashboard-card active">Manage Music</a>
-    <a href="/admin/suggestions" class="dashboard-card">Review Suggestions</a>
-    <a href="/admin/add" class="dashboard-card">Add Music</a>
-    <a href="/admin/reviews" class="dashboard-card">Review Moderation</a>
-  </div>
+ 
+<nav class="admin-nav">
+  <a href="/admin/manage" class="admin-nav-link">Manage Music</a>
+  <a href="/admin/suggestions" class="admin-nav-link">Review Suggestions</a>
+  <a href="/admin/add" class="admin-nav-link">Add Music</a>
+</nav>
 
   <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search albums, songs or artists..." class="search-input" />
 

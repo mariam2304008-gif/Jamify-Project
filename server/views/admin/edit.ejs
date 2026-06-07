@@ -5,6 +5,7 @@
   <title>Edit – Jamify</title>
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminadd.css" />
+  <link rel="stylesheet" href="/CSS/adminNav.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body>
@@ -13,7 +14,16 @@
 
 <div class="has-navbar"></div>
 
+
+
 <div class="container">
+
+<nav class="admin-nav">
+  <a href="/admin/manage" class="admin-nav-link">Manage Music</a>
+  <a href="/admin/suggestions" class="admin-nav-link">Review Suggestions</a>
+  <a href="/admin/add" class="admin-nav-link">Add Music</a>
+</nav>
+
   <h1>Edit <%= type === 'album' ? 'Album' : type === 'song' ? 'Song' : 'Artist' %></h1>
 
   <% if (error) { %>
