@@ -120,19 +120,41 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 4. Validation Interceptor ---
+   // --- 4. Validation Interceptor ---
     const reviewForm = document.querySelector("form");
     if (reviewForm) {
-        reviewForm.addEventListener("submit", (e) => {
+        reviewForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
             const currentScore = parseInt(hiddenRatingInput.value);
             const textContent = document.getElementById("review").value.trim();
 
             if (currentScore === 0) {
-                e.preventDefault(); 
                 showToast("Please select a star rating level!");
+                return;
             } else if (!textContent) {
-                e.preventDefault();
                 showToast("Please type a quick comment before saving!");
+                return;
+            }
+
+            try {
+                const response = await fetch(reviewForm.action, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ rating: currentScore, review: textContent })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.reload();
+                } else if (data.notLoggedIn) {
+                    showLoginModal();
+                } else {
+                    showToast(data.message || "Error saving review.");
+                }
+            } catch (err) {
+                console.error("Failed submitting review:", err);
             }
         });
     }

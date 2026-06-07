@@ -131,7 +131,7 @@ module.exports = {
     try {
         // 1. Check if the user is authenticated. If not, send them to the login page!
         if (!req.session || !req.session.user) {
-            return res.redirect('/login'); 
+            return res.status(401).json({ success: false, notLoggedIn: true });
         }
 
         const currentAlbum = await album.findById(req.params.id);
@@ -152,7 +152,7 @@ module.exports = {
         await newReview.save();
         await updateAverageRating(req.params.id, 'Album');
         
-        res.redirect(`/albums/${req.params.id}`);
+        res.json({ success: true });
     } catch (err) {
         res.status(400).send("Error Saving Review: " + err.message);
     }
