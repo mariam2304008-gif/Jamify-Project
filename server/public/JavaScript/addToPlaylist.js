@@ -126,8 +126,8 @@
 
     _playlists.forEach(pl => {
       // Check if item already in playlist
-      const alreadyAdded = pl.albums && pl.albums.some(a =>
-        (typeof a === 'string' ? a : a._id) === _itemId
+     const alreadyAdded = pl.songs && pl.songs.some(s =>
+        (typeof s === 'string' ? s : s._id?.toString()) === _itemId
       );
 
       const item = document.createElement('div');
@@ -135,7 +135,7 @@
       item.innerHTML = `
         <div>
           <div class="atp-playlist-name">${escHtml(pl.name)}</div>
-          <div class="atp-playlist-count">${pl.albums ? pl.albums.length : 0} items</div>
+         <div class="atp-playlist-count">${pl.songs ? pl.songs.length : 0} songs</div>
         </div>
         <button class="atp-add-btn${alreadyAdded ? ' added' : ''}"
           onclick="atpAddTo('${pl._id}', this)"
@@ -149,8 +149,8 @@
 
   window.atpAddTo = async function (playlistId, btn) {
     
-    const url = _itemType === 'album'
-      ? `/api/users/playlists/${playlistId}/albums/${_itemId}`
+      const url = _itemType === 'album'
+      ? `/api/users/playlists/${playlistId}/album/${_itemId}`
       : `/api/users/playlists/${playlistId}/songs/${_itemId}`;
 
     try {
@@ -219,10 +219,12 @@ const createData = JSON.parse(text);
       _playlists.push(newPlaylist);
 
       // Add item to new playlist
-      const addRes = await fetch(`/api/users/playlists/${newPlaylist._id}/albums/${_itemId}`, {
-  method: 'POST',
-  credentials: 'include'
-});
+        const addRes = await fetch(
+        _itemType === 'album'
+          ? `/api/users/playlists/${newPlaylist._id}/album/${_itemId}`
+          : `/api/users/playlists/${newPlaylist._id}/songs/${_itemId}`,
+        { method: 'POST', credentials: 'include' }
+      );
       const addData = await addRes.json();
 
       if (addData.success) {

@@ -286,12 +286,21 @@ async function loadUserPlaylists() {
             // This allows clicking the card to open your songs modal
             card.onclick = () => openSongsModal(playlist._id, playlist.name);
             
-            card.innerHTML = `
+           card.innerHTML = `
                 <div class="playlist-info">
-                    <h3>${playlist.name}</h3>
-                    <p class="playlist-desc">${playlist.description || 'No description'}</p>
-                    <p class="playlist-meta">${playlist.isPublic ? 'Public' : 'Private'}</p>
-                </div>
+                   <div class="playlist-card-top">
+                        <div>
+                            <h3>${playlist.name}</h3>
+                            <p class="playlist-desc">${playlist.description || 'No description'}</p>
+                        </div>
+                    </div>
+                    <div class="playlist-card-footer">
+                        <span class="playlist-badge ${playlist.isPublic ? 'badge-public' : 'badge-private'}">
+                            ${playlist.isPublic ? 'Public' : 'Private'}
+                        </span>
+                        <span class="playlist-song-count">${playlist.songs ? playlist.songs.length : 0} songs</span>
+                        <button class="playlist-edit-btn" onclick="event.stopPropagation(); openEditPlaylist('${playlist._id}', '${playlist.name.replace(/'/g, "\\'")}', '${(playlist.description || '').replace(/'/g, "\\'")}', ${playlist.isPublic})"><i class="fa-solid fa-pen"></i></button>
+                    </div>
             `;
             container.appendChild(card);
         });
