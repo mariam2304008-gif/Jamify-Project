@@ -84,9 +84,11 @@ exports.addMusic = async (req, res, next) => {
 // Function 3
 exports.showManage = async (req, res, next) => {
   try {
-    const albums = await Album.find().sort({ title: 1 }).populate('artist', 'name').lean();
-    const songs  = await Song.find().sort({ title: 1 }).populate('artists', 'name').lean();
-    res.render('admin/manage', { albums, songs });
+    const Artist = require('../models/Artist');
+    const albums  = await Album.find().sort({ title: 1 }).populate('artist', 'name').lean();
+    const songs   = await Song.find().sort({ title: 1 }).populate('artists', 'name').lean();
+    const artists = await Artist.find().sort({ name: 1 }).lean();
+    res.render('admin/manage', { albums, songs, artists });
   } catch (err) {
     next(err);
   }
@@ -95,13 +97,16 @@ exports.showManage = async (req, res, next) => {
 //Function 4
 exports.showEdit = async (req, res, next) => {
   try {
+    const Artist = require('../models/Artist');
     const { type, id } = req.params;
-    const item = type === 'album'
-      ? await Album.findById(id).lean()
-      : await Song.findById(id).lean();
+    let item;
+    if (type === 'album')       item = await Album.findById(id).lean();
+    else if (type === 'song')   item = await Song.findById(id).lean();
+    else if (type === 'artist') item = await Artist.findById(id).lean();
     if (!item) return res.redirect('/admin/manage');
-    const albums = await Album.find().sort({ title: 1 }).lean();
-    res.render('admin/edit', { type, item, error: null, success: false, albums });
+    const albums  = await Album.find().sort({ title: 1 }).lean();
+    const artists = await Artist.find().sort({ name: 1 }).lean();
+    res.render('admin/edit', { type, item, error: null, success: false, albums, artists });
   } catch (err) {
     next(err);
   }
@@ -110,8 +115,17 @@ exports.showEdit = async (req, res, next) => {
 // Function 5
 exports.updateMusic = async (req, res, next) => {
   try {
+    const Artist = require('../models/Artist');
     const { type, id } = req.params;
-    const { title, artist, genre, releaseDate, spotifyLink, anghamiLink, albumId, trackNumber } = req.body;
+    const { title, artist, genre, releaseDate, spotifyLink, anghamiLink, albumId, trackNumber,
+            name, bio, country, spotifyUrl } = req.body;
+
+    if (type === 'artist') {
+      const update = { name, bio: bio || '', genre: genre || '', country: country || '', spotifyUrl: spotifyUrl || '' };
+      if (req.file) update.image = `/uploads/${req.file.filename}`;
+      await Artist.findByIdAndUpdate(id, update);
+      return res.redirect('/admin/manage');
+    }
 
     if (type === 'album') {
       const update = {
@@ -149,12 +163,11 @@ exports.updateMusic = async (req, res, next) => {
 //Function 6
 exports.deleteMusic = async (req, res, next) => {
   try {
+    const Artist = require('../models/Artist');
     const { type, id } = req.params;
-    if (type === 'album') {
-      await Album.findByIdAndDelete(id);
-    } else {
-      await Song.findByIdAndDelete(id);
-    }
+    if (type === 'album')       await Album.findByIdAndDelete(id);
+    else if (type === 'song')   await Song.findByIdAndDelete(id);
+    else if (type === 'artist') await Artist.findByIdAndDelete(id);
     res.redirect('/admin/manage');
   } catch (err) {
     next(err);

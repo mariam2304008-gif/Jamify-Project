@@ -4,7 +4,7 @@ function filterCards() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     document.querySelectorAll('.music-card').forEach(function(card) {
         const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(query) ? 'block' : 'none';
+        card.style.display = text.includes(query) ? 'flex' : 'none';
     });
 }
 

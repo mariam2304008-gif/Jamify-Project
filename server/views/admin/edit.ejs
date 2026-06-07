@@ -5,17 +5,16 @@
   <title>Edit – Jamify</title>
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminadd.css" />
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body>
 
 <%- include('../partials/navbar') %>
 
-<div class="has-navbar">
-    </div>
+<div class="has-navbar"></div>
 
 <div class="container">
-  <h1>Edit <%= type === 'album' ? 'Album' : 'Song' %></h1>
+  <h1>Edit <%= type === 'album' ? 'Album' : type === 'song' ? 'Song' : 'Artist' %></h1>
 
   <% if (error) { %>
     <p style="color:#e74c3c; margin-bottom:12px;"><%= error %></p>
@@ -24,66 +23,121 @@
   <div class="admin-form">
     <form method="POST" action="/admin/edit/<%= type %>/<%= item._id %>" enctype="multipart/form-data">
 
-      <div class="form-row">
-        <label>Title *</label>
-        <input type="text" name="title" value="<%= item.title %>" required />
-      </div>
+      <%# ───── ARTIST FORM ───── %>
+      <% if (type === 'artist') { %>
 
-      <div class="form-row">
-        <label>Artist *</label>
-        <input type="text" name="artist" value="<%= type === 'album' ? item.artist : (item.artists ? item.artists[0] : '') %>" required />
-      </div>
+        <div class="form-row">
+          <label>Name *</label>
+          <input type="text" name="name" value="<%= item.name %>" required />
+        </div>
 
-      <% if (type === 'song') { %>
-      <div class="form-row">
-        <label>Belongs to Album <span style="color:#888; font-weight:normal;">(optional)</span></label>
-        <select name="albumId" id="albumSelect">
-          <option value="">-- Standalone Single --</option>
-          <% albums.forEach(a => { %>
-            <option value="<%= a._id %>" <%= item.album && item.album.toString() === a._id.toString() ? 'selected' : '' %>><%= a.title %> — <%= a.artist %></option>
-          <% }) %>
-        </select>
-      </div>
+        <div class="form-row">
+          <label>Bio</label>
+          <textarea name="bio" rows="4" style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit;"><%= item.bio || '' %></textarea>
+        </div>
 
-      <div class="form-row">
-        <label>Track Number <span style="color:#888; font-weight:normal;">(optional)</span></label>
-        <input type="number" name="trackNumber" placeholder="e.g. 3" min="1" value="<%= item.trackNumber || '' %>" />
-      </div>
+        <div class="form-row two-col">
+          <div>
+            <label>Genre</label>
+            <input type="text" name="genre" value="<%= item.genre || '' %>" placeholder="Pop, Rock..." />
+          </div>
+          <div>
+            <label>Country</label>
+            <input type="text" name="country" value="<%= item.country || '' %>" placeholder="e.g. Egypt" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Spotify URL</label>
+          <input type="text" name="spotifyUrl" value="<%= item.spotifyUrl || '' %>" placeholder="https://open.spotify.com/artist/..." />
+        </div>
+
+        <div class="form-row">
+          <label>Current Photo</label>
+          <img src="<%= item.image %>" alt="artist photo" style="width:80px; height:80px; object-fit:cover; border-radius:50%; display:block; margin-bottom:8px;" />
+          <label>Upload New Photo <span style="color:#888; font-weight:normal;">(optional)</span></label>
+          <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+          <small style="color:#888; display:block; margin-top:4px;">Leave empty to keep current photo</small>
+        </div>
+
       <% } %>
 
-      <div class="form-row two-col">
-        <div>
-          <label>Release Date</label>
-          <% if (type === 'album') { %>
-            <input type="date" name="releaseDate" value="<%= item.releaseDate ? new Date(item.releaseDate).toISOString().split('T')[0] : '' %>" />
-          <% } else { %>
-            <input type="date" name="releaseDate" value="<%= item.released ? new Date(item.released).toISOString().split('T')[0] : '' %>" />
-          <% } %>
-        </div>
-        <div>
-          <label>Genre</label>
-          <input type="text" name="genre" value="<%= item.genre || '' %>" placeholder="Pop, Jazz, R&B..." />
-        </div>
-      </div>
+      <%# ───── ALBUM / SONG FIELDS ───── %>
+      <% if (type === 'album' || type === 'song') { %>
 
-      <div class="form-row two-col">
-        <div>
-          <label>Spotify Link</label>
-          <input type="text" name="spotifyLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.spotify || '') : (item.songLinks && item.songLinks.spotify || '') %>" placeholder="https://open.spotify.com/..." />
+        <div class="form-row">
+          <label>Title *</label>
+          <input type="text" name="title" value="<%= item.title %>" required />
         </div>
-        <div>
-          <label>Anghami Link</label>
-          <input type="text" name="anghamiLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.anghami || '') : (item.songLinks && item.songLinks.anghami || '') %>" placeholder="https://play.anghami.com/..." />
-        </div>
-      </div>
 
-      <div class="form-row">
-        <label>Current Cover</label>
-        <img src="<%= item.coverImageUrl %>" alt="cover" style="width:80px; height:80px; object-fit:cover; border-radius:8px; display:block; margin-bottom:8px;" />
-        <label>Upload New Cover (optional)</label>
-        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
-        <small style="color:#888; display:block; margin-top:4px;">Leave empty to keep current cover</small>
-      </div>
+        <div class="form-row">
+          <label>Artist *</label>
+          <select name="artist" required style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none;">
+            <option value="">-- Select Artist --</option>
+            <% artists.forEach(a => {
+                const currentArtist = type === 'album'
+                  ? (item.artist ? item.artist.toString() : '')
+                  : (item.artists && item.artists[0] ? item.artists[0].toString() : '');
+            %>
+              <option value="<%= a._id %>" <%= currentArtist === a._id.toString() ? 'selected' : '' %>>
+                <%= a.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <% if (type === 'song') { %>
+          <div class="form-row">
+            <label>Belongs to Album <span style="color:#888; font-weight:normal;">(optional)</span></label>
+            <select name="albumId" id="albumSelect" style="width:100%; padding:9px 12px; background:#ccc9c6; border:none; border-bottom:1.5px solid #aaa; font-size:14px; color:#444; box-sizing:border-box; outline:none;">
+              <option value="">-- Standalone Single --</option>
+              <% albums.forEach(a => { %>
+                <option value="<%= a._id %>" <%= item.album && item.album.toString() === a._id.toString() ? 'selected' : '' %>><%= a.title %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>Track Number <span style="color:#888; font-weight:normal;">(optional)</span></label>
+            <input type="number" name="trackNumber" placeholder="e.g. 3" min="1" value="<%= item.trackNumber || '' %>" />
+          </div>
+        <% } %>
+
+        <div class="form-row two-col">
+          <div>
+            <label>Release Date</label>
+            <% if (type === 'album') { %>
+              <input type="date" name="releaseDate" value="<%= item.releaseDate ? new Date(item.releaseDate).toISOString().split('T')[0] : '' %>" />
+            <% } else { %>
+              <input type="date" name="releaseDate" value="<%= item.released ? new Date(item.released).toISOString().split('T')[0] : '' %>" />
+            <% } %>
+          </div>
+          <div>
+            <label>Genre</label>
+            <input type="text" name="genre" value="<%= item.genre || '' %>" placeholder="Pop, Jazz, R&B..." />
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div>
+            <label>Spotify Link</label>
+            <input type="text" name="spotifyLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.spotify || '') : (item.songLinks && item.songLinks.spotify || '') %>" placeholder="https://open.spotify.com/..." />
+          </div>
+          <div>
+            <label>Anghami Link</label>
+            <input type="text" name="anghamiLink" value="<%= type === 'album' ? (item.albumLinks && item.albumLinks.anghami || '') : (item.songLinks && item.songLinks.anghami || '') %>" placeholder="https://play.anghami.com/..." />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Current Cover</label>
+          <img src="<%= item.coverImageUrl %>" alt="cover" style="width:80px; height:80px; object-fit:cover; border-radius:8px; display:block; margin-bottom:8px;" />
+          <label>Upload New Cover <span style="color:#888; font-weight:normal;">(optional)</span></label>
+          <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" />
+          <small style="color:#888; display:block; margin-top:4px;">Leave empty to keep current cover</small>
+        </div>
+
+      <% } %>
 
       <div style="display:flex; gap:12px; margin-top:8px;">
         <button type="submit" class="btn-add">Save Changes</button>

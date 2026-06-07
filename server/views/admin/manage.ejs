@@ -6,22 +6,20 @@
   <link rel="stylesheet" href="/CSS/navbar.css">
   <link rel="stylesheet" href="/CSS/adminmanage.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-  
 
   <style>
-      a[href="/admin/reviews"],
-      .nav-links a[href="/admin/reviews"],
-      nav a[href="/admin/reviews"] {
-          display: none !important;
-      }
+    a[href="/admin/reviews"],
+    .nav-links a[href="/admin/reviews"],
+    nav a[href="/admin/reviews"] {
+        display: none !important;
+    }
   </style>
 </head>
 <body>
 
 <%- include('../partials/navbar') %>
 
-<div class="has-navbar">
-    </div>
+<div class="has-navbar"></div>
 
 <div class="container">
   <h1>Admin Dashboard</h1>
@@ -32,8 +30,9 @@
     <a href="/admin/reviews" class="dashboard-card">Review Moderation</a>
   </div>
 
-  <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search albums or songs..." class="search-input" />
+  <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search albums, songs or artists..." class="search-input" />
 
+  <%# ───── ALBUMS ───── %>
   <h2>Manage Music</h2>
   <% if (typeof albums !== 'undefined' && albums.length === 0) { %>
     <p class="empty">No albums found.</p>
@@ -41,7 +40,10 @@
     <% albums.forEach(a => { %>
     <div class="music-card">
       <a href="/albums/<%= a._id %>">
-        <img src="<%= a.coverImageUrl %>" alt="<%= a.title %>" class="music-thumb" style="cursor: pointer; border-radius: 4px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+        <img src="<%= a.coverImageUrl %>" alt="<%= a.title %>" class="music-thumb"
+          style="cursor:pointer; border-radius:4px; transition:transform 0.2s;"
+          onmouseover="this.style.transform='scale(1.05)'"
+          onmouseout="this.style.transform='scale(1)'" />
       </a>
       <div class="music-info">
         <strong><%= a.title %></strong>
@@ -57,6 +59,7 @@
     <% }) %>
   <% } %>
 
+  <%# ───── SONGS ───── %>
   <h2 style="margin-top:40px;">Songs</h2>
   <% if (typeof songs !== 'undefined' && songs.length === 0) { %>
     <p class="empty">No songs found.</p>
@@ -64,7 +67,10 @@
     <% songs.forEach(s => { %>
     <div class="music-card">
       <a href="/songs/<%= s._id %>">
-        <img src="<%= s.coverImageUrl || '/Images/album-profile-images/epic.png' %>" alt="<%= s.title %>" class="music-thumb" style="cursor: pointer; border-radius: 4px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+        <img src="<%= s.coverImageUrl || '/Images/album-profile-images/epic.png' %>" alt="<%= s.title %>" class="music-thumb"
+          style="cursor:pointer; border-radius:4px; transition:transform 0.2s;"
+          onmouseover="this.style.transform='scale(1.05)'"
+          onmouseout="this.style.transform='scale(1)'" />
       </a>
       <div class="music-info">
         <strong><%= s.title %></strong>
@@ -79,8 +85,35 @@
     </div>
     <% }) %>
   <% } %>
-</div>
 
+  <%# ───── ARTISTS ───── %>
+  <h2 style="margin-top:40px;">Artists</h2>
+  <% if (typeof artists !== 'undefined' && artists.length === 0) { %>
+    <p class="empty">No artists found.</p>
+  <% } else if (typeof artists !== 'undefined') { %>
+    <% artists.forEach(a => { %>
+    <div class="music-card">
+      <a href="/artists/<%= a._id %>/profile">
+        <img src="<%= a.image || '/Images/album-profile-images/epic.png' %>" alt="<%= a.name %>" class="music-thumb"
+          style="cursor:pointer; border-radius:50%; transition:transform 0.2s;"
+          onmouseover="this.style.transform='scale(1.05)'"
+          onmouseout="this.style.transform='scale(1)'" />
+      </a>
+      <div class="music-info">
+        <strong><%= a.name %></strong>
+        <span><%= a.genre || '' %><%= a.country ? ' · ' + a.country : '' %></span>
+      </div>
+      <div class="music-actions">
+        <a href="/admin/edit/artist/<%= a._id %>" class="btn-edit">Edit</a>
+        <form method="POST" action="/admin/delete/artist/<%= a._id %>" style="display:inline;" class="delete-form">
+          <button type="button" class="btn-delete" onclick="showDeleteModal(this)">Delete</button>
+        </form>
+      </div>
+    </div>
+    <% }) %>
+  <% } %>
+
+</div>
 
 <div id="deleteModal" class="delete-modal-overlay" style="display:none;">
   <div class="delete-modal-box">
