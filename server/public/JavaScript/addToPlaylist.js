@@ -12,7 +12,15 @@
           <div id="atp-list"></div>
           <div id="atp-new">
             <p>No playlists yet? Create one:</p>
-            <input type="text" id="atp-new-name" placeholder="Playlist name">
+            <input 
+  type="text" 
+  id="atp-new-name" 
+  placeholder="Playlist name"
+  autocomplete="off"
+  autocorrect="off"
+  autocapitalize="off"
+  spellcheck="false"
+>
             <button id="atp-create-btn" onclick="atpCreateAndAdd()">Create & Add</button>
           </div>
         </div>
@@ -126,16 +134,20 @@
 
     _playlists.forEach(pl => {
       // Check if item already in playlist
-      const alreadyAdded = pl.albums && pl.albums.some(a =>
-        (typeof a === 'string' ? a : a._id) === _itemId
-      );
+      const items = _itemType === 'album'
+  ? pl.albums
+  : pl.songs;
+
+const alreadyAdded = items && items.some(item =>
+  (typeof item === 'string' ? item : item._id) === _itemId
+);
 
       const item = document.createElement('div');
       item.className = `atp-playlist-item${alreadyAdded ? ' added' : ''}`;
       item.innerHTML = `
         <div>
           <div class="atp-playlist-name">${escHtml(pl.name)}</div>
-          <div class="atp-playlist-count">${pl.albums ? pl.albums.length : 0} items</div>
+          <div class="atp-playlist-count">${items ? items.length : 0} items</div>
         </div>
         <button class="atp-add-btn${alreadyAdded ? ' added' : ''}"
           onclick="atpAddTo('${pl._id}', this)"
@@ -203,10 +215,8 @@
   body: JSON.stringify({ name, isPublic: true })
 });
 
-const text = await createRes.text();
-console.log(text);
-
-const createData = JSON.parse(text);
+const createData = await createRes.json();
+console.log(createData);
 
       if (!createData.success) {
         showToast(createData.error || 'Failed to create playlist', 'error');
@@ -219,7 +229,11 @@ const createData = JSON.parse(text);
       _playlists.push(newPlaylist);
 
       // Add item to new playlist
-      const addRes = await fetch(`/api/users/playlists/${newPlaylist._id}/albums/${_itemId}`, {
+      const addUrl = _itemType === 'album'
+  ? `/api/users/playlists/${newPlaylist._id}/albums/${_itemId}`
+  : `/api/users/playlists/${newPlaylist._id}/songs/${_itemId}`;
+
+const addRes = await fetch(addUrl, {
   method: 'POST',
   credentials: 'include'
 });
