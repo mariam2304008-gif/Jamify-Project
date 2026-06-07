@@ -4,11 +4,11 @@ const bcrypt = require('bcryptjs');
 // Handle User Signup
 exports.signup = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, displayName } = req.body;
 
         // Check if user already exists by email or username
         let user = await User.findOne({ $or: [{ email }, { username }] });
-        if (user) return res.status(400).send("User already exists with that email or username");
+        if (user) return res.status(400).json({ error: 'user_exists', message: 'An account with that username or email already exists.' });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -18,16 +18,16 @@ exports.signup = async (req, res) => {
             username, 
             email, 
             password: hashedPassword,
-            displayName: username, 
+            displayName: displayName || username,
             bio: "No bio yet.",
             profileImageUrl: "/Images/album-profile-images/epic.png", 
             isAdmin: false
         });
         
         await user.save();
-        res.redirect('/login'); 
+        return res.status(200).json({ success: true });
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: 'server_error', message: err.message });
     }
 };
 
@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
         const password = req.body.password;
 
         if (!loginInput || !password) {
-            return res.status(400).send("Please provide both a username/email and password to log in.");
+           return res.status(400).json({ error: 'missing_fields', message: 'Please provide both a username/email and password.' });
         }
 
         // Search for the account matching either field in Atlas
@@ -51,13 +51,13 @@ exports.login = async (req, res) => {
         });
         
         if (!user) {
-            return res.status(400).send("Invalid Credentials (User not found)");
+           return res.status(404).json({ error: 'user_not_found', message: 'User does not exist.' });
         }
 
         // Check password dynamically
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send("Invalid Credentials (Wrong password)");
+           return res.status(401).json({ error: 'wrong_password', message: 'Wrong password.' });
         }
 
        
@@ -72,13 +72,13 @@ exports.login = async (req, res) => {
         req.session.save((err) => {
             if (err) {
                 console.error("Session save error:", err);
-                return res.status(500).send("Error saving login session.");
+               return res.status(500).json({ error: 'session_error', message: 'Error saving login session.' });
             }
-            res.redirect('/'); 
+           res.status(200).json({ success: true });
         });
 
     } catch (err) {
-        res.status(500).send(err.message);
+       res.status(500).json({ error: 'server_error', message: err.message });
     }
 };
 

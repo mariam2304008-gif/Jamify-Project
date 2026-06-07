@@ -59,7 +59,7 @@ function bindEditProfile() {
         };
 
         try {
-            const res = await fetch('/users/profile', { 
+            const res = await fetch('/api/users/profile', {
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json' // Crucial for Express to read req.body correctly

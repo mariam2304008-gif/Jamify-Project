@@ -198,9 +198,7 @@
                                     <% if (typeof user !=='undefined' && user && review.user && (user.isAdmin ||
                                         review.user._id.toString()===user._id.toString())) { %>
                                         <div class="review-card-actions">
-                                            <form method="POST" action="/reviews/<%= review._id %>/delete"
-                                                onsubmit="return confirm('Are you sure you want to delete this review?')"
-                                                style="margin:0; padding:0; background:none; border:none; box-shadow:none; gap:0; width:auto; height:auto; display:inline;">
+                                            <form method="POST" action="/reviews/<%= review._id %>/delete" class="review-delete-form" style="margin:0; padding:0; background:none; border:none; box-shadow:none; gap:0; width:auto; height:auto; display:inline;">
                                                 <input type="hidden" name="redirect"
                                                     value="/albums/<%= album._id %>#reviews-stream">
                                                 <button type="submit" class="review-delete-button"
@@ -249,9 +247,22 @@
             <span id="toast-message"></span>
         </div>
 
+        <div id="confirm-delete-modal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <h3>Delete Review</h3>
+        <p>Are you sure you want to delete this review?</p>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <button id="modal-confirm-delete-btn" class="modal-login-btn" style="background-color: #e74c3c;">Delete</button>
+            <button onclick="closeDeleteModal()" class="modal-login-btn" style="background-color: #7f8c8d;">Cancel</button>
+        </div>
+    </div>
+</div>
+
         <script src="/JavaScript/toast.js"></script>
         <script src="/JavaScript/addToPlaylist.js"></script>
         <script src="/JavaScript/navbar.js"></script>
+
 
     </body>
 

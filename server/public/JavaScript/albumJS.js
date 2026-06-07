@@ -7,6 +7,7 @@ function showLoginModal() {
         console.warn("Login modal element not found on this page.");
     }
 }
+
 function closeLoginModal() {
     const modal = document.getElementById("login-modal");
     if (modal) {
@@ -16,10 +17,43 @@ function closeLoginModal() {
     }
 }
 
+// Global variables to support your state transition
+let formToSubmit = null;
+
+function showDeleteModal() {
+    const modal = document.getElementById("confirm-delete-modal");
+    if (modal) modal.classList.add("show");
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById("confirm-delete-modal");
+    if (modal) modal.classList.remove("show");
+    formToSubmit = null; // Flush validation reference safely
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    
-  
-    
+
+    // --- 1. Custom Delete Confirmation Modal Logic ---
+    const deleteForms = document.querySelectorAll(".review-delete-form");
+    const confirmDeleteBtn = document.getElementById("modal-confirm-delete-btn");
+
+    deleteForms.forEach((form) => {
+        form.addEventListener("submit", function (e) {
+            // Prevent native browser engine from executing immediately
+            e.preventDefault(); 
+            formToSubmit = this; // Store context reference to click instance
+            showDeleteModal();
+        });
+    });
+
+    // Handle user accepting the confirmation inside the modal
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener("click", () => {
+            if (formToSubmit) {
+                formToSubmit.submit(); // Execute native database submission route
+            }
+        });
+    }
 
     // --- 2. Star Rating UI Handler Loop ---
     const stars = document.querySelectorAll(".stars i");
@@ -101,8 +135,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-   // --- 4. Validation Interceptor ---
-    const reviewForm = document.querySelector("form");
+    // --- 4. Validation Interceptor (Targeted safely to skip delete forms) ---
+    const pathParts = window.location.pathname.split('/');
+    const isAlbum = pathParts.includes('albums');
+    const parentContext = isAlbum ? 'albums' : 'songs';
+    const resourceId = pathParts[pathParts.indexOf(parentContext) + 1];
+    
+    // Explicitly target the creation form dynamically matching action URL
+    const reviewForm = document.querySelector(`form[action="/${parentContext}/${resourceId}/reviews"]`);
+    
     if (reviewForm) {
         reviewForm.addEventListener("submit", async (e) => {
             e.preventDefault();
