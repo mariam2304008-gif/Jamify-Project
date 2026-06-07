@@ -1,0 +1,26 @@
+.admin-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 28px;
+}
+
+.admin-nav-link {
+  padding: 12px 22px;
+  text-decoration: none;
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.admin-nav-link:hover {
+  color: #e74c3c;
+}
+
+.admin-nav-link.active {
+  color: #e74c3c;
+  border-bottom-color: #e74c3c;
+}

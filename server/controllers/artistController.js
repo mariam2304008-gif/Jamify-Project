@@ -22,7 +22,7 @@ exports.getArtist = async (req, res, next) => {
   try {
     const artist = await Artist.findById(req.params.id);
     if (!artist) {
-      return next(new ErrorResponse(`Artist not found with id of ${req.params.id}`, 404));
+      return res.status(404).render('404', { message: 'Artist Not Found', type: 'artist' });
     }
 
     // Get all albums where artist name matches
@@ -75,8 +75,9 @@ exports.searchArtists = async (req, res) => {
 // @access  Private/Admin
 exports.createArtist = async (req, res, next) => {
   try {
+    if (req.file) req.body.image = `/uploads/${req.file.filename}`;
     const artist = await Artist.create(req.body);
-    res.status(201).json({ success: true, data: artist });
+    res.redirect('/admin/add');
   } catch (err) {
     next(err);
   }
