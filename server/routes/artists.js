@@ -12,7 +12,8 @@ const {
   toggleArtistLike
 } = require('../controllers/artistController');
 
-const { protect, authorize } = require('../middleware/auth');
+const isLoggedIn = require('../middleware/isLoggedIn');
+const isAdmin = require('../middleware/isAdmin');
 
 const router = express.Router();
 
@@ -36,9 +37,7 @@ router.get('/debug-db', async (req, res) => {
 });
 router.route('/search').get(searchArtists);
 
-router.route('/')
-  .get(getArtists)
-  .post(protect, authorize('admin'), createArtist);
+
 
 // PROFILE ROUTE
 router.get('/:id/profile', async (req, res) => {
@@ -73,12 +72,11 @@ router.get('/:id/profile', async (req, res) => {
 });
 // KEEP THIS LAST
 
-
-// Place these at the bottom
-router.route('/:id/follow').post(protect, followArtist);
-router.route('/:id/unfollow').post(protect, unfollowArtist);
-router.route('/:id/like').post(protect, toggleArtistLike);
+router.route('/').get(getArtists).post(isLoggedIn, isAdmin, createArtist);
+router.route('/:id/follow').post(isLoggedIn, followArtist);
+router.route('/:id/unfollow').post(isLoggedIn, unfollowArtist);
+router.route('/:id/like').post(isLoggedIn, toggleArtistLike);
 
 // TEMP DEBUG ROUTE
-router.route('/:id').get(getArtist);
+// router.route('/:id').get(getArtist);
 module.exports = router;

@@ -43,7 +43,6 @@ const User = require('./models/User');
 app.use(async (req, res, next) => {
 
     res.locals.user = null;
-    res.locals.sessionUser = null;
 
     if (req.session && req.session.user) {
 
@@ -54,7 +53,6 @@ app.use(async (req, res, next) => {
             if (dbUser) {
 
                 res.locals.user = dbUser;
-                res.locals.sessionUser = dbUser;
 
                 req.user = dbUser;
             }
@@ -80,15 +78,16 @@ const albumRoutes = require('./routes/albums');
 const suggestionRoutes = require('./routes/suggestions');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
-
+const artistRoutes = require('./routes/artists');
 
 // 2. Route Routing Middlewares
 app.use('/albums', albumRoutes);
 app.use('/songs', songRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', authRoutes); // Handles POST /api/login and POST /api/signup
-app.use('/api/artists', require('./routes/artists'));
-app.use('/artists', require('./routes/artists'));
+
+app.use('/api/artists', artistRoutes);
+app.use('/artists', artistRoutes);
 app.use('/suggestions', suggestionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);

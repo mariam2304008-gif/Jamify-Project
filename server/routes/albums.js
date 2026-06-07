@@ -3,13 +3,7 @@ const express = require('express');
 const router = express.Router();
 const albumController = require('../controllers/albumController');
 
-// Clean session guard for AJAX liking actions
-const protectSession = (req, res, next) => {
-    if (req.session && req.session.user) {
-        return next();
-    }
-    return res.status(401).json({ success: false, message: 'Please log in to like this album!' });
-};
+const protectSession = require('../middleware/protectSession');
 
 router.get('/', albumController.getAllAlbums);
 router.get('/search', albumController.searchAlbums);

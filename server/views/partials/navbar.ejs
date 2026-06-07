@@ -1,7 +1,4 @@
-<% 
-  // Safely check for the user in locals, which is always available
-const activeUser = (typeof locals !== 'undefined' && locals.sessionUser) ? locals.sessionUser : null;
-%>
+<% const activeUser = (typeof locals !== 'undefined' && locals.user) ? locals.user : null; %>
 
 <body>
 

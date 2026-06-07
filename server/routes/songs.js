@@ -3,13 +3,9 @@ const Song = require('../models/Song');
 const router = express.Router();
 const songController = require('../controllers/songController');
 
-// Middleware helper from your auth middleware folder to block guests
-const protectSession = (req, res, next) => {
-    if (req.session && req.session.user) {
-        return next();
-    }
-    return res.status(401).json({ success: false, message: 'Please log in to like this track!' });
-};
+const protectSession = require('../middleware/protectSession');
+
+
 router.get('/search', async (req, res) => {
     try {
         const q = req.query.q;
