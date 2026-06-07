@@ -128,6 +128,14 @@ app.get('/search', (req, res) => {
 // Home Route
 app.get('/', albumController.getAllAlbums);
 
+// Global error handler for invalid IDs and unhandled errors
+app.use((err, req, res, next) => {
+    if (err.name === 'CastError' || err.statusCode === 404) {
+        return res.status(404).render('404', { message: 'Page Not Found', type: 'content' });
+    }
+    res.status(500).send('Something went wrong: ' + err.message);
+});
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });

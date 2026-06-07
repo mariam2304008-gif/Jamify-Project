@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found | Jamify</title>
+    <link rel="stylesheet" href="/CSS/navbar.css">
+    <style>
+        body {
+            background: #f7f3f3;
+            color: #2c2c2c;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 6rem;
+            margin: 0;
+            color: #e74c3c;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 0.5rem 0;
+            color: #2c2c2c;
+        }
+        p {
+            color: #666;
+            margin: 0.5rem 0 2rem;
+            font-size: 1rem;
+        }
+        a {
+            background: #e74c3c;
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        a:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>404</h1>
+    <h2><%= message || "Page Not Found" %></h2>
+    <p>The <%= type || "content" %> you're looking for doesn't exist or was removed.</p>
+    <a href="/">Back to Home</a>
+</body>
+</html>

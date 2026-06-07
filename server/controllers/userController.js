@@ -13,7 +13,6 @@ exports.getProfile = async (req, res, next) => {
 
     const userId = req.session.user._id;
 
-    // 🌟 FIX: Updated 'profileImage' to 'profileImageUrl' to match your upload naming
     const user = await User.findById(userId).populate([
       {
         path: 'followers',
@@ -129,9 +128,9 @@ exports.getPublicProfile = async (req, res, next) => {
         }
       ]);
 
-    if (!user) {
-      return res.status(404).render('error', { message: 'User not found' });
-    }
+   if (!user) {
+    return res.status(404).render('404', { message: 'User Not Found', type: 'user' });
+  }
 
     const reviews = await Review.find({ user: targetUserId })
       .populate('albumID')
@@ -153,7 +152,10 @@ exports.getPublicProfile = async (req, res, next) => {
       playlistCount: playlists.length   
     });
 
-  } catch (err) {
+} catch (err) {
+    if (err.name === 'CastError') {
+        return res.status(404).render('404', { message: 'User Not Found', type: 'user' });
+    }
     next(err);
   }
 };

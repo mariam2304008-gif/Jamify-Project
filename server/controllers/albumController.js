@@ -49,9 +49,9 @@ module.exports = {
     .populate('songs')
     .populate('artist');
             
-            if (!currentAlbum) {
-                return res.status(404).json({ message: 'Album not found' });
-            }
+           if (!currentAlbum) {
+    return res.status(404).render('404', { message: 'Album Not Found', type: 'album' });
+    }
 
             // Fetch all reviews linked to this album
             const reviews = await review.find({ albumID: req.params.id }).populate('user');
@@ -67,7 +67,10 @@ module.exports = {
                 reviews: reviews,
                 tracklist: tracklist 
             });
-        } catch (err) {
+       } catch (err) {
+            if (err.name === 'CastError') {
+                return res.status(404).render('404', { message: 'Album Not Found', type: 'album' });
+            }
             res.status(500).json({ message: err.message });
         }
     },

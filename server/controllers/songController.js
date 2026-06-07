@@ -11,8 +11,8 @@ module.exports = {
     .populate('album')
     .populate('artists');
             
-            if (!currentSong) {
-                return res.status(404).send('Song profile not found');
+           if (!currentSong) {
+                return res.status(404).render('404', { message: 'Song Not Found', type: 'song' });
             }
 
             // Fetch all reviews linked specifically to this song ID
@@ -24,6 +24,9 @@ module.exports = {
                 reviews: reviews 
             });
         } catch (err) {
+            if (err.name === 'CastError') {
+                return res.status(404).render('404', { message: 'Song Not Found', type: 'song' });
+            }
             res.status(500).send("Error loading song profile: " + err.message);
         }
     },

@@ -46,7 +46,7 @@ router.get('/:id/profile', async (req, res) => {
         const artist = await Artist.findById(req.params.id);
 
         if (!artist) {
-            return res.status(404).send('Artist not found');
+            return res.status(404).render('404', { message: 'Artist Not Found', type: 'artist' });
         }
 
         const Album = require('../models/album');
@@ -66,7 +66,9 @@ router.get('/:id/profile', async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
+        if (err.name === 'CastError') {
+            return res.status(404).render('404', { message: 'Artist Not Found', type: 'artist' });
+        }
         res.status(500).send('Server Error');
     }
 });
