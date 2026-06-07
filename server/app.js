@@ -122,6 +122,7 @@ app.get('/', albumController.getAllAlbums);
 
 // Global error handler for invalid IDs and unhandled errors
 app.use((err, req, res, next) => {
+    console.error('Error caught by global handler:', err);
     if (err.name === 'CastError' || err.statusCode === 404) {
         return res.status(404).render('404', { message: 'Page Not Found', type: 'content' });
     }
@@ -144,6 +145,12 @@ mongoose.connect(dbURL)
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
     console.error('Unhandled Rejection:', err);
+    process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
     process.exit(1);
 });
 
