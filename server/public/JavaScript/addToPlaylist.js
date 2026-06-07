@@ -174,7 +174,7 @@
       } else {
         btn.disabled = false;
         btn.textContent = '+ Add';
-        alert(data.error || 'Failed to add to playlist');
+        showToast(data.error || 'Failed to add to playlist', 'error');
       }
     } catch (err) {
       btn.disabled = false;
@@ -186,7 +186,7 @@
   window.atpCreateAndAdd = async function () {
     const name = document.getElementById('atp-new-name').value.trim();
 
-    if (!name) { alert('Please enter a playlist name'); return; }
+    if (!name) { showToast('Please enter a playlist name', 'warning'); return; }
 
     const createBtn = document.getElementById('atp-create-btn');
     createBtn.textContent = 'Creating...';
@@ -209,7 +209,7 @@ console.log(text);
 const createData = JSON.parse(text);
 
       if (!createData.success) {
-        alert(createData.error || 'Failed to create playlist');
+        showToast(createData.error || 'Failed to create playlist', 'error');
         createBtn.textContent = 'Create & Add';
         createBtn.disabled = false;
         return;

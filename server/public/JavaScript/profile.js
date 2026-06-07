@@ -50,7 +50,7 @@ function bindEditProfile() {
         const newName = document.getElementById('displayName').textContent.trim();
         const newBio = document.getElementById('displayBio').textContent.trim();
 
-        if (!newName) { alert('Please enter a display name'); return; }
+        if (!newName) { showToast('Please enter a display name', 'warning'); return; }
 
         // Fix: Pack fields into a standard JSON payload
         const payload = {
@@ -70,14 +70,14 @@ function bindEditProfile() {
 
             if (data.success) {
                 exitEditMode();
-                alert('Profile updated successfully!');
+                showToast('Profile updated successfully!', 'success');
                 window.location.reload(); 
             } else {
-                alert(data.error || 'Failed to update profile');
+                showToast(data.error || 'Failed to update profile', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Server error while saving profile');
+            showToast('Server error while saving profile', 'error');
         }
     });
 }
@@ -157,7 +157,7 @@ async function deletePlaylist(id) {
         if (data.success) {
             window.location.reload();
         } else {
-            alert(data.message || "Failed to delete.");
+            showToast(data.message || 'Failed to delete.', 'error');
         }
     } catch (err) {
         console.error(err);

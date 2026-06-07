@@ -242,7 +242,7 @@ async function openSongsModal(playlistId, playlistName) {
         document.getElementById('songsModal').style.display = 'block';
     } catch (err) {
     console.error("Fetch error:", err); // Keep this
-    alert('Error: ' + err.message); // Change this to see the actual error
+    showToast('Error: ' + err.message, 'error');
 }
 }
 
@@ -302,18 +302,19 @@ if (followBtn) {
                 location.reload();
 
             } else {
-                alert(data.message || 'Something went wrong');
+                showToast(data.message || 'Something went wrong', 'error');
             }
 
         } catch (err) {
             console.error(err);
-            alert('Server error');
+            showToast('Server error', 'error');
         }
 
     });
 
 }
 </script>
+<script src="/JavaScript/toast.js"></script>
 <script src="/JavaScript/navbar.js"></script>
 <script>
 document.getElementById('profileImg').addEventListener('click', function () {
