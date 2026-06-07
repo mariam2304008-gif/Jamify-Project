@@ -27,15 +27,17 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-// 1. Session Configuration (Must be initialized BEFORE routes!)
+app.set('trust proxy', 1); // ADD THIS LINE before app.use(session(...))
+
 app.use(session({
-    secret: 'jamify-secret-key', 
+    secret: process.env.SESSION_SECRET || 'jamify-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-    secure: process.env.NODE_ENV === 'production', 
-    maxAge: 1000 * 60 * 60 * 24 
-}
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // ADD THIS
+        maxAge: 1000 * 60 * 60 * 24 
+    }
 }));
 
 const User = require('./models/User');
