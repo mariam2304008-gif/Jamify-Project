@@ -1,6 +1,4 @@
-
 (function () {
-  // Inject modal HTML once
   const modalHTML = `
     <div id="atp-overlay" style="display:none;" onclick="if(event.target===this)closeAddToPlaylist()">
       <div id="atp-modal">
@@ -83,8 +81,6 @@
   let _playlists = [];
 
   window.openAddToPlaylist = async function (itemId, itemType = 'album') {
-    const token = '';
-
     _itemId = itemId;
     _itemType = itemType;
 
@@ -93,9 +89,7 @@
     document.getElementById('atp-new').style.display = 'none';
 
     try {
-      const res = await fetch('/api/users/playlists', {
-    credentials: 'include'
-});
+      const res = await fetch('/api/users/playlists', { credentials: 'include' });
       const data = await res.json();
 
       if (data.success) {
@@ -125,17 +119,21 @@
     list.innerHTML = '';
 
     _playlists.forEach(pl => {
-      // Check if item already in playlist
-     const alreadyAdded = pl.songs && pl.songs.some(s =>
-        (typeof s === 'string' ? s : s._id?.toString()) === _itemId
-      );
+      // Songs: check if already in playlist. Albums: always show Add.
+      const alreadyAdded = _itemType === 'song'
+        ? pl.songs && pl.songs.some(s =>
+            (typeof s === 'string' ? s : s._id?.toString()) === _itemId
+          )
+        : false;
+
+      const songCount = pl.songs ? pl.songs.length : 0;
 
       const item = document.createElement('div');
       item.className = `atp-playlist-item${alreadyAdded ? ' added' : ''}`;
       item.innerHTML = `
         <div>
           <div class="atp-playlist-name">${escHtml(pl.name)}</div>
-         <div class="atp-playlist-count">${pl.songs ? pl.songs.length : 0} songs</div>
+          <div class="atp-playlist-count">${songCount} songs</div>
         </div>
         <button class="atp-add-btn${alreadyAdded ? ' added' : ''}"
           onclick="atpAddTo('${pl._id}', this)"
@@ -148,8 +146,8 @@
   }
 
   window.atpAddTo = async function (playlistId, btn) {
-    
-      const url = _itemType === 'album'
+    // /album/ (singular) matches the route: /playlists/:id/album/:albumId
+    const url = _itemType === 'album'
       ? `/api/users/playlists/${playlistId}/album/${_itemId}`
       : `/api/users/playlists/${playlistId}/songs/${_itemId}`;
 
@@ -157,24 +155,25 @@
       btn.disabled = true;
       btn.textContent = '...';
 
-      const res = await fetch(url, {
-  method: 'POST',
-  credentials: 'include'
-});
+      const res = await fetch(url, { method: 'POST', credentials: 'include' });
       const data = await res.json();
 
       if (data.success) {
         btn.textContent = '✓ Added';
         btn.classList.add('added');
         btn.closest('.atp-playlist-item').classList.add('added');
-        // Update local count
         const countEl = btn.closest('.atp-playlist-item').querySelector('.atp-playlist-count');
-        const current = parseInt(countEl.textContent);
-        countEl.textContent = `${current + 1} items`;
+        if (_itemType === 'song') {
+          const current = parseInt(countEl.textContent) || 0;
+          countEl.textContent = `${current + 1} songs`;
+        } else {
+          // Album adds multiple songs — show added confirmation in count
+          countEl.textContent = 'Songs added ✓';
+        }
       } else {
         btn.disabled = false;
         btn.textContent = '+ Add';
-        showToast(data.error || 'Failed to add to playlist', 'error');
+        showToast(data.message || data.error || 'Failed to add to playlist', 'error');
       }
     } catch (err) {
       btn.disabled = false;
@@ -185,7 +184,6 @@
 
   window.atpCreateAndAdd = async function () {
     const name = document.getElementById('atp-new-name').value.trim();
-
     if (!name) { showToast('Please enter a playlist name', 'warning'); return; }
 
     const createBtn = document.getElementById('atp-create-btn');
@@ -193,20 +191,13 @@
     createBtn.disabled = true;
 
     try {
-      // Create playlist
       const createRes = await fetch('/api/users/playlists', {
-  method: 'POST',
-  credentials: 'include',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ name, isPublic: true })
-});
-
-const text = await createRes.text();
-console.log(text);
-
-const createData = JSON.parse(text);
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, isPublic: true })
+      });
+      const createData = await createRes.json();
 
       if (!createData.success) {
         showToast(createData.error || 'Failed to create playlist', 'error');
@@ -218,8 +209,7 @@ const createData = JSON.parse(text);
       const newPlaylist = createData.data;
       _playlists.push(newPlaylist);
 
-      // Add item to new playlist
-        const addRes = await fetch(
+      const addRes = await fetch(
         _itemType === 'album'
           ? `/api/users/playlists/${newPlaylist._id}/album/${_itemId}`
           : `/api/users/playlists/${newPlaylist._id}/songs/${_itemId}`,
@@ -227,18 +217,20 @@ const createData = JSON.parse(text);
       );
       const addData = await addRes.json();
 
+      createBtn.textContent = 'Create & Add';
+      createBtn.disabled = false;
+
       if (addData.success) {
         document.getElementById('atp-new-name').value = '';
-        createBtn.textContent = 'Create & Add';
-        createBtn.disabled = false;
         renderPlaylistList();
-        // Show success briefly
         const list = document.getElementById('atp-list');
         const msg = document.createElement('p');
         msg.style.cssText = 'color:#4caf50;font-size:13px;text-align:center;margin:5px 0;';
         msg.textContent = `✓ Created "${name}" and added!`;
         list.prepend(msg);
         setTimeout(() => msg.remove(), 3000);
+      } else {
+        showToast(addData.message || addData.error || 'Playlist created but could not add item.', 'error');
       }
     } catch (err) {
       console.error(err);

@@ -232,7 +232,8 @@ exports.createPlaylist = async (req, res, next) => {
         req.body.isPublic !== undefined
           ? req.body.isPublic
           : true,
-      user: req.session.user._id
+      user: req.session.user._id,
+songs: []
     });
 
     res.status(201).json({
@@ -304,7 +305,7 @@ exports.deletePlaylist = async (req, res, next) => {
 
 exports.addAlbumToPlaylist = async (req, res, next) => {
   try {
-    const playlist = await Playlist.findById(req.params.id);
+    const playlist = await Playlist.findById(req.params.playlistId);
     if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
 
     if (playlist.user.toString() !== req.session.user._id.toString()) {
@@ -316,7 +317,14 @@ exports.addAlbumToPlaylist = async (req, res, next) => {
     const songIdsToAdd = albumSongs.map(song => song._id.toString());
 
     // 2. Filter: Only keep IDs not already in the playlist
-    const newSongs = songIdsToAdd.filter(id => !playlist.songs.includes(id));
+    // 2. Filter: Only keep IDs not already in the playlist
+const existingSongIds = playlist.songs.map(song =>
+  song.toString()
+);
+
+const newSongs = songIdsToAdd.filter(
+  id => !existingSongIds.includes(id)
+);
 
     if (newSongs.length === 0) {
       return res.status(200).json({ success: true, message: "No new songs to add." });
@@ -335,7 +343,7 @@ exports.addAlbumToPlaylist = async (req, res, next) => {
 
 exports.removeSongFromPlaylist = async (req, res, next) => {
   try {
-    const playlist = await Playlist.findById(req.params.id);
+    const playlist = await Playlist.findById(req.params.playlistId);
     if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
 
     if (playlist.user.toString() !== req.session.user._id.toString()) {
@@ -357,7 +365,7 @@ exports.removeSongFromPlaylist = async (req, res, next) => {
 
 exports.addSongToPlaylist = async (req, res, next) => {
   try {
-    const playlist = await Playlist.findById(req.params.id);
+    const playlist = await Playlist.findById(req.params.playlistId);
     if (!playlist) return next(new ErrorResponse('Playlist not found', 404));
 
     if (playlist.user.toString() !== req.session.user._id.toString()) {

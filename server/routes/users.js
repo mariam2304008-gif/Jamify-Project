@@ -61,10 +61,10 @@ router.route('/playlists/:id')
   .put(isLoggedIn, updatePlaylist)
   .delete(isLoggedIn, deletePlaylist);
 
-router.route('/playlists/:id/album/:albumId')
+router.route('/playlists/:playlistId/albums/:albumId')
   .post(isLoggedIn, addAlbumToPlaylist);
 
-  router.route('/playlists/:id/songs/:songId')
+  router.route('/playlists/:playlistId/songs/:songId')
   .post(isLoggedIn, addSongToPlaylist)
   .delete(isLoggedIn, removeSongFromPlaylist);
 
