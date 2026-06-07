@@ -66,14 +66,6 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// MongoDB Connection
-mongoose.connect(dbURL)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
-
-
-
-
 const albumRoutes = require('./routes/albums');
 const suggestionRoutes = require('./routes/suggestions');
 const userRoutes = require('./routes/users');
@@ -136,7 +128,22 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something went wrong: ' + err.message);
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+// MongoDB Connection - Start server only after connection
+mongoose.connect(dbURL)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
+  })
+  .catch(err => {
+    console.error('Could not connect to MongoDB', err);
+    process.exit(1);
+  });
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Rejection:', err);
+    process.exit(1);
 });
 
