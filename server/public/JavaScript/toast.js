@@ -69,3 +69,62 @@
     }
   };
 })();
+
+window.showConfirm = function(message, onConfirm) {
+    const existing = document.getElementById('confirm-modal');
+    if (existing) existing.remove();
+
+    const el = document.createElement('div');
+    el.id = 'confirm-modal';
+    el.innerHTML = `
+        <div id="confirm-backdrop"></div>
+        <div id="confirm-box">
+            <p id="confirm-message"></p>
+            <div id="confirm-actions">
+                <button id="confirm-cancel">Cancel</button>
+                <button id="confirm-ok">Confirm</button>
+            </div>
+        </div>
+        <style>
+            #confirm-backdrop {
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 10000;
+            }
+            #confirm-box {
+                position: fixed; top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                background: white; border-radius: 12px;
+                padding: 24px; width: 300px;
+                z-index: 10001;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+                font-family: inherit;
+            }
+            #confirm-message {
+                margin: 0 0 20px;
+                font-size: 15px;
+                color: #333;
+            }
+            #confirm-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            #confirm-cancel {
+                padding: 8px 16px; border-radius: 8px;
+                border: 1px solid #ddd; background: white;
+                cursor: pointer; font-family: inherit;
+            }
+            #confirm-ok {
+                padding: 8px 16px; border-radius: 8px;
+                border: none; background: #e74c3c;
+                color: white; cursor: pointer;
+                font-family: inherit; font-weight: 600;
+            }
+        </style>
+    `;
+    document.body.appendChild(el);
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-cancel').onclick = () => el.remove();
+    document.getElementById('confirm-ok').onclick = () => { el.remove(); onConfirm(); };
+};

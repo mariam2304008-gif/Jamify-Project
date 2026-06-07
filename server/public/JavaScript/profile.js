@@ -113,7 +113,7 @@ function bindPlaylistModal() {
         const description = document.getElementById('playlistDesc').value.trim();
         const isPublic = document.getElementById('playlistPublic').checked;
 
-        if (!name) { alert('Please enter a playlist name'); return; }
+        if (!name) { showToast('Please enter a playlist name', 'warning'); return; }
 
         const payload = { name, description, isPublic };
         const url = editingPlaylistId ? `/api/users/playlists/${editingPlaylistId}` : '/api/users/playlists';
@@ -133,6 +133,7 @@ function bindPlaylistModal() {
             }
         } catch (err) {
             console.error(err);
+            showToast('Error saving playlist.', 'error');
         }
     });
 }
@@ -146,22 +147,23 @@ function openEditPlaylist(id, name, description, isPublic) {
     document.getElementById('playlistModal').style.display = 'flex';
 }
 
-async function deletePlaylist(id) {
-    if (!confirm('Delete this playlist?')) return;
-    try {
-        const res = await fetch(`/api/users/playlists/${id}`, { 
-            method: 'DELETE',
-            credentials: 'include' 
-        });
-        const data = await res.json();
-        if (data.success) {
-            window.location.reload();
-        } else {
-            showToast(data.message || 'Failed to delete.', 'error');
+function deletePlaylist(id) {
+    showConfirm('Delete this playlist?', async () => {
+        try {
+            const res = await fetch(`/api/users/playlists/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.reload();
+            } else {
+                showToast(data.message || 'Failed to delete.', 'error');
+            }
+        } catch (err) {
+            console.error(err);
         }
-    } catch (err) {
-        console.error(err);
-    }
+    });
 }
 
 // ─── Social Collapsible Widget Engine ──────────────────────────────────────────
@@ -234,20 +236,20 @@ function closeSongsModal() {
 }
 
 // Remove a song
-async function removeSong(playlistId, songId) {
-    if (!confirm('Remove this song from the playlist?')) return;
-    try {
-        const res = await fetch(`/api/users/playlists/${playlistId}/songs/${songId}`, { 
-            method: 'DELETE' 
-        });
-        const data = await res.json();
-        if (data.success) {
-            // Refresh the modal view
-            openSongsModal(playlistId, document.getElementById('songsModalTitle').textContent);
+function removeSong(playlistId, songId) {
+    showConfirm('Remove this song from the playlist?', async () => {
+        try {
+            const res = await fetch(`/api/users/playlists/${playlistId}/songs/${songId}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            if (data.success) {
+                openSongsModal(playlistId, document.getElementById('songsModalTitle').textContent);
+            }
+        } catch (err) {
+            console.error(err);
         }
-    } catch (err) {
-        console.error(err);
-    }
+    });
 }
 
 // ─── Render Playlists ──────────────────────────────────────────────────────────

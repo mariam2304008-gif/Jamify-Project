@@ -18,26 +18,7 @@ function closeLoginModal() {
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // --- 1. Toast Notification Helper ---
-    function showToast(message, isRedirect = false) {
-        if (isRedirect) {
-            window.location.href = "/login";
-            return;
-        }
-        
-        const toast = document.getElementById("toast-notification");
-        const toastMsg = document.getElementById("toast-message");
-        
-        if (toast && toastMsg) {
-            toastMsg.textContent = message;
-            toast.classList.add("show");
-            
-            // Hide automatically after 3 seconds
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000);
-        }
-    }
+  
     
 
     // --- 2. Star Rating UI Handler Loop ---
@@ -130,10 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const textContent = document.getElementById("review").value.trim();
 
             if (currentScore === 0) {
-                showToast("Please select a star rating level!");
+                showToast("Please select a star rating level!", "warning");
                 return;
             } else if (!textContent) {
-                showToast("Please type a quick comment before saving!");
+                showToast("Please type a quick comment before saving!", "warning");
                 return;
             }
 
@@ -151,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (data.notLoggedIn) {
                     showLoginModal();
                 } else {
-                    showToast(data.message || "Error saving review.");
+                    showToast(data.message || "Error saving review.", "error");
                 }
             } catch (err) {
                 console.error("Failed submitting review:", err);
