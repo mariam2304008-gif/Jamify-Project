@@ -198,11 +198,11 @@
 
                         <% if (profileUser.followingArtists) { %>
                             <% profileUser.followingArtists.forEach((a) => { %>
-                                <a href="/artists/<%= a._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
+                                <a href="/artists/<%= a._id %>/profile" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= a.image || '/Images/default-avatar.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
                                         <p class="connection-name"><%= a.name %></p>
-                                        <p class="connection-handle" style="color: #1db954;">Artist</p>
+                                        <p class="connection-handle" style="color: #1db954;"> Artist</p>
                                     </div>
                                 </a>
                                 <% dynamicIndex++; %>

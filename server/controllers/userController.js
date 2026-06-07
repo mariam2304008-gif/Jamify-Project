@@ -22,6 +22,10 @@ exports.getProfile = async (req, res, next) => {
       {
         path: 'followingUsers', 
         select: 'username displayName profileImageUrl'
+      },
+      {
+        path: 'followingArtists',
+        select: 'name image'
       }
     ]);
 
