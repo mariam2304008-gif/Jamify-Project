@@ -13,7 +13,6 @@ body {
     color: #2c2c2c;
 }
 
-
 /* Main Content Wrapper */
 .main-content {
     width: 85%;
@@ -191,8 +190,6 @@ body {
     cursor: pointer;
     font-size: 13px;
 }
-
-
 
 .profile-info {
     overflow: hidden;
@@ -406,80 +403,6 @@ body {
     text-align: center;
 }
 
-/* ==========================================================================
-   ARTIST SPECIFIC OVERLAYS
-   ========================================================================== */
-.artist-header {
-    display: flex;
-    gap: 25px;
-    align-items: flex-start;
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 20px;
-    width: 100%;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-.artist-img {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-.artist-badge {
-    font-size: 12px;
-    background: #f5e6e6;
-    color: #e74c3c;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-}
-
-.artist-info h1 {
-    margin: 8px 0 4px;
-    font-size: 26px;
-}
-
-.artist-genre { color: #888; font-size: 14px; margin: 2px 0; }
-.artist-country { color: #aaa; font-size: 13px; margin: 2px 0; }
-.artist-bio { color: #555; font-size: 14px; margin: 10px 0; line-height: 1.5; max-width: 500px; }
-.artist-stats { display: flex; gap: 15px; font-size: 14px; color: #666; margin: 8px 0; }
-.artist-links { display: flex; gap: 10px; margin-top: 10px; }
-
-.streaming-link {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    text-decoration: none;
-    font-weight: 600;
-}
-.streaming-link.spotify { background: #1DB954; color: white; }
-
-.albums-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    width: 100%;
-}
-
-.album-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: transform 0.2s;
-}
-.album-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-.album-card a { text-decoration: none; color: inherit; display: block; }
-.album-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-.album-card-info { padding: 10px; }
-.album-card-info h4 { margin: 0 0 4px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.album-card-info p { margin: 0; font-size: 12px; color: #888; }
-
 /* Modal Infrastructure */
 .modal {
     display: none;
@@ -506,7 +429,7 @@ body {
     }
 }
 @media (max-width: 600px) {
-    .profile-card, .artist-header {
+    .profile-card {
         flex-direction: column;
         text-align: center;
     }
@@ -523,6 +446,55 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: min(320px, 90%);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.modal-login-btn {
+    margin-top: 15px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
 .profile-modal {
     display: none;
     position: fixed;

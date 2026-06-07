@@ -8,7 +8,8 @@ const {
   searchArtists,
   createArtist,
   followArtist,
-  unfollowArtist
+  unfollowArtist,
+  toggleArtistLike
 } = require('../controllers/artistController');
 
 const { protect, authorize } = require('../middleware/auth');
@@ -74,9 +75,10 @@ router.get('/:id/profile', async (req, res) => {
 
 
 // Place these at the bottom
-router.route('/:id/follow').post(followArtist);
-router.route('/:id/unfollow').post(unfollowArtist);
-// TEMP DEBUG ROUTE
+router.route('/:id/follow').post(protect, followArtist);
+router.route('/:id/unfollow').post(protect, unfollowArtist);
+router.route('/:id/like').post(protect, toggleArtistLike);
 
+// TEMP DEBUG ROUTE
 router.route('/:id').get(getArtist);
 module.exports = router;

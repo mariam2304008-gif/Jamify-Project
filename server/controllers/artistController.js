@@ -86,64 +86,101 @@ exports.createArtist = async (req, res, next) => {
 // @route   POST /api/artists/:id/follow
 // @access  Private
 exports.followArtist = async (req, res) => {
-
     try {
-
         const artist = await Artist.findById(req.params.id);
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
 
-        const currentUserId = '61ac192b1619c87991658b99';
+        const currentUserId = req.user && (req.user._id || req.user.id);
+        if (!currentUserId) {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
+        }
 
-        if (!artist.followers.includes(currentUserId)) {
+        const existingFollower = artist.followers.some(
+            follower => follower.toString() === currentUserId.toString()
+        );
 
+        if (!existingFollower) {
             artist.followers.push(currentUserId);
-
             await artist.save();
         }
 
-        res.json({
-            success: true
-        });
-
+        res.json({ success: true });
     } catch (err) {
-
         console.log(err);
-
-        res.json({
-            success: false
-        });
-
+        res.status(500).json({ success: false, message: 'Server error' });
     }
-
 };
+
 // @desc    Unfollow an Artist
 // @route   POST /api/artists/:id/unfollow
 // @access  Private
 exports.unfollowArtist = async (req, res) => {
-
     try {
-
         const artist = await Artist.findById(req.params.id);
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
 
-        const currentUserId = '61ac192b1619c87991658b99';
+        const currentUserId = req.user && (req.user._id || req.user.id);
+        if (!currentUserId) {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
+        }
 
         artist.followers = artist.followers.filter(
-            follower => follower.toString() !== currentUserId
+            follower => follower.toString() !== currentUserId.toString()
         );
 
         await artist.save();
 
-        res.json({
-            success: true
-        });
-
+        res.json({ success: true });
     } catch (err) {
-
         console.log(err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// @desc    Toggle an Artist like
+// @route   POST /api/artists/:id/like
+// @access  Private
+exports.toggleArtistLike = async (req, res) => {
+    try {
+        const artist = await Artist.findById(req.params.id);
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
+
+        const currentUserId = req.user && (req.user._id || req.user.id);
+        if (!currentUserId) {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
+        }
+
+        if (!artist.likes) {
+            artist.likes = [];
+        }
+
+        const hasLiked = artist.likes.some(
+            like => like.toString() === currentUserId.toString()
+        );
+
+        if (hasLiked) {
+            artist.likes = artist.likes.filter(
+                like => like.toString() !== currentUserId.toString()
+            );
+        } else {
+            artist.likes.push(currentUserId);
+        }
+
+        await artist.save();
 
         res.json({
-            success: false
+            success: true,
+            hasLiked: !hasLiked,
+            likeCount: artist.likes.length
         });
-
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
-
 };
