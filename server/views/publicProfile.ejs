@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= user.displayName %> - Jamify Profile</title>
+    <title><%= profileUser.displayName %> - Jamify Profile</title>
     <link rel="stylesheet" href="/CSS/profile.css">
     <link rel="stylesheet" href="/CSS/navbar.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
@@ -24,16 +24,16 @@
 
 <img
     id="profileImg"
-    src="<%= user.profileImageUrl || '/Images/album-profile-images/epic.png' %>"
+    src="<%= profileUser.profileImageUrl || '/Images/album-profile-images/epic.png' %>"
     class="profile-image"
     style="cursor:pointer;"
 >
 
 </div>
         <div class="profile-info">
-            <h2 id="displayName"><%= user.displayName %></h2>
-            <p class="username" id="displayUsername">@<%= user.username %></p>
-            <p class="bio" id="displayBio"><%= user.bio || "No bio yet." %></p>
+            <h2 id="displayName"><%= profileUser.displayName %></h2>
+            <p class="username" id="displayUsername">@<%= profileUser.username %></p>
+            <p class="bio" id="displayBio"><%= profileUser.bio || "No bio yet." %></p>
 
             <div class="stats">
                 <span id="statReviews"><%= reviewCount %> Reviews</span>
@@ -46,11 +46,11 @@
 
 <button
     id="followBtn"
-    data-user-id="<%= user._id %>"
-    data-following="<%= user.followers && user.followers.some(f => f._id.toString() === currentUser._id.toString()) %>"
+    data-user-id="<%= profileUser._id %>"
+    data-following="<%= profileUser.followers && profileUser.followers.some(f => f._id.toString() === currentUser._id.toString()) %>"
     class="follow-btn"
 >
-    <%= user.followers && user.followers.some(f => f._id.toString() === currentUser._id.toString())
+    <%= profileUser.followers && profileUser.followers.some(f => f._id.toString() === currentUser._id.toString())
         ? 'Unfollow'
         : 'Follow'
     %>
@@ -147,16 +147,16 @@
             
             <div class="social-widget-card">
                 <div class="social-widget-header">
-                    <h3>Followers (<%= user.followers ? user.followers.length : 0 %>)</h3>
-                    <% if (user.followers && user.followers.length > 3) { %>
+                    <h3>Followers (<%= profileUser.followers ? profileUser.followers.length : 0 %>)</h3>
+                    <% if (profileUser.followers && profileUser.followers.length > 3) { %>
                         <button class="toggle-expansion-btn" onclick="toggleSocialExpansion('followersList', this)">Show More</button>
                     <% } %>
                 </div>
                 <div class="social-connections-list" id="followersList">
-                    <% if (!user.followers || user.followers.length === 0) { %>
+                    <% if (!profileUser.followers || profileUser.followers.length === 0) { %>
                         <p class="empty-msg" style="font-size: 12px; text-align: left;">No followers yet.</p>
                     <% } else { %>
-                        <% user.followers.forEach((f, index) => { %>
+                        <% profileUser.followers.forEach((f, index) => { %>
                             <a href="/api/users/<%= f._id %>/public" class="connection-row <%= index >= 3 ? 'collapsible-target' : '' %>">
                                 <img src="<%= f.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                 <div class="connection-meta">
@@ -171,8 +171,8 @@
 
             <div class="social-widget-card">
                 <div class="social-widget-header">
-                    <h3>Following (<%= (user.followingUsers ? user.followingUsers.length : 0) + (user.followingArtists ? user.followingArtists.length : 0) %>)</h3>
-                    <% let totalFollowing = (user.followingUsers ? user.followingUsers.length : 0) + (user.followingArtists ? user.followingArtists.length : 0); %>
+                    <h3>Following (<%= (profileUser.followingUsers ? profileUser.followingUsers.length : 0) + (profileUser.followingArtists ? profileUser.followingArtists.length : 0) %>)</h3>
+                    <% let totalFollowing = (profileUser.followingUsers ? profileUser.followingUsers.length : 0) + (profileUser.followingArtists ? profileUser.followingArtists.length : 0); %>
                     <% if (totalFollowing > 3) { %>
                         <button class="toggle-expansion-btn" onclick="toggleSocialExpansion('followingList', this)">Show More</button>
                     <% } %>
@@ -183,8 +183,8 @@
                     <% } else { %>
                         <% let dynamicIndex = 0; %>
                         
-                        <% if (user.followingUsers) { %>
-                            <% user.followingUsers.forEach((u) => { %>
+                        <% if (profileUser.followingUsers) { %>
+                            <% profileUser.followingUsers.forEach((u) => { %>
                                 <a href="/api/users/<%= u._id %>/public" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= u.profileImageUrl || '/Images/album-profile-images/epic.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
@@ -196,13 +196,13 @@
                             <% }) %>
                         <% } %>
 
-                        <% if (user.followingArtists) { %>
-                            <% user.followingArtists.forEach((a) => { %>
+                        <% if (profileUser.followingArtists) { %>
+                            <% profileUser.followingArtists.forEach((a) => { %>
                                 <a href="/artists/<%= a._id %>" class="connection-row <%= dynamicIndex >= 3 ? 'collapsible-target' : '' %>">
                                     <img src="<%= a.image || '/Images/default-avatar.png' %>" class="connection-avatar">
                                     <div class="connection-meta">
                                         <p class="connection-name"><%= a.name %></p>
-                                        <p class="connection-handle" style="color: #1db954;">🎵 Artist</p>
+                                        <p class="connection-handle" style="color: #1db954;">Artist</p>
                                     </div>
                                 </a>
                                 <% dynamicIndex++; %>

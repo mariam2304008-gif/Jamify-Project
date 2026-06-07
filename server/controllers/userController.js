@@ -141,7 +141,7 @@ exports.getPublicProfile = async (req, res, next) => {
       .sort('-createdAt');
 
     res.render('publicProfile', { 
-      user: user, 
+      profileUser: user, 
       currentUser: req.session.user || null, 
       reviews: reviews, 
       playlists: playlists,
