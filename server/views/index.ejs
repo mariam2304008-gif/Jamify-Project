@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +12,7 @@
 
   <%- include('partials/navbar') %>
 
-<div class="has-navbar">
-    </div>
+  <div class="has-navbar"></div>
 
   <div class="container">
     <h1>Rate. Review. Share.</h1>
@@ -23,94 +21,85 @@
     <div class="container">
       <h1>Discover New Music</h1>
       <p class="subtitle">Trending reviews and top-rated albums on Jamify.</p>
-  
-      <div class="album-discovery-grid">
-          
-        <% albums.forEach(album => { %>
-          
-          <div class="album-card">
-              <a href="/albums/<%= album._id %>" class="album-image-wrapper">
-                  <img src="<%= album.coverImageUrl %>" alt="<%= album.title %>">
-                  
-                  <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= album.rating || 1 %></span>
-              </a>
-              <div class="album-card-info">
-                  <h3><%= album.title %></h3>
-                  <% if (album.artist && album.artist.name) { %>
 
-    <a href="/artists/<%= album.artist._id %>/profile">
-        <%= album.artist.name %>
-    </a>
+      <% genres.forEach(genre => { %>
+        <% if (albumsByGenre[genre] && albumsByGenre[genre].length > 0) { %>
 
-<% } else { %>
+          <h2 class="section-title"><%= genre %></h2>
 
-    <p><%= album.artist %></p>
+          <div class="genre-carousel" data-genre="albums-<%= genre.toLowerCase().replace(/[^a-z0-9]/g, '-') %>">
+            <button class="carousel-btn carousel-prev" aria-label="Previous">&#8592;</button>
 
-<% } %>
+            <div class="carousel-track-wrapper">
+              <div class="carousel-track">
+                <% albumsByGenre[genre].forEach(album => { %>
+                  <div class="album-card">
+                    <a href="/albums/<%= album._id %>" class="album-image-wrapper">
+                      <img src="<%= album.coverImageUrl %>" alt="<%= album.title %>">
+                      <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= album.rating || 1 %></span>
+                    </a>
+                    <div class="album-card-info">
+                      <h3><%= album.title %></h3>
+                      <% if (album.artist && album.artist.name) { %>
+                        <a href="/artists/<%= album.artist._id %>/profile"><%= album.artist.name %></a>
+                      <% } else { %>
+                        <p><%= album.artist %></p>
+                      <% } %>
+                    </div>
+                  </div>
+                <% }) %>
               </div>
+            </div>
+
+            <button class="carousel-btn carousel-next" aria-label="Next">&#8594;</button>
           </div>
-  
-        <% }) %> 
-      </div>
-    
 
-<h2 class="section-title" style="margin-top: 40px; margin-bottom: 20px;">Standalone Singles</h2>
+        <% } %>
+      <% }) %>
 
-<div class="album-discovery-grid"> 
-    <% if (typeof standaloneSongs !== 'undefined' && standaloneSongs.length > 0) { %>
-        <% standaloneSongs.forEach(song => { %>
-                  
-            <% const cardUrl = `/songs/${song._id}`; %>
 
-            <a href="<%= cardUrl %>" class="album-card">
-                <div class="album-image-wrapper">
-                    <img src="<%= song.coverImageUrl || '/Images/album-profile-images/default-single.png' %>" alt="<%= song.title %>">
-                    <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= song.rating || 1 %></span>
-                </div>
-                <div class="album-card-info">
-                    <h3><%= song.title %></h3>
-                    <p>
-    <%= song.artists?.name || 'Unknown Artist' %>
-</p>
-                </div>
-            </a>
-    
-        <% }) %>
-    <% } else { %>
-        <p style="color: grey; padding-left: 15px; grid-column: 1 / -1;">No standalone singles available right now.</p>
-    <% } %>
-</div>
-        
+      <h2 class="section-title" style="margin-top: 50px;">Standalone Singles</h2>
 
+      <% genres.forEach(genre => { %>
+        <% if (songsByGenre[genre] && songsByGenre[genre].length > 0) { %>
+
+          <h3 class="section-subtitle"><%= genre %></h3>
+
+          <div class="genre-carousel" data-genre="songs-<%= genre.toLowerCase().replace(/[^a-z0-9]/g, '-') %>">
+            <button class="carousel-btn carousel-prev" aria-label="Previous">&#8592;</button>
+
+            <div class="carousel-track-wrapper">
+              <div class="carousel-track">
+                <% songsByGenre[genre].forEach(song => { %>
+                  <a href="/songs/<%= song._id %>" class="album-card">
+                    <div class="album-image-wrapper">
+                      <img src="<%= song.coverImageUrl || '/Images/album-profile-images/default-single.png' %>" alt="<%= song.title %>">
+                      <span class="avg-rating"><i class="fa-solid fa-star"></i> <%= song.rating || 1 %></span>
+                    </div>
+                    <div class="album-card-info">
+                      <h3><%= song.title %></h3>
+                      <p><%= song.artists?.name || 'Unknown Artist' %></p>
+                    </div>
+                  </a>
+                <% }) %>
+              </div>
+            </div>
+
+            <button class="carousel-btn carousel-next" aria-label="Next">&#8594;</button>
+          </div>
+
+        <% } %>
+      <% }) %>
+
+      <% const hasNoSongs = genres.every(g => !songsByGenre[g] || songsByGenre[g].length === 0); %>
+      <% if (hasNoSongs) { %>
+        <p style="color: grey; padding-left: 15px;">No standalone singles available right now.</p>
+      <% } %>
 
     </div>
   </div>
 
-<script src="/JavaScript/navbar.js"></script>
-
-
+  <script src="/JavaScript/navbar.js"></script>
+<script src="/JavaScript/carousel.js"></script>
 </body>
 </html>
-
-<div class="pagination">
-
-    <% if (currentPage > 1) { %>
-        <a href="/?page=<%= currentPage - 1 %>">←</a>
-    <% } %>
-
-    <% for(let i = 1; i <= totalPages; i++) { %>
-
-        <a
-            href="/?page=<%= i %>"
-            class="<%= currentPage === i ? 'active-page' : '' %>"
-        >
-            <%= i %>
-        </a>
-
-    <% } %>
-
-    <% if (currentPage < totalPages) { %>
-        <a href="/?page=<%= currentPage + 1 %>">→</a>
-    <% } %>
-
-</div>

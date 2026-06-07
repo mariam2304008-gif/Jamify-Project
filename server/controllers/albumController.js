@@ -6,45 +6,34 @@ const {updateAverageRating}  = require('../utils/ratingHelper');
 module.exports = {
     getAllAlbums: async (req, res) => {
     try {
+        const genres = ['Pop', 'Rock', 'Arabic', 'Hip-hop', 'Rap'];
 
-        const page = parseInt(req.query.page) || 1;
+        const allAlbums = await album.find({
+            trackType: { $nin: ['Standalone Single', 'Single track', 'Single'] }
+        }).populate('artist');
 
-        const limit = 3;
+        const allSongs = await Song.find({
+            $or: [
+                { album: null },
+                { trackType: 'Standalone Single' },
+                { trackType: 'Single track' }
+            ]
+        }).populate('artists');
 
-        const skip = (page - 1) * limit;
-
-        const filter = {
-            trackType: {
-                $nin: [
-                    'Standalone Single',
-                    'Single track',
-                    'Single'
-                ]
-            }
+        const groupByGenre = (items) => {
+            const groups = {};
+            genres.forEach(g => {
+                groups[g] = items.filter(item =>
+                    item.genre && item.genre.toLowerCase().includes(g.toLowerCase())
+                );
+            });
+            return groups;
         };
 
-        const totalAlbums = await album.countDocuments(filter);
-
-        const paginatedAlbums = await album.find(filter)
-    .populate('artist')
-    .skip(skip)
-    .limit(limit);
-
-        const combinedSingles = await Song.find({
-    $or: [
-        { album: null },
-        { trackType: 'Standalone Single' },
-        { trackType: 'Single track' }
-    ]
-}).populate('artists');
-
-        const totalPages = Math.ceil(totalAlbums / limit);
-
         res.render('index', {
-            albums: paginatedAlbums,
-            standaloneSongs: combinedSingles,
-            currentPage: page,
-            totalPages
+            albumsByGenre: groupByGenre(allAlbums),
+            songsByGenre: groupByGenre(allSongs),
+            genres
         });
 
     } catch (err) {
