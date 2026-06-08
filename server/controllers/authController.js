@@ -1,19 +1,19 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 
-// Handle User Signup
+
 exports.signup = async (req, res) => {
     try {
         const { username, email, password, displayName } = req.body;
 
-        // Check if user already exists by email or username
+        
         let user = await User.findOne({ $or: [{ email }, { username }] });
         if (user) return res.status(400).json({ error: 'user_exists', message: 'An account with that username or email already exists.' });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Dynamically initialize clean fields in Atlas upon signup
+        
         user = new User({ 
             username, 
             email, 
@@ -31,10 +31,10 @@ exports.signup = async (req, res) => {
     }
 };
 
-// Handle User Login
+
 exports.login = async (req, res) => {
     try {
-        // FIXED: Explicitly grab both the input identifier AND the password from the form body!
+        
         const loginInput = req.body.username || req.body.email; 
         const password = req.body.password;
 
@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
            return res.status(400).json({ error: 'missing_fields', message: 'Please provide both a username/email and password.' });
         }
 
-        // Search for the account matching either field in Atlas
+        
         const user = await User.findOne({
             $or: [
                 { username: loginInput },
@@ -54,7 +54,7 @@ exports.login = async (req, res) => {
            return res.status(404).json({ error: 'user_not_found', message: 'User does not exist.' });
         }
 
-        // Check password dynamically
+        
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
            return res.status(401).json({ error: 'wrong_password', message: 'Wrong password.' });
@@ -62,13 +62,13 @@ exports.login = async (req, res) => {
 
        
         req.session.user = {
-        id: user._id.toString(),   // Keeps your code working
-        _id: user._id.toString(),  // FIX: This gives your friend's userController the exact key it wants!
+        id: user._id.toString(),   
+        _id: user._id.toString(),  
         username: user.username,
         isAdmin: user.isAdmin || false
         };
 
-        // Explicitly save the session before redirecting to guarantee the cookie updates immediately
+        
         req.session.save((err) => {
             if (err) {
                 console.error("Session save error:", err);
@@ -82,7 +82,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// Handle User Logout
+
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {

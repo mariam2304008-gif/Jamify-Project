@@ -1,12 +1,12 @@
 const Song = require('../models/Song');
-const review = require('../models/review'); // Match your lowercase review import
+const review = require('../models/review'); 
 const { updateAverageRating } = require('../utils/ratingHelper');
 
 module.exports = {
-    // GET /songs/:id -> Render individual song profile page
+    
     getSongById: async (req, res) => {
         try {
-            // Fetch the song document and deeply populate the parent album data if it exists
+            
             const currentSong = await Song.findById(req.params.id)
     .populate('album')
     .populate('artists');
@@ -15,8 +15,8 @@ module.exports = {
                 return res.status(404).render('404', { message: 'Song Not Found', type: 'song' });
             }
 
-            // Fetch all reviews linked specifically to this song ID
-            // NOTE: Make sure your review model schema can accept a songID field!
+            
+            
             const reviews = await review.find({ songID: req.params.id }).populate('user');
 
             res.render('songProfile', { 
@@ -50,7 +50,7 @@ module.exports = {
             review: req.body.review,
             date: new Date(),
             likes: [],
-            // Safe to access now because we verified the session above
+            
             user: req.session.user.id || req.session.user._id
         });
 
@@ -70,15 +70,15 @@ module.exports = {
             const song = await Song.findById(songId);
             if (!song) return res.status(404).json({ success: false, message: "Song document not found" });
 
-            // Initialize as empty array if missing
+            
             if (!song.likes) song.likes = [];
 
             const hasLiked = song.likes.includes(userId);
             if (hasLiked) {
-                // If user already liked it, pull them out of the array
+                
                 await Song.findByIdAndUpdate(songId, { $pull: { likes: userId } });
             } else {
-                // Else, push their ID cleanly into the array
+                
                 await Song.findByIdAndUpdate(songId, { $addToSet: { likes: userId } });
             }
 
@@ -94,7 +94,7 @@ module.exports = {
         }
     },
 
-    // POST /songs/reviews/:reviewId/like -> Toggle user like inside comment loop arrays
+    
     toggleReviewLike: async (req, res) => {
         try {
             const reviewId = req.params.reviewId;
@@ -103,7 +103,7 @@ module.exports = {
             const targetReview = await review.findById(reviewId);
             if (!targetReview) return res.status(404).json({ success: false, message: "Review comment not found" });
 
-            // If your legacy schema seeds likes as a simple number instead of an array, fix it safely
+            
             let hasLiked = false;
             if (Array.isArray(targetReview.likes)) {
                 hasLiked = targetReview.likes.includes(userId);
@@ -113,7 +113,7 @@ module.exports = {
                     await review.findByIdAndUpdate(reviewId, { $addToSet: { likes: userId } });
                 }
             } else {
-                // Fallback for primitive numeric count fields if arrays haven't migrated completely yet
+                
                 await review.findByIdAndUpdate(reviewId, { $inc: { likes: 1 } });
             }
 

@@ -17,7 +17,7 @@ const {
   updateProfile
 } = require('../controllers/userController');
 
-// 1. Base Static / Operational Routes
+
 router.route('/playlists')
   .get(isLoggedIn, getPlaylists)
   .post(isLoggedIn, createPlaylist);
@@ -36,11 +36,11 @@ router.get('/search', async (req, res) => {
   } 
 });
 
-// Profile update route
+
 router.route('/profile')
   .put(isLoggedIn, updateProfile);
 
-// 2. Specific Playlist Instance Routes (Must come BEFORE /:id parameterized routes)
+
 const Playlist = require('../models/Playlist');
 
 router.route('/playlists/:id')
@@ -68,12 +68,12 @@ router.route('/playlists/:playlistId/album/:albumId')
   .post(isLoggedIn, addSongToPlaylist)
   .delete(isLoggedIn, removeSongFromPlaylist);
 
-// 3. User Social Interaction Routes
+
 router.route('/:id/follow').post(isLoggedIn, followUser);
 router.route('/:id/unfollow').post(isLoggedIn, unfollowUser);
 
-// 4. Targeted Public Profile Route 
-// Changed to '/:id/public' to completely prevent router overlap issues!
+
+
 router.get('/:id/public', getPublicProfile);
 
 router.post(

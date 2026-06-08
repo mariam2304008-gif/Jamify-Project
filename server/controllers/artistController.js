@@ -3,9 +3,9 @@ const Album = require('../models/album');
 const Song = require('../models/Song');
 const ErrorResponse = require('../utils/errorResponse');
 
-// @desc    Get all artists
-// @route   GET /api/artists
-// @access  Public
+
+
+
 exports.getArtists = async (req, res, next) => {
   try {
     const artists = await Artist.find().sort('name');
@@ -15,9 +15,9 @@ exports.getArtists = async (req, res, next) => {
   }
 };
 
-// @desc    Get single artist with their albums
-// @route   GET /api/artists/:id
-// @access  Public
+
+
+
 exports.getArtist = async (req, res, next) => {
   try {
     const artist = await Artist.findById(req.params.id);
@@ -25,10 +25,10 @@ exports.getArtist = async (req, res, next) => {
       return res.status(404).render('404', { message: 'Artist Not Found', type: 'artist' });
     }
 
-    // Get all albums where artist name matches
+    
     const albums = await Album.find({ artist: artist._id });
 
-    // Get all songs where artist name matches
+    
     const songs = await Song.find({ artists: artist._id });
 
     res.render('artistProfile', {
@@ -41,9 +41,9 @@ exports.getArtist = async (req, res, next) => {
   }
 };
 
-// @desc    Search artists by name
-// @route   GET /api/artists/search?q=query
-// @access  Public
+
+
+
 exports.searchArtists = async (req, res) => {
 
     try {
@@ -70,9 +70,9 @@ exports.searchArtists = async (req, res) => {
     }
 };
 
-// @desc    Create artist (admin only)
-// @route   POST /api/artists
-// @access  Private/Admin
+
+
+
 exports.createArtist = async (req, res, next) => {
   try {
     if (req.file) req.body.image = `/uploads/${req.file.filename}`;
@@ -83,9 +83,9 @@ exports.createArtist = async (req, res, next) => {
   }
 };
 
-// @desc    Follow an Artist
-// @route   POST /api/artists/:id/follow
-// @access  Private
+
+
+
 exports.followArtist = async (req, res) => {
     try {
         const artist = await Artist.findById(req.params.id);
@@ -114,9 +114,9 @@ exports.followArtist = async (req, res) => {
     }
 };
 
-// @desc    Unfollow an Artist
-// @route   POST /api/artists/:id/unfollow
-// @access  Private
+
+
+
 exports.unfollowArtist = async (req, res) => {
     try {
         const artist = await Artist.findById(req.params.id);
@@ -142,9 +142,9 @@ exports.unfollowArtist = async (req, res) => {
     }
 };
 
-// @desc    Toggle an Artist like
-// @route   POST /api/artists/:id/like
-// @access  Private
+
+
+
 exports.toggleArtistLike = async (req, res) => {
     try {
         const artist = await Artist.findById(req.params.id);

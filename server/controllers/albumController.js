@@ -41,10 +41,10 @@ module.exports = {
     }
 },
 
-    // FIXED: Now populates the nested song objects to prevent .join() crashes in EJS!
+    
     getAlbumById: async (req, res) => {
         try {
-            // .populate('songs') matches your updated models/album.js schema definition
+            
             const currentAlbum = await album.findById(req.params.id)
     .populate('songs')
     .populate('artist');
@@ -53,15 +53,15 @@ module.exports = {
     return res.status(404).render('404', { message: 'Album Not Found', type: 'album' });
     }
 
-            // Fetch all reviews linked to this album
+            
             const reviews = await review.find({ albumID: req.params.id }).populate('user');
 
-            // Fallback tracklist sorting check
+            
             const tracklist = currentAlbum.songs && currentAlbum.songs.length > 0 
                 ? currentAlbum.songs.sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0))
                 : await Song.find({ album: req.params.id }).sort({ trackNumber: 1 });
 
-            // Pass the variables into your albumProfile.ejs template cleanly
+            
             res.render('albumProfile', { 
                 album: currentAlbum, 
                 reviews: reviews,
@@ -118,10 +118,10 @@ module.exports = {
         }
     },
 
-    // FIXED: Cleaned up to properly map to your updated Review database schema configuration
+    
    addReview: async (req, res) => {
     try {
-        // 1. Check if the user is authenticated. If not, send them to the login page!
+        
         if (!req.session || !req.session.user) {
             return res.status(401).json({ success: false, notLoggedIn: true });
         }
@@ -137,7 +137,7 @@ module.exports = {
             review: req.body.review, 
             date: new Date(),
             likes: [],
-            // Safe to access now because we verified the session above
+            
             user: req.session.user.id || req.session.user._id
         });
         
@@ -164,19 +164,19 @@ module.exports = {
                 return res.status(403).send('You are not allowed to delete this review');
             }
 
-            // 1. Capture both asset IDs before deleting the document from the DB
+            
             const targetAlbumId = currentReview.albumID;
             const targetSongId = currentReview.songID;
 
-            // 2. Destroy the review document
+            
             await review.findByIdAndDelete(req.params.id);
 
-            // 3. Conditional Recalculation Check
+            
             if (targetAlbumId) {
-                // If it was an album review, recalculate album metrics
+                
                 await updateAverageRating(targetAlbumId, 'Album');
             } else if (targetSongId) {
-                // If it was a song review, recalculate song metrics
+                
                 await updateAverageRating(targetSongId, 'Song');
             }
             
@@ -195,7 +195,7 @@ module.exports = {
             const currentAlbum = await album.findById(albumId);
             if (!currentAlbum) return res.status(404).json({ success: false, message: "Album not found" });
 
-            // Fail-safe initialization for arrays
+            
             if (!Array.isArray(currentAlbum.likes)) {
                 currentAlbum.likes = [];
             }
@@ -219,7 +219,7 @@ module.exports = {
         }
     },
 
-    // 8. POST /albums/reviews/:reviewId/like -> Toggle user like inside album review comment loops
+    
     toggleAlbumReviewLike: async (req, res) => {
         try {
             const reviewId = req.params.reviewId;
@@ -237,7 +237,7 @@ module.exports = {
                     await review.findByIdAndUpdate(reviewId, { $addToSet: { likes: userId } });
                 }
             } else {
-                // Fallback for legacy database counters
+                
                 await review.findByIdAndUpdate(reviewId, { $inc: { likes: 1 } });
             }
 

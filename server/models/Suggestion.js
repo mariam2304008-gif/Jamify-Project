@@ -11,9 +11,9 @@ const suggestionSchema = new mongoose.Schema({
   submittedBy:  { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   addedByAdmin: { type: Boolean, default: false },
 
-  // Song-specific fields (only used when type === 'song')
+  
   trackType:    { type: String, enum: ['Standalone Single', 'Album Track', 'Single track'], default: 'Standalone Single' },
-  albumName:    { type: String, default: '' },  // name of parent album for Album Track / Single track
+  albumName:    { type: String, default: '' },  
   trackNumber:  { type: Number, default: null }
 }, { timestamps: true });
 

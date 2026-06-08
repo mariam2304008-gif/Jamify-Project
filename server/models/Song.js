@@ -11,7 +11,7 @@ const songSchema = new mongoose.Schema({
     ref: 'Artist',
     required: true
 },
-    // Optional reference: If null, it's a Standalone Single!
+    
     album: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Album',
@@ -23,7 +23,7 @@ const songSchema = new mongoose.Schema({
         trim: true,
         default: 'Pop'
     },
-    // Track type logic indicator
+    
     trackType: {
         type: String,
         enum: ['Album Track', 'Single track', 'Standalone Single'],
@@ -44,12 +44,12 @@ const songSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    // Track number on the album (null if standalone single)
+    
     trackNumber: {
         type: Number,
         default: null
     },
-    // Dynamic metrics
+    
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -68,10 +68,10 @@ const songSchema = new mongoose.Schema({
     }
 });
 
-// Indexing trackNumber makes sorting album tracklists incredibly fast later
+
 songSchema.index({ album: 1, trackNumber: 1 });
 
-// DYNAMIC PRE-SAVE HOOK: In models/Song.js
+
 songSchema.pre('save', async function () {
     if (this.album) {
         try {

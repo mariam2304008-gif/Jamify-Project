@@ -46,7 +46,7 @@ const ArtistSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Virtual to get all albums by this artist
+// to get all albums by this artist
 ArtistSchema.virtual('albums', {
   ref: 'Album',
   localField: 'name',

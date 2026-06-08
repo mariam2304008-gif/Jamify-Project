@@ -2,7 +2,7 @@ const Suggestion = require('../models/Suggestion');
 const Album = require('../models/album');
 const Song = require('../models/Song');
 
-// Function 1
+
 exports.index = async (req, res, next) => {
   try {
     const suggestions = await Suggestion.find({ submittedBy: req.session.user.id })
@@ -14,7 +14,7 @@ exports.index = async (req, res, next) => {
   }
 };
 
-// Function 2
+
 exports.create = async (req, res, next) => {
   try {
     const { type, title, artist, releaseDate, genre, link, trackType, albumName, trackNumber } = req.body;
@@ -41,8 +41,8 @@ exports.create = async (req, res, next) => {
   }
 };
 
-// Function 3
-// Admin: list all suggestions with optional status filter
+
+
 exports.adminIndex = async (req, res, next) => {
   try {
     const { status } = req.query;
@@ -57,7 +57,7 @@ exports.adminIndex = async (req, res, next) => {
   }
 };
 
-//Function 4
+
 exports.approve = async (req, res, next) => {
   try {
     const suggestion = await Suggestion.findById(req.params.id);
@@ -81,7 +81,7 @@ exports.approve = async (req, res, next) => {
     } else if (suggestion.type === 'song') {
       let albumId = null;
 
-      // If the song belongs to an album, look it up by name
+      
       if (
         (suggestion.trackType === 'Album Track' || suggestion.trackType === 'Single track') &&
         suggestion.albumName
@@ -103,7 +103,7 @@ exports.approve = async (req, res, next) => {
         }
       });
 
-      // If linked to an album, add this song to the album's tracklist
+      
       if (albumId) {
         await Album.findByIdAndUpdate(albumId, { $addToSet: { songs: newSong._id } });
       }
@@ -116,7 +116,7 @@ exports.approve = async (req, res, next) => {
   }
 };
 
-// Function 5
+
 exports.reject = async (req, res, next) => {
   try {
     await Suggestion.findByIdAndUpdate(req.params.id, { status: 'rejected' });
@@ -126,7 +126,7 @@ exports.reject = async (req, res, next) => {
   }
 };
 
-//Function 6
+
 exports.delete = async (req, res, next) => {
   try {
     const suggestion = await Suggestion.findById(req.params.id);

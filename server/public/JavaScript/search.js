@@ -136,7 +136,7 @@ function renderResults(users, artists, albums, songs) {
         return;
     }
 
-    // 🌟 UPDATE THIS SECTION IN YOUR search.js:
+  
 if (users.length > 0) {
     const section = document.createElement('div');
     section.className = 'results-section users';

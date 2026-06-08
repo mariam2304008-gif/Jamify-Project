@@ -75,9 +75,9 @@
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   });
 
-  // State
+  
   let _itemId = null;
-  let _itemType = 'album'; // 'album' or 'song'
+  let _itemType = 'album'; 
   let _playlists = [];
 
   window.openAddToPlaylist = async function (itemId, itemType = 'album') {
@@ -119,7 +119,7 @@
     list.innerHTML = '';
 
     _playlists.forEach(pl => {
-      // Songs: check if already in playlist. Albums: always show Add.
+      
       const alreadyAdded = _itemType === 'song'
         ? pl.songs && pl.songs.some(s =>
             (typeof s === 'string' ? s : s._id?.toString()) === _itemId
@@ -146,7 +146,7 @@
   }
 
   window.atpAddTo = async function (playlistId, btn) {
-    // /album/ (singular) matches the route: /playlists/:id/album/:albumId
+    
     const url = _itemType === 'album'
       ? `/api/users/playlists/${playlistId}/album/${_itemId}`
       : `/api/users/playlists/${playlistId}/songs/${_itemId}`;
@@ -167,8 +167,8 @@
           const current = parseInt(countEl.textContent) || 0;
           countEl.textContent = `${current + 1} songs`;
         } else {
-          // Album adds multiple songs — show added confirmation in count
-          countEl.textContent = 'Songs added ✓';
+          
+          countEl.textContent = 'Songs added';
         }
       } else {
         btn.disabled = false;

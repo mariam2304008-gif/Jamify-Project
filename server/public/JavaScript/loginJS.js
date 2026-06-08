@@ -24,18 +24,18 @@ signupTab.addEventListener('click', () => {
     loginForm.classList.add('hidden');
 });
 
-// ── Validation helpers ────────────────────────────────────────────────────────
+
 
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function isValidPassword(password) {
-    // Min 8 chars, at least 1 uppercase, 1 digit, 1 special character
+    
     return /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password);
 }
 
-// ── Signup ────────────────────────────────────────────────────────────────────
+
 
 async function handleSignup(event) {
     event.preventDefault();
@@ -46,7 +46,7 @@ async function handleSignup(event) {
     const password    = document.getElementById('reg-pass').value;
     const confirm     = document.getElementById('reg-confirm').value;
 
-    // Client-side validation with toast notifications
+    
     if (displayName === '') {
         return showToast('Please enter your display name.', 'error');
     }
@@ -75,7 +75,7 @@ async function handleSignup(event) {
         return showToast('Passwords do not match.', 'error');
     }
 
-    // Send to authController via fetch
+    
     try {
         const res = await fetch('/api/signup', {
             method: 'POST',
@@ -97,7 +97,7 @@ async function handleSignup(event) {
     }
 }
 
-// ── Login ─────────────────────────────────────────────────────────────────────
+
 
 async function handleLogin(event) {
     event.preventDefault();
@@ -128,7 +128,7 @@ async function handleLogin(event) {
             return showToast(data.message || 'Login failed. Please try again.', 'error');
         }
 
-        // Success — server set the session, redirect home
+        
         window.location.href = '/';
 
     } catch (err) {

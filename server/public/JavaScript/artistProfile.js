@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentType = res.headers.get('content-type') || '';
 
         if (!contentType.includes('application/json')) {
-            // Server returned HTML (e.g. login redirect) — treat as unauthorized
+          
             return { notAuthorized: true };
         }
 

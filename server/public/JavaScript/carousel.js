@@ -17,7 +17,7 @@ document.querySelectorAll('.genre-carousel').forEach(carousel => {
         return;
     }
 
-    // --- Build: [clone of full set] [real cards] [clone of full set] ---
+    
     const before = originalCards.map(c => {
         const cl = c.cloneNode(true);
         cl.setAttribute('aria-hidden', 'true');
@@ -32,13 +32,13 @@ document.querySelectorAll('.genre-carousel').forEach(carousel => {
     before.reverse().forEach(c => track.insertBefore(c, track.firstChild));
     after.forEach(c => track.appendChild(c));
 
-    // The real set sits at index `total` (after the prepended clones)
-    // Each card occupies (CARD_WIDTH + GAP)px
+    
+    
     const cardStep = CARD_WIDTH + GAP;
-    const realSetStart = total * cardStep; // px offset where real set begins
+    const realSetStart = total * cardStep; 
 
-    // We track which card index (within the infinite sequence) is leftmost visible
-    // Start showing real card 0
+    
+    
     let currentOffset = realSetStart;
 
     function setOffset(px, animate) {
@@ -46,22 +46,22 @@ document.querySelectorAll('.genre-carousel').forEach(carousel => {
         track.style.transform = `translateX(-${px}px)`;
     }
 
-    // Place without animation
+    
     setOffset(currentOffset, false);
 
     let isAnimating = false;
 
     track.addEventListener('transitionend', () => {
-        // After animation ends, check if we're in clone territory and silently reset
-        const totalCards = total * 3; // before + real + after
+        
+        const totalCards = total * 3; 
         const maxOffset = totalCards * cardStep;
 
         if (currentOffset >= realSetStart + total * cardStep) {
-            // Went past end of real set into after-clones — jump to mirror in real set
+            
             currentOffset -= total * cardStep;
             setOffset(currentOffset, false);
         } else if (currentOffset < realSetStart - total * cardStep) {
-            // Went before start of real set into before-clones — jump to mirror in real set  
+            
             currentOffset += total * cardStep;
             setOffset(currentOffset, false);
         }

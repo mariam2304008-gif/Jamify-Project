@@ -58,12 +58,12 @@ exports.getProfile = async (req, res, next) => {
     next(err);
   }
 };
-// @desc    Update own profile
-// @route   PUT /api/users/profile
-// @access  Private
+
+
+
 exports.updateProfile = async (req, res, next) => {
   try {
-    // 1. Guard check: Use the session user ID to match getProfile's login tracking
+    
     if (!req.session || !req.session.user) {
       return res.status(401).json({ success: false, error: 'Not authorized, session expired.' });
     }
@@ -71,7 +71,7 @@ exports.updateProfile = async (req, res, next) => {
     const userId = req.session.user.id;
     const fieldsToUpdate = {};
     
-    // Explicitly pull ONLY displayName and bio. Email is completely locked out.
+    
     if (req.body.displayName !== undefined) fieldsToUpdate.displayName = req.body.displayName;
     if (req.body.bio !== undefined) fieldsToUpdate.bio = req.body.bio;
 
@@ -79,7 +79,7 @@ exports.updateProfile = async (req, res, next) => {
       fieldsToUpdate.profileImageUrl = `uploads/${req.file.filename}`;
     }
 
-    // 2. Fix: Find by the verified session userId
+    
     const user = await User.findByIdAndUpdate(userId, fieldsToUpdate, {
       new: true,
       runValidators: true 
@@ -96,9 +96,9 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Get public profile of any user by ID
-// @route   GET /api/users/:id/public
-// @access  Public
+
+
+
 exports.getPublicProfile = async (req, res, next) => {
   try {
     const targetUserId = req.params.id;
@@ -110,8 +110,8 @@ exports.getPublicProfile = async (req, res, next) => {
       }
     }
 
-    // 🌟 FIX: Added population here so public profiles can read follower/following list details
-    // 🌟 FIX: Checked for 'profileImageUrl' instead of 'profileImage'
+    
+    
     const user = await User.findById(targetUserId)
       .select('-password')
       .populate([
@@ -159,9 +159,9 @@ exports.getPublicProfile = async (req, res, next) => {
     next(err);
   }
 };
-// @desc    Search users by username or displayName
-// @route   GET /api/users/search?q=query
-// @access  Public
+
+
+
 exports.searchUsers = async (req, res, next) => {
   try {
     const query = req.query.q || '';
@@ -178,9 +178,9 @@ exports.searchUsers = async (req, res, next) => {
   }
 };
 
-// @desc    Get all users (admin)
-// @route   GET /api/users
-// @access  Private/Admin
+
+
+
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -190,9 +190,9 @@ exports.getUsers = async (req, res, next) => {
   }
 };
 
-// @desc    Delete user (admin)
-// @route   DELETE /api/users/:id
-// @access  Private/Admin
+
+
+
 exports.deleteUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
@@ -204,7 +204,7 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-// ─── PLAYLIST CONTROLLERS ─────────────────────────────────────────────────────
+
 
 exports.getPlaylists = async (req, res, next) => {
   try {
@@ -312,12 +312,12 @@ exports.addAlbumToPlaylist = async (req, res, next) => {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
-    // 1. Get all song IDs belonging to the album
+    
     const albumSongs = await Song.find({ album: req.params.albumId }).select('_id');
     const songIdsToAdd = albumSongs.map(song => song._id.toString());
 
-    // 2. Filter: Only keep IDs not already in the playlist
-    // 2. Filter: Only keep IDs not already in the playlist
+    
+    
 const existingSongIds = playlist.songs.map(song =>
   song.toString()
 );
@@ -330,7 +330,7 @@ const newSongs = songIdsToAdd.filter(
       return res.status(200).json({ success: true, message: "No new songs to add." });
     }
 
-    // 3. Add only the new, unique songs
+    
     playlist.songs.push(...newSongs);
     await playlist.save();
 
@@ -350,14 +350,14 @@ exports.removeSongFromPlaylist = async (req, res, next) => {
       return next(new ErrorResponse('Not authorized', 403));
     }
 
-    // Remove the specific song ID
+    
     playlist.songs = playlist.songs.filter(
       id => id.toString() !== req.params.songId
     );
 
     await playlist.save();
     
-    // Populate the new 'songs' field
+    
     const updated = await Playlist.findById(playlist._id).populate('songs');
     res.status(200).json({ success: true, data: updated });
   } catch (err) { next(err); }
@@ -374,7 +374,7 @@ exports.addSongToPlaylist = async (req, res, next) => {
 
     const songId = req.params.songId;
 
-    // Prevent duplicates
+    
     if (playlist.songs.includes(songId)) {
       return next(new ErrorResponse('Song already in playlist', 400));
     }
@@ -387,9 +387,9 @@ exports.addSongToPlaylist = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// @desc    Follow another User
-// @route   POST /api/users/:id/follow
-// @access  Private
+
+
+
 exports.followUser = async (req, res, next) => {
   try {
     const targetUserId = req.params.id;
@@ -399,12 +399,12 @@ exports.followUser = async (req, res, next) => {
       return next(new ErrorResponse('You cannot follow your own account.', 400));
     }
 
-    // 1. Add target user to current user's following list ($addToSet avoids duplicates)
+    
     await User.findByIdAndUpdate(req.session.user._id, {
       $addToSet: { followingUsers: targetUserId }
     });
 
-    // 2. Add current user to target user's followers list
+    
     await User.findByIdAndUpdate(targetUserId, {
       $addToSet: { followers: currentUserId }
     });
@@ -413,9 +413,9 @@ exports.followUser = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// @desc    Unfollow another User
-// @route   POST /api/users/:id/unfollow
-// @access  Private
+
+
+
 exports.unfollowUser = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.session.user._id, { $pull: { followingUsers: req.params.id } });

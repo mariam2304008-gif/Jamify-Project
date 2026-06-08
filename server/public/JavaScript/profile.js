@@ -1,14 +1,14 @@
-// ─── State ────────────────────────────────────────────────────────────────────
+
 let editingPlaylistId = null;
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', function () {
     bindEditProfile();
     bindPlaylistModal();
     loadUserPlaylists();
 });
 
-// ─── Tab Switching ────────────────────────────────────────────────────────────
+
 function showTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -20,7 +20,7 @@ function showTab(tabId, btn) {
     }
 }
 
-// ─── Edit Profile ─────────────────────────────────────────────────────────────
+
 function bindEditProfile() {
     let originalName = '', originalBio = '';
 
@@ -52,7 +52,7 @@ function bindEditProfile() {
 
         if (!newName) { showToast('Please enter a display name', 'warning'); return; }
 
-        // Fix: Pack fields into a standard JSON payload
+        
         const payload = {
             displayName: newName,
             bio: newBio
@@ -62,7 +62,7 @@ function bindEditProfile() {
             const res = await fetch('/api/users/profile', {
                 method: 'PUT', 
                 headers: {
-                    'Content-Type': 'application/json' // Crucial for Express to read req.body correctly
+                    'Content-Type': 'application/json' 
                 },
                 body: JSON.stringify(payload) 
             });
@@ -93,7 +93,7 @@ function exitEditMode() {
     document.getElementById('editBtn').style.display = 'inline-block';
 }
 
-// ─── Playlists Management ─────────────────────────────────────────────────────
+
 function bindPlaylistModal() {
     const modal = document.getElementById('playlistModal');
 
@@ -166,14 +166,14 @@ function deletePlaylist(id) {
     });
 }
 
-// ─── Social Collapsible Widget Engine ──────────────────────────────────────────
+
 function toggleSocialExpansion(listId, buttonElement) {
     const listContainer = document.getElementById(listId);
     
-    // Toggle structural state class
+    
     listContainer.classList.toggle('expanded-state');
     
-    // Evaluate current state to re-label text contents
+    
     if (listContainer.classList.contains('expanded-state')) {
         buttonElement.textContent = "Show Less";
     } else {
@@ -181,7 +181,7 @@ function toggleSocialExpansion(listId, buttonElement) {
     }
 }
 
-// ─── Song Management in Playlists ──────────────────────────────────────────
+
 
 async function openSongsModal(playlistId, playlistName) {
     const modal = document.getElementById('songsModal');
@@ -248,7 +248,7 @@ function closeSongsModal() {
     document.getElementById('songsModal').style.display = 'none';
 }
 
-// Remove a song
+
 function removeSong(playlistId, songId) {
     showConfirm('Remove this song from the playlist?', async () => {
         try {
@@ -265,12 +265,12 @@ function removeSong(playlistId, songId) {
     });
 }
 
-// ─── Render Playlists ──────────────────────────────────────────────────────────
+
 async function loadUserPlaylists() {
     const container = document.getElementById('user-playlists-container');
     try {
         const res = await fetch('/api/users/playlists');
-        const data = await res.json(); // Assuming your controller returns { success: true, data: [...] }
+        const data = await res.json(); 
 
         container.innerHTML = '';
         if (data.data.length === 0) {
@@ -283,7 +283,7 @@ async function loadUserPlaylists() {
             card.className = 'playlist-card';
             card.style.cursor = 'pointer';
             
-            // This allows clicking the card to open your songs modal
+            
             card.onclick = () => openSongsModal(playlist._id, playlist.name);
             
            card.innerHTML = `

@@ -48,15 +48,15 @@ router.get('/search', async (req, res) => {
         });
     }
 });
-// Define profile path endpoint matching your view link anchor tags
+
 router.get('/:id', songController.getSongById);
 
 
 
-// Define form submittal processing pipeline route target matches
+
 router.post('/:id/reviews', songController.addSongReview);
 
-// AJAX Mutation Routes for Real-Time Liking
+
 router.post('/:id/like', protectSession, songController.toggleSongLike);
 router.post('/reviews/:reviewId/like', protectSession, songController.toggleReviewLike);
 

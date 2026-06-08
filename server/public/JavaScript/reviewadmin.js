@@ -1,4 +1,4 @@
-// Mock reviews data (pending reviews waiting for approval)
+
 let pendingReviews = [
     { id: 1, user: 'pinkfloyd_fan', rating: 5, review: 'Thriller is an absolute masterpiece! Michael Jackson\'s best work.', date: '2024-04-18', album: 'Thriller' },
     { id: 2, user: 'music_lover', rating: 4, review: 'Great album but some tracks could be shorter.', date: '2024-04-17', album: 'Lemonade' },
@@ -7,12 +7,12 @@ let pendingReviews = [
     { id: 5, user: 'casual_listener', rating: 4, review: 'Really enjoyed listening to this from start to finish.', date: '2024-04-14', album: 'Wicked' },
 ];
 
-// Load reviews on page load
+
 document.addEventListener('DOMContentLoaded', function() {
     displayReviews();
 });
 
-// Display pending reviews
+
 function displayReviews() {
     const container = document.getElementById('reviewsContainer');
     const noReviewsMsg = document.getElementById('noReviewsMessage');
@@ -46,21 +46,21 @@ function displayReviews() {
     `).join('');
 }
 
-// Approve review
+
 function approveReview(reviewId) {
     pendingReviews = pendingReviews.filter(r => r.id !== reviewId);
     displayReviews();
     showNotification('Review approved successfully!');
 }
 
-// Deny review
+
 function denyReview(reviewId) {
     pendingReviews = pendingReviews.filter(r => r.id !== reviewId);
     displayReviews();
     showNotification('Review denied and removed!');
 }
 
-// Show notification
+
 function showNotification(message) {
     const notif = document.getElementById('successNotification');
     document.getElementById('notificationMessage').textContent = message;
@@ -70,18 +70,18 @@ function showNotification(message) {
     }, 3000);
 }
 
-// Close notification
+
 function closeNotification() {
     document.getElementById('successNotification').style.display = 'none';
 }
 
-// Format date
+
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
-// Escape HTML to prevent XSS
+
 function escapeHtml(text) {
     const map = {
         '&': '&amp;',

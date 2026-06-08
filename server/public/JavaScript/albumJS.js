@@ -1,6 +1,6 @@
 function showLoginModal() {
     const modal = document.getElementById("login-modal");
-    // Only add class if the element actually exists on this page
+    
     if (modal) {
         modal.classList.add("show");
     } else {
@@ -17,7 +17,7 @@ function closeLoginModal() {
     }
 }
 
-// Global variables to support your state transition
+
 let formToSubmit = null;
 
 function showDeleteModal() {
@@ -28,34 +28,34 @@ function showDeleteModal() {
 function closeDeleteModal() {
     const modal = document.getElementById("confirm-delete-modal");
     if (modal) modal.classList.remove("show");
-    formToSubmit = null; // Flush validation reference safely
+    formToSubmit = null; 
 }
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // --- 1. Custom Delete Confirmation Modal Logic ---
+    
     const deleteForms = document.querySelectorAll(".review-delete-form");
     const confirmDeleteBtn = document.getElementById("modal-confirm-delete-btn");
 
     deleteForms.forEach((form) => {
         form.addEventListener("submit", function (e) {
-            // Prevent native browser engine from executing immediately
+            
             e.preventDefault(); 
-            formToSubmit = this; // Store context reference to click instance
+            formToSubmit = this; 
             showDeleteModal();
         });
     });
 
-    // Handle user accepting the confirmation inside the modal
+    
     if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener("click", () => {
             if (formToSubmit) {
-                formToSubmit.submit(); // Execute native database submission route
+                formToSubmit.submit(); 
             }
         });
     }
 
-    // --- 2. Star Rating UI Handler Loop ---
+    
     const stars = document.querySelectorAll(".stars i");
     const hiddenRatingInput = document.getElementById("rating");
 
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 3. Heart Like Mutation Engine ---
+    
     const hearts = document.querySelectorAll(".like-heart");
 
     hearts.forEach((heart) => {
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const parentContext = isAlbumPage ? 'albums' : 'songs';
             const resourceId = pathParts[pathParts.indexOf(parentContext) + 1];
 
-            // Scenario A: Main Entity Heart
+            
             if (!reviewId) {
                 try {
                     const response = await fetch(`/${parentContext}/${resourceId}/like`, {
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         const secondaryCounter = document.querySelector(".total-likes-counter");
                         if (secondaryCounter) secondaryCounter.textContent = data.likeCount;
                     } else {
-                        // Redirect to login if not authenticated
+                        
                         showLoginModal();
                     }
                 } catch (err) {
@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Scenario B: Mini Liker (Reviews)
+            
             try {
                 const response = await fetch(`/${parentContext}/reviews/${reviewId}/like`, {
                     method: 'POST',
@@ -135,13 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 4. Validation Interceptor (Targeted safely to skip delete forms) ---
+    
     const pathParts = window.location.pathname.split('/');
     const isAlbum = pathParts.includes('albums');
     const parentContext = isAlbum ? 'albums' : 'songs';
     const resourceId = pathParts[pathParts.indexOf(parentContext) + 1];
     
-    // Explicitly target the creation form dynamically matching action URL
+    
     const reviewForm = document.querySelector(`form[action="/${parentContext}/${resourceId}/reviews"]`);
     
     if (reviewForm) {
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 5. Tracklist Toggle Section Controller ---
+    
     const toggleBtn = document.getElementById('toggleTracklistBtn');
     const tracklistSection = document.getElementById('tracklistSection');
 

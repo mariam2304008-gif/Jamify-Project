@@ -18,7 +18,7 @@ const isAdmin = require('../middleware/isAdmin');
 const router = express.Router();
 
 
-// DEBUG ROUTES FIRST
+
 router.get('/test-artists', async (req, res) => {
   console.log(Artist.collection.name);
   console.log(Artist.db.name);
@@ -39,7 +39,7 @@ router.route('/search').get(searchArtists);
 
 
 
-// PROFILE ROUTE
+
 router.get('/:id/profile', async (req, res) => {
     try {
 
@@ -72,7 +72,7 @@ router.get('/:id/profile', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-// KEEP THIS LAST
+
 
 const upload = require('../middleware/upload');
 router.route('/').get(getArtists).post(isLoggedIn, isAdmin, upload.single('image'), createArtist);
@@ -80,6 +80,6 @@ router.route('/:id/follow').post(isLoggedIn, followArtist);
 router.route('/:id/unfollow').post(isLoggedIn, unfollowArtist);
 router.route('/:id/like').post(isLoggedIn, toggleArtistLike);
 
-// TEMP DEBUG ROUTE
-// router.route('/:id').get(getArtist);
+
+
 module.exports = router;

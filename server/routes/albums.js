@@ -13,7 +13,7 @@ router.put('/:id', albumController.updateAlbum);
 router.delete('/:id', albumController.deleteAlbum);
 router.post('/:id/reviews', albumController.addReview);
 
-// Real-Time Album Liking Endpoints
+
 router.post('/:id/like', protectSession, albumController.toggleAlbumLike);
 router.post('/reviews/:reviewId/like', protectSession, albumController.toggleAlbumReviewLike);
 

@@ -1,7 +1,7 @@
-// ─── Global Toast Notification System ────────────────────────────────────────
-// Uses the same beautiful slide-in animation from album.js
+
+
 (function () {
-  // Inject toast container and styles once
+  
   const containerHTML = `
     <div id="toast-notification">
       <span id="toast-message"></span>
